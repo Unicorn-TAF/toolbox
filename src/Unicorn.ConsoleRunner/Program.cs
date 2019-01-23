@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using Unicorn.Core.Engine;
 using Unicorn.Core.Testing.Tests;
@@ -52,46 +53,36 @@ namespace Unicorn.ConsoleRunner
                 throw new ArgumentException($"'{ConstConfiguration}' parameter was not specified");
             }
 
-            Uri assemblyUri;
+            Uri assemblyUri = Path.IsPathRooted(assemblyPath) ? 
+                new Uri(assemblyPath, UriKind.Absolute) : 
+                new Uri(assemblyPath, UriKind.Relative);
 
-            if (Path.IsPathRooted(assemblyPath))
-            {
-                assemblyUri = new Uri(assemblyPath, UriKind.Absolute);
-            }
-            else
-            {
-                assemblyUri = new Uri(assemblyPath, UriKind.Relative);
-            }
+            Uri configUri = Path.IsPathRooted(propertiesPath) ?
+                new Uri(propertiesPath, UriKind.Absolute) :
+                new Uri(propertiesPath, UriKind.Relative);
 
-            Uri configUri;
-
-            if (Path.IsPathRooted(propertiesPath))
-            {
-                configUri = new Uri(propertiesPath, UriKind.Absolute);
-            }
-            else
-            {
-                configUri = new Uri(propertiesPath, UriKind.Relative);
-            }
-
-            TestsRunner runner = new TestsRunner(assemblyUri.ToString(), configUri.ToString());
-
+            Configuration.FillFromFile(configUri.AbsolutePath);
             ReportHeader(assemblyPath);
 
-            runner.RunTests();
+            LaunchOutcome outcome;
 
-            ReportResults(runner);
+            using (var executor = new UnicornAppDomainIsolation<IsolatedTestsRunner>(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)))
+            {
+                outcome = executor.Instance.RunTests(assemblyUri.AbsolutePath, configUri.AbsolutePath);
+            }
+
+            ReportResults(outcome);
         }
 
-        private static void ReportResults(TestsRunner runner)
+        private static void ReportResults(LaunchOutcome outcome)
         {
             StringBuilder header = new StringBuilder();
 
             header.AppendLine().AppendLine().AppendLine().AppendLine()
                 .AppendLine(Delimiter).AppendLine()
-                .AppendLine($"Tests run {runner.Outcome.RunStatus}").AppendLine();
+                .AppendLine($"Tests run {outcome.RunStatus}").AppendLine();
 
-            var color = runner.Outcome.RunStatus.Equals(Status.Passed) ? ConsoleColor.Green : ConsoleColor.Red;
+            var color = outcome.RunStatus.Equals(Status.Passed) ? ConsoleColor.Green : ConsoleColor.Red;
             Console.ForegroundColor = color;
 
             Console.Write(header.ToString());
@@ -100,11 +91,11 @@ namespace Unicorn.ConsoleRunner
             int skippedTests = 0;
             int failedTests = 0;
 
-            foreach (var outcome in runner.Outcome.SuitesOutcomes)
+            foreach (var suiteOutcome in outcome.SuitesOutcomes)
             {
-                failedTests += outcome.FailedTests;
-                skippedTests += outcome.SkippedTests;
-                passedTests += outcome.TotalTests - outcome.FailedTests - outcome.SkippedTests;
+                failedTests += suiteOutcome.FailedTests;
+                skippedTests += suiteOutcome.SkippedTests;
+                passedTests += suiteOutcome.PassedTests;
             }
 
             Console.ForegroundColor = ConsoleColor.White;
