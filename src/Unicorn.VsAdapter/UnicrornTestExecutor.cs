@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
 using Unicorn.Core.Engine;
 
 namespace Unicorn.TestAdapter
@@ -26,7 +27,7 @@ namespace Unicorn.TestAdapter
                 TestsRunner runner = new TestsRunner(source, false);
                 runner.RunTests();
 
-                using (var loader = new UnicornAppDomainIsolation<RunTestsWorker>(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)))
+                using (var loader = new UnicornAppDomainIsolation<IsolatedTestsRunner>(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)))
                 {
                     outcome = loader.Instance.RunTests(source);
                 }
@@ -38,11 +39,21 @@ namespace Unicorn.TestAdapter
         {
             m_cancelled = false;
 
-            LaunchOutcome outcome;
+            LaunchOutcome outcome = null;
+            var recorder = new TestsRecorder(frameworkHandle);
 
-            using (var loader = new UnicornAppDomainIsolation<RunTestsWorker>(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)))
+            frameworkHandle.SendMessage(TestMessageLevel.Informational, "Unicorn Adapter: Test run starting");
+
+            try
             {
-                outcome = loader.Instance.RunTests(tests.First().Source, tests.Select(t => t.FullyQualifiedName).ToArray());
+                using (var loader = new UnicornAppDomainIsolation<IsolatedTestsRunner>(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)))
+                {
+                    outcome = loader.Instance.RunTests(tests.First().Source, tests.Select(t => t.FullyQualifiedName).ToArray());
+                }
+            }
+            catch (Exception ex)
+            {
+                frameworkHandle.SendMessage(TestMessageLevel.Error, $"Unicorn Adapter: error running tests ({ex.Message})");
             }
 
             foreach (TestCase test in tests)
@@ -52,48 +63,43 @@ namespace Unicorn.TestAdapter
                     break;
                 }
 
-                var testResult = new TestResult(test);
-                var correspondingUnicornOutcome = outcome.SuitesOutcomes.SelectMany(so => so.TestsOutcomes).First(to => to.FullMethodName.Equals(test.FullyQualifiedName));
-                testResult.Outcome = GetTestCaseResult(correspondingUnicornOutcome);
+                var unicornOutcome = outcome.SuitesOutcomes.SelectMany(so => so.TestsOutcomes).First(to => to.FullMethodName.Equals(test.FullyQualifiedName));
+                var testResult = GetTestResultFromOutcome(unicornOutcome, test);
                 frameworkHandle.RecordResult(testResult);
             }
+
+            frameworkHandle.SendMessage(TestMessageLevel.Informational, "Unicorn Adapter: Test run complete");
         }
 
-
-        private TestOutcome GetTestCaseResult(Core.Testing.Tests.TestOutcome outcome)
+        private TestResult GetTestResultFromOutcome(Core.Testing.Tests.TestOutcome outcome, TestCase testCase)
         {
+            var testResult = new TestResult(testCase);
+            testResult.ComputerName = Environment.MachineName;
+
             switch (outcome.Result)
             {
                 case Core.Testing.Tests.Status.Passed:
-                    return TestOutcome.Passed;
+                    testResult.Outcome = TestOutcome.Passed;
+                    testResult.Duration = outcome.ExecutionTime;
+                    break;
                 case Core.Testing.Tests.Status.Failed:
-                    return TestOutcome.Failed;
+                    testResult.Outcome = TestOutcome.Failed;
+                    testResult.ErrorMessage = outcome.Exception.Message;
+                    testResult.ErrorStackTrace = outcome.Exception.StackTrace;
+                    testResult.Duration = outcome.ExecutionTime;
+                    break;
                 case Core.Testing.Tests.Status.Skipped:
-                    return TestOutcome.Skipped;
+                    testResult.Outcome = TestOutcome.Skipped;
+                    break;
                 default:
-                    return TestOutcome.None;
+                    testResult.Outcome = TestOutcome.None;
+                    break;
             }
+
+            return testResult;
         }
 
         public void Cancel() =>
             m_cancelled = true;
-    }
-
-    public class RunTestsWorker : MarshalByRefObject
-    {
-        public LaunchOutcome RunTests(string source)
-        {
-            var runner = new TestsRunner(source, false);
-            runner.RunTests();
-            return runner.Outcome;
-        }
-
-        public LaunchOutcome RunTests(string source, string[] testsMasks)
-        {
-            Configuration.SetTestsMasks(testsMasks);
-            var runner = new TestsRunner(source, false);
-            runner.RunTests();
-            return runner.Outcome;
-        }
     }
 }

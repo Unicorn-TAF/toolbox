@@ -64,11 +64,18 @@ namespace Unicorn.ConsoleRunner
             Configuration.FillFromFile(configUri.AbsolutePath);
             ReportHeader(assemblyPath);
 
-            LaunchOutcome outcome;
+            LaunchOutcome outcome = null;
 
-            using (var executor = new UnicornAppDomainIsolation<IsolatedTestsRunner>(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)))
+            try
             {
-                outcome = executor.Instance.RunTests(assemblyUri.AbsolutePath, configUri.AbsolutePath);
+                using (var executor = new UnicornAppDomainIsolation<IsolatedTestsRunner>(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)))
+                {
+                    outcome = executor.Instance.RunTests(assemblyUri.AbsolutePath, configUri.AbsolutePath);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error running tests ({ex.Message})");
             }
 
             ReportResults(outcome);
