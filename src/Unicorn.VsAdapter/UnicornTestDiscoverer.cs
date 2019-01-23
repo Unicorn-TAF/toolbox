@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
 using Unicorn.Core.Engine;
-using Unicorn.Core.Testing.Tests.Attributes;
 
 namespace Unicorn.TestAdapter
 {
@@ -21,11 +19,11 @@ namespace Unicorn.TestAdapter
 
             foreach (string source in sources)
             {
-                List<TestInfo> infos;
+                List<UnicornTestInfo> infos;
 
-                using (var loader = new UnicornAppDomainIsolation<GetTestsWorker>(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)))
+                using (var discoverer = new UnicornAppDomainIsolation<IsolatedTestsDiscoverer>(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)))
                 {
-                    infos = loader.Instance.GetTests(source);
+                    infos = discoverer.Instance.GetTests(source);
                 }
 
                 logger?.SendMessage(TestMessageLevel.Informational, $"Source: {source} (found {infos.Count} tests)");
@@ -44,43 +42,5 @@ namespace Unicorn.TestAdapter
 
             logger?.SendMessage(TestMessageLevel.Informational, "Unicorn Adapter: Test discovery complete");
         }
-
-        public class GetTestsWorker : MarshalByRefObject
-        {
-            public List<TestInfo> GetTests(string source)
-            {
-                var infos = new List<TestInfo>();
-                var testsAssembly = Assembly.LoadFrom(source);
-                var unicornTests = TestsObserver.ObserveTests(testsAssembly);
-
-                foreach (var unicornTest in unicornTests)
-                {
-                    var testAttribute = unicornTest.GetCustomAttribute(typeof(TestAttribute), true) as TestAttribute;
-
-                    if (testAttribute != null)
-                    {
-                        var name = string.IsNullOrEmpty(testAttribute.Description) ? unicornTest.Name : testAttribute.Description;
-
-                        infos.Add(new TestInfo(AdapterUtilities.GetFullTestMethodName(unicornTest), name));
-                    }
-                }
-
-                return infos;
-            }
-        }
-    }
-
-    [Serializable]
-    public class TestInfo
-    {
-        public TestInfo(string fullName, string displayName)
-        {
-            this.FullName = fullName;
-            this.DisplayName = displayName;
-        }
-
-        public string FullName { get; protected set; }
-
-        public string DisplayName { get; protected set; }
     }
 }

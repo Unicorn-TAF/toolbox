@@ -9,11 +9,11 @@ using Unicorn.Core.Engine;
 
 namespace Unicorn.TestAdapter
 {
-    [ExtensionUri(UnicrornTestExecutor.ExecutorUriString)]
+    [ExtensionUri(ExecutorUriString)]
     public class UnicrornTestExecutor : ITestExecutor
     {
         public const string ExecutorUriString = "executor://UnicornTestExecutor/v1";
-        public static readonly Uri ExecutorUri = new Uri(UnicrornTestExecutor.ExecutorUriString);
+        public static readonly Uri ExecutorUri = new Uri(ExecutorUriString);
         private bool m_cancelled;
 
         public void RunTests(IEnumerable<string> sources, IRunContext runContext,
@@ -60,15 +60,15 @@ namespace Unicorn.TestAdapter
         }
 
 
-        private TestOutcome GetTestCaseResult(Unicorn.Core.Testing.Tests.TestOutcome outcome)
+        private TestOutcome GetTestCaseResult(Core.Testing.Tests.TestOutcome outcome)
         {
             switch (outcome.Result)
             {
-                case Unicorn.Core.Testing.Tests.Status.Passed:
+                case Core.Testing.Tests.Status.Passed:
                     return TestOutcome.Passed;
-                case Unicorn.Core.Testing.Tests.Status.Failed:
+                case Core.Testing.Tests.Status.Failed:
                     return TestOutcome.Failed;
-                case Unicorn.Core.Testing.Tests.Status.Skipped:
+                case Core.Testing.Tests.Status.Skipped:
                     return TestOutcome.Skipped;
                 default:
                     return TestOutcome.None;
