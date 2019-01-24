@@ -17,13 +17,14 @@ namespace Unicorn.TestAdapter
 
             foreach (var unicornTest in unicornTests)
             {
+                var methodName = unicornTest.Name;
+                var className = unicornTest.DeclaringType.FullName;
                 var testAttribute = unicornTest.GetCustomAttribute(typeof(TestAttribute), true) as TestAttribute;
 
                 if (testAttribute != null)
                 {
                     var name = string.IsNullOrEmpty(testAttribute.Description) ? unicornTest.Name : testAttribute.Description;
-
-                    infos.Add(new UnicornTestInfo(AdapterUtilities.GetFullTestMethodName(unicornTest), name));
+                    infos.Add(new UnicornTestInfo(AdapterUtilities.GetFullTestMethodName(unicornTest), name, methodName, className));
                 }
             }
 

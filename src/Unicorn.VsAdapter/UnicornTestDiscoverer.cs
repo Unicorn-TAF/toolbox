@@ -28,13 +28,18 @@ namespace Unicorn.TestAdapter
 
                 logger?.SendMessage(TestMessageLevel.Informational, $"Source: {source} (found {infos.Count} tests)");
 
+                var testCoordinatesProvider = new TestCoordinatesProvider(source);
+
                 foreach (var info in infos)
                 {
+                    var coordinates = testCoordinatesProvider.GetNavigationData(info.ClassName, info.MethodName);
+
                     var testcase = new TestCase(info.FullName, UnicrornTestExecutor.ExecutorUri, source)
                     {
-                        CodeFilePath = source,
-                        DisplayName = info.DisplayName
-                    };
+                        DisplayName = info.DisplayName,
+                        CodeFilePath = coordinates.FilePath,
+                        LineNumber = coordinates.LineNumber
+                };
 
                     discoverySink.SendTestCase(testcase);
                 }
