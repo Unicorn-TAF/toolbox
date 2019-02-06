@@ -38,6 +38,10 @@ namespace Unicorn.Toolbox
                 return;
             }
 
+            this.tabControl.IsEnabled = true;
+            this.buttonGetCoverage.IsEnabled = false;
+            this.buttonVisualizeCoverage.IsEnabled = false;
+
             this.analyzer = new Analyzer(assemblyFile);
             this.analyzer.GetTestsStatistics();
 
@@ -127,6 +131,9 @@ namespace Unicorn.Toolbox
             {
                 return;
             }
+
+            this.buttonGetCoverage.IsEnabled = true;
+            this.buttonVisualizeCoverage.IsEnabled = true;
 
             this.coverage = new SpecsCoverage(specFileName);
 

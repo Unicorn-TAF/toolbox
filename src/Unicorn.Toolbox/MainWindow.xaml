@@ -5,13 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Unicorn.Toolbox"
         mc:Ignorable="d"
-        Title="Unicorn toolbox" Height="750" Width="1200" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+        Title="Unicorn toolbox" Height="750" Width="1200" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Icon="unicornIcon.ico">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0*"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <TabControl x:Name="tabControl" Margin="10,37,10,0" Grid.ColumnSpan="2" Height="644" VerticalAlignment="Top">
+        <TabControl x:Name="tabControl" Margin="10,37,10,0" Grid.ColumnSpan="2" Height="644" VerticalAlignment="Top" IsEnabled="False">
             <TabItem Header="Tests statistics">
                 <Grid Background="#FFE5E5E5" Margin="0,0,0,1">
                     <DataGrid x:Name="gridResults" HorizontalScrollBarVisibility="Disabled" HeadersVisibility="All" Grid.Column="0" RowHeaderWidth="0" CanUserAddRows="False" AutoGenerateColumns="False"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="224,10,10,0" Height="530" VerticalAlignment="Top">
@@ -25,7 +25,7 @@
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-                            <DataGridTemplateColumn Header="Features" Width="150">
+                            <DataGridTemplateColumn Header="Tags" Width="150">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <DataGrid DataContext="{Binding Features}" ItemsSource="{Binding}" IsReadOnly="True" AutoGenerateColumns="False" HeadersVisibility="None">
@@ -57,7 +57,7 @@
                         </DataGrid.Columns>
                     </DataGrid>
                     <TabControl x:Name="tabControlFilters" HorizontalAlignment="Left" Margin="10,38,0,10" Width="200">
-                        <TabItem x:Name="tabFeaures" Header="Features">
+                        <TabItem x:Name="tabFeaures" Header="Tags">
                             <ScrollViewer>
                                 <Grid x:Name="gridFeatures" Background="White"/>
                             </ScrollViewer>
@@ -77,10 +77,10 @@
                     <TextBox x:Name="textBoxCurrentFilter" Text="" Margin="224,545,10,10" IsEnabled="False" FontSize="10"/>
                     <Button x:Name="buttonApplyFilter" Content="Apply Filter" HorizontalAlignment="Left" VerticalAlignment="Top" Width="90" Margin="60,69,0,0" Click="ApplyFilter"/>
                     <Button x:Name="buttonVisualize" Content="Visualize" Width="80" Margin="130,10,0,0" VerticalAlignment="Top" Click="Visualize" HorizontalAlignment="Left"/>
-                    <CheckBox x:Name="checkBox" Content="" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="196,40,0,0" RenderTransformOrigin="0.633,1.422" Unchecked="checkBox_Unchecked" Checked="checkBox_Checked"/>
+                    <CheckBox x:Name="checkBox" Content="" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="197,40,0,0" RenderTransformOrigin="0.633,1.422" Unchecked="checkBox_Unchecked" Checked="checkBox_Checked"/>
                 </Grid>
             </TabItem>
-            <TabItem Header="Coverage">
+            <TabItem Header="Coverage" Height="23" VerticalAlignment="Bottom">
                 <Grid Background="#FFE5E5E5">
                     <Button x:Name="buttonLoadSpecs" Content="Load Specs" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="91" Click="LoadSpecs"/>
                     <Button x:Name="buttonGetCoverage" Content="Get coverage" HorizontalAlignment="Left" Margin="106,10,0,0" VerticalAlignment="Top" Width="89" Click="GetAutomationCoverage"/>

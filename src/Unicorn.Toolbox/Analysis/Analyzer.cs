@@ -74,7 +74,7 @@ namespace Unicorn.Toolbox.Analysis
                 }
 
                 var testSuite = suiteInstance as TestSuite;
-                var suiteInfo = new SuiteInfo(testSuite.Name, testSuite.Features, testSuite.Metadata);
+                var suiteInfo = new SuiteInfo(testSuite.Name, testSuite.Tags, testSuite.Metadata);
 
                 var fieldInfo = currentType.GetField("tests", BindingFlags.NonPublic | BindingFlags.Instance);
                 var tests = fieldInfo.GetValue(suiteInstance) as Test[];
