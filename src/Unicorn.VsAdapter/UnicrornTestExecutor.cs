@@ -27,9 +27,9 @@ namespace Unicorn.TestAdapter
                 TestsRunner runner = new TestsRunner(source, false);
                 runner.RunTests();
 
-                using (var loader = new UnicornAppDomainIsolation<IsolatedTestsRunner>(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)))
+                using (var isolation = new UnicornAppDomainIsolation<IsolatedTestsRunner>(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)))
                 {
-                    outcome = loader.Instance.RunTests(source);
+                    outcome = isolation.Instance.RunTests(source);
                 }
             }
         }
@@ -53,7 +53,7 @@ namespace Unicorn.TestAdapter
             }
             catch (Exception ex)
             {
-                frameworkHandle.SendMessage(TestMessageLevel.Error, $"Unicorn Adapter: error running tests ({ex.Message})");
+                frameworkHandle.SendMessage(TestMessageLevel.Error, $"Unicorn Adapter: error running tests ({ex.ToString()})");
             }
 
             foreach (TestCase test in tests)
