@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Unicorn.Core.Engine;
-using Unicorn.Core.Testing.Tests.Attributes;
+using Unicorn.Taf.Core.Engine;
+using Unicorn.Taf.Core.Testing.Tests.Attributes;
 
 namespace Unicorn.TestAdapter
 {

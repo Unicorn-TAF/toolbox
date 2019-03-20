@@ -50,9 +50,8 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
-    <Reference Include="Unicorn.Core, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Unicorn.TAF.Core.2.0.0\lib\net452\Unicorn.Core.dll</HintPath>
+    <Reference Include="Unicorn.Taf.Core">
+      <HintPath>..\packages\Unicorn.Taf.Core.2.0.0\lib\net452\Unicorn.Taf.Core.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />

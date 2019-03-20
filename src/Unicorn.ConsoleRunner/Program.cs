@@ -3,8 +3,8 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using Unicorn.Core.Engine;
-using Unicorn.Core.Testing.Tests;
+using Unicorn.Taf.Core.Engine;
+using Unicorn.Taf.Core.Testing.Tests;
 
 namespace Unicorn.ConsoleRunner
 {

@@ -4,7 +4,7 @@ using System.Reflection;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
-using Unicorn.Core.Engine;
+using Unicorn.Taf.Core.Engine;
 
 namespace Unicorn.TestAdapter
 {
