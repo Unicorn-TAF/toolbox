@@ -23,7 +23,7 @@ namespace Unicorn.TestAdapter
 
                 if (testAttribute != null)
                 {
-                    var name = string.IsNullOrEmpty(testAttribute.Description) ? unicornTest.Name : testAttribute.Description;
+                    var name = string.IsNullOrEmpty(testAttribute.Title) ? unicornTest.Name : testAttribute.Title;
                     infos.Add(new UnicornTestInfo(AdapterUtilities.GetFullTestMethodName(unicornTest), name, methodName, className));
                 }
             }

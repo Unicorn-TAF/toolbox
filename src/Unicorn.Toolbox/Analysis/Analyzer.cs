@@ -88,7 +88,7 @@ namespace Unicorn.Toolbox.Analysis
             }
 
             private TestInfo GetTestInfo(Test test) => 
-                new TestInfo(test.Description, test.Author, test.Categories);
+                new TestInfo(test.Outcome.Title, test.Outcome.Author, test.Categories);
         }
     }
 }
