@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
@@ -19,33 +19,47 @@ namespace Unicorn.TestAdapter
 
             foreach (string source in sources)
             {
-                List<UnicornTestInfo> infos;
-
-                using (var discoverer = new UnicornAppDomainIsolation<IsolatedTestsDiscoverer>(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)))
+                try
                 {
-                    infos = discoverer.Instance.GetTests(source);
+                    DiscoverAssembly(source, logger, discoverySink);
                 }
-
-                logger?.SendMessage(TestMessageLevel.Informational, $"Source: {source} (found {infos.Count} tests)");
-
-                var testCoordinatesProvider = new TestCoordinatesProvider(source);
-
-                foreach (var info in infos)
+                catch (Exception ex)
                 {
-                    var coordinates = testCoordinatesProvider.GetNavigationData(info.ClassName, info.MethodName);
-
-                    var testcase = new TestCase(info.FullName, UnicrornTestExecutor.ExecutorUri, source)
-                    {
-                        DisplayName = info.DisplayName,
-                        CodeFilePath = coordinates.FilePath,
-                        LineNumber = coordinates.LineNumber
-                };
-
-                    discoverySink.SendTestCase(testcase);
+                    logger?.SendMessage(TestMessageLevel.Error, $"Unicorn Adapter: Error discovering {source} source: {ex.Message}");
                 }
             }
 
             logger?.SendMessage(TestMessageLevel.Informational, "Unicorn Adapter: Test discovery complete");
+        }
+
+        private void DiscoverAssembly(string source, IMessageLogger logger, ITestCaseDiscoverySink discoverySink)
+        {
+            List<TestInfo> testsInfos;
+
+            using (var discoverer = new UnicornAppDomainIsolation<IsolatedTestsInfoObserver>(Path.GetDirectoryName(source)))
+            {
+                testsInfos = discoverer.Instance.GetTests(source);
+            }
+
+            logger?.SendMessage(TestMessageLevel.Informational, $"Source: {source} (found {testsInfos.Count} tests)");
+
+            var testCoordinatesProvider = new TestCoordinatesProvider(source);
+
+            foreach (var testInfo in testsInfos)
+            {
+                var methodName = testInfo.MethodName;
+                var className = testInfo.ClassName;
+                var coordinates = testCoordinatesProvider.GetNavigationData(className, methodName);
+
+                var testcase = new TestCase(testInfo.FullName, UnicrornTestExecutor.ExecutorUri, source)
+                {
+                    DisplayName = testInfo.DisplayName,
+                    CodeFilePath = coordinates.FilePath,
+                    LineNumber = coordinates.LineNumber,
+                };
+
+                discoverySink.SendTestCase(testcase);
+            }
         }
     }
 }

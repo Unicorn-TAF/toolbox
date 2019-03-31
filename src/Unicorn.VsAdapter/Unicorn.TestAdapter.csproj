@@ -103,12 +103,8 @@
     <Compile Include="Helpers\TestFileChangedEventArgs.cs" />
     <Compile Include="Helpers\TestFilesUpdateWatcher.cs" />
     <Compile Include="Helpers\VsSolutionHelper.cs" />
-    <Compile Include="IsolatedTestsDiscoverer.cs" />
-    <Compile Include="IsolatedTestsRunner.cs" />
     <Compile Include="TestCoordinates.cs" />
     <Compile Include="TestCoordinatesProvider.cs" />
-    <Compile Include="TestsRecorder.cs" />
-    <Compile Include="UnicornTestInfo.cs" />
     <Compile Include="UnicornTestContainer.cs" />
     <Compile Include="UnicrornTestExecutor.cs" />
     <Compile Include="UnicornTestDiscoverer.cs" />

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
@@ -27,7 +26,7 @@ namespace Unicorn.TestAdapter
                 TestsRunner runner = new TestsRunner(source, false);
                 runner.RunTests();
 
-                using (var isolation = new UnicornAppDomainIsolation<IsolatedTestsRunner>(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)))
+                using (var isolation = new UnicornAppDomainIsolation<IsolatedTestsRunner>(Path.GetDirectoryName(source)))
                 {
                     outcome = isolation.Instance.RunTests(source);
                 }
@@ -40,13 +39,12 @@ namespace Unicorn.TestAdapter
             m_cancelled = false;
 
             LaunchOutcome outcome = null;
-            var recorder = new TestsRecorder(frameworkHandle);
 
             frameworkHandle.SendMessage(TestMessageLevel.Informational, "Unicorn Adapter: Test run starting");
 
             try
             {
-                using (var loader = new UnicornAppDomainIsolation<IsolatedTestsRunner>(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)))
+                using (var loader = new UnicornAppDomainIsolation<IsolatedTestsRunner>(Path.GetDirectoryName(tests.First().Source)))
                 {
                     outcome = loader.Instance.RunTests(tests.First().Source, tests.Select(t => t.FullyQualifiedName).ToArray());
                 }

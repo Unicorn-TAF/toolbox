@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using Unicorn.Taf.Core.Engine;
+using Unicorn.Taf.Core.Engine.Configuration;
 using Unicorn.Taf.Core.Testing.Tests;
 
 namespace Unicorn.ConsoleRunner
@@ -61,7 +62,7 @@ namespace Unicorn.ConsoleRunner
                 new Uri(propertiesPath, UriKind.Absolute) :
                 new Uri(propertiesPath, UriKind.Relative);
 
-            Configuration.FillFromFile(configUri.AbsolutePath);
+            Config.FillFromFile(configUri.AbsolutePath);
             ReportHeader(assemblyPath);
 
             LaunchOutcome outcome = null;
@@ -121,7 +122,7 @@ namespace Unicorn.ConsoleRunner
             Console.WriteLine("Configuration");
             Console.WriteLine();
             Console.WriteLine("Tests assembly: " + assemblyPath);
-            Console.WriteLine(Configuration.GetInfo());
+            Console.WriteLine(Config.GetInfo());
             Console.WriteLine(Delimiter);
             Console.WriteLine();
 
