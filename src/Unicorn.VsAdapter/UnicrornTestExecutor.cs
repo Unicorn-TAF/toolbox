@@ -69,24 +69,24 @@ namespace Unicorn.TestAdapter
             frameworkHandle.SendMessage(TestMessageLevel.Informational, "Unicorn Adapter: Test run complete");
         }
 
-        private TestResult GetTestResultFromOutcome(Taf.Core.Testing.Tests.TestOutcome outcome, TestCase testCase)
+        private TestResult GetTestResultFromOutcome(Taf.Core.Testing.TestOutcome outcome, TestCase testCase)
         {
             var testResult = new TestResult(testCase);
             testResult.ComputerName = Environment.MachineName;
 
             switch (outcome.Result)
             {
-                case Taf.Core.Testing.Tests.Status.Passed:
+                case Taf.Core.Testing.Status.Passed:
                     testResult.Outcome = TestOutcome.Passed;
                     testResult.Duration = outcome.ExecutionTime;
                     break;
-                case Taf.Core.Testing.Tests.Status.Failed:
+                case Taf.Core.Testing.Status.Failed:
                     testResult.Outcome = TestOutcome.Failed;
                     testResult.ErrorMessage = outcome.Exception.Message;
                     testResult.ErrorStackTrace = outcome.Exception.StackTrace;
                     testResult.Duration = outcome.ExecutionTime;
                     break;
-                case Taf.Core.Testing.Tests.Status.Skipped:
+                case Taf.Core.Testing.Status.Skipped:
                     testResult.Outcome = TestOutcome.Skipped;
                     break;
                 default:
