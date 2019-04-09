@@ -13,60 +13,94 @@ namespace Unicorn.TestAdapter
     public class UnicrornTestExecutor : ITestExecutor
     {
         public const string ExecutorUriString = "executor://UnicornTestExecutor/v1";
+
+        private const string RunStarting = "Unicorn Adapter: Test run starting";
+        private const string RunComplete = "Unicorn Adapter: Test run complete";
+
         public static readonly Uri ExecutorUri = new Uri(ExecutorUriString);
         private bool m_cancelled;
 
-        public void RunTests(IEnumerable<string> sources, IRunContext runContext,
-            IFrameworkHandle frameworkHandle)
+        public void RunTests(IEnumerable<string> sources, IRunContext runContext, IFrameworkHandle frameworkHandle)
         {
-            foreach (var source in sources)
-            {
-                LaunchOutcome outcome;
 
-                TestsRunner runner = new TestsRunner(source, false);
-                runner.RunTests();
-
-                using (var isolation = new UnicornAppDomainIsolation<IsolatedTestsRunner>(Path.GetDirectoryName(source)))
-                {
-                    outcome = isolation.Instance.RunTests(source);
-                }
-            }
-        }
-
-        public void RunTests(IEnumerable<TestCase> tests, IRunContext runContext,
-               IFrameworkHandle frameworkHandle)
-        {
+            frameworkHandle.SendMessage(TestMessageLevel.Informational, RunStarting);
             m_cancelled = false;
 
-            LaunchOutcome outcome = null;
-
-            frameworkHandle.SendMessage(TestMessageLevel.Informational, "Unicorn Adapter: Test run starting");
-
-            try
+            foreach (var source in sources)
             {
-                using (var loader = new UnicornAppDomainIsolation<IsolatedTestsRunner>(Path.GetDirectoryName(tests.First().Source)))
+                LaunchOutcome outcome = null;
+
+                try
                 {
-                    outcome = loader.Instance.RunTests(tests.First().Source, tests.Select(t => t.FullyQualifiedName).ToArray());
+                    using (var isolation = new UnicornAppDomainIsolation<IsolatedTestsRunner>(Path.GetDirectoryName(source)))
+                    {
+                        outcome = isolation.Instance.RunTests(source);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    frameworkHandle.SendMessage(TestMessageLevel.Error, $"Unicorn Adapter: error running tests ({ex.ToString()})");
                 }
             }
-            catch (Exception ex)
-            {
-                frameworkHandle.SendMessage(TestMessageLevel.Error, $"Unicorn Adapter: error running tests ({ex.ToString()})");
-            }
 
-            foreach (TestCase test in tests)
+            frameworkHandle.SendMessage(TestMessageLevel.Informational, RunComplete);
+        }
+
+        public void RunTests(IEnumerable<TestCase> tests, IRunContext runContext, IFrameworkHandle frameworkHandle)
+        {
+            var sources = tests.Select(t => t.Source).Distinct();
+
+            frameworkHandle.SendMessage(TestMessageLevel.Informational, RunStarting);
+            m_cancelled = false;
+
+            foreach (var source in sources)
             {
-                if (m_cancelled)
+                LaunchOutcome outcome = null;
+
+                try
                 {
-                    break;
-                }
+                    using (var loader = new UnicornAppDomainIsolation<IsolatedTestsRunner>(Path.GetDirectoryName(source)))
+                    {
+                        outcome = loader.Instance.RunTests(source, tests.Select(t => t.FullyQualifiedName).ToArray());
+                    }
 
-                var unicornOutcome = outcome.SuitesOutcomes.SelectMany(so => so.TestsOutcomes).First(to => to.FullMethodName.Equals(test.FullyQualifiedName));
-                var testResult = GetTestResultFromOutcome(unicornOutcome, test);
-                frameworkHandle.RecordResult(testResult);
+                    foreach (TestCase test in tests)
+                    {
+                        if (!outcome.RunInitialized)
+                        {
+                            FailTest(test, outcome.RunnerException, frameworkHandle);
+                        }
+                        else
+                        {
+                            var unicornOutcome = outcome.SuitesOutcomes.SelectMany(so => so.TestsOutcomes).First(to => to.FullMethodName.Equals(test.FullyQualifiedName));
+                            var testResult = GetTestResultFromOutcome(unicornOutcome, test);
+                            frameworkHandle.RecordResult(testResult);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    foreach (TestCase test in tests)
+                    {
+                        FailTest(test, ex, frameworkHandle);
+                    }
+                }
             }
 
-            frameworkHandle.SendMessage(TestMessageLevel.Informational, "Unicorn Adapter: Test run complete");
+            frameworkHandle.SendMessage(TestMessageLevel.Informational, RunComplete);
+        }
+
+        private void FailTest(TestCase test, Exception ex, IFrameworkHandle frameworkHandle)
+        {
+            var testResult = new TestResult(test)
+            {
+                ComputerName = Environment.MachineName,
+                Outcome = TestOutcome.Failed,
+                ErrorMessage = ex.Message,
+                ErrorStackTrace = ex.StackTrace
+            };
+
+            frameworkHandle.RecordResult(testResult);
         }
 
         private TestResult GetTestResultFromOutcome(Taf.Core.Testing.TestOutcome outcome, TestCase testCase)
