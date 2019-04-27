@@ -22,7 +22,6 @@ namespace Unicorn.TestAdapter
 
         public void RunTests(IEnumerable<string> sources, IRunContext runContext, IFrameworkHandle frameworkHandle)
         {
-
             frameworkHandle.SendMessage(TestMessageLevel.Informational, RunStarting);
             m_cancelled = false;
 
@@ -56,33 +55,43 @@ namespace Unicorn.TestAdapter
             foreach (var source in sources)
             {
                 LaunchOutcome outcome = null;
+                var succeeded = false;
 
                 try
                 {
                     using (var loader = new UnicornAppDomainIsolation<IsolatedTestsRunner>(Path.GetDirectoryName(source)))
                     {
                         outcome = loader.Instance.RunTests(source, tests.Select(t => t.FullyQualifiedName).ToArray());
-                    }
 
-                    foreach (TestCase test in tests)
-                    {
-                        if (!outcome.RunInitialized)
+                        foreach (TestCase test in tests)
                         {
-                            FailTest(test, outcome.RunnerException, frameworkHandle);
+                            if (!outcome.RunInitialized)
+                            {
+                                FailTest(test, outcome.RunnerException, frameworkHandle);
+                            }
+                            else
+                            {
+                                var unicornOutcome = outcome.SuitesOutcomes.SelectMany(so => so.TestsOutcomes).First(to => to.FullMethodName.Equals(test.FullyQualifiedName));
+                                var testResult = GetTestResultFromOutcome(unicornOutcome, test);
+                                frameworkHandle.RecordResult(testResult);
+                            }
                         }
-                        else
-                        {
-                            var unicornOutcome = outcome.SuitesOutcomes.SelectMany(so => so.TestsOutcomes).First(to => to.FullMethodName.Equals(test.FullyQualifiedName));
-                            var testResult = GetTestResultFromOutcome(unicornOutcome, test);
-                            frameworkHandle.RecordResult(testResult);
-                        }
+
+                        succeeded = true;
                     }
                 }
                 catch (Exception ex)
                 {
-                    foreach (TestCase test in tests)
+                    if (succeeded)
                     {
-                        FailTest(test, ex, frameworkHandle);
+                        frameworkHandle.SendMessage(TestMessageLevel.Warning, ex.ToString());
+                    }
+                    else
+                    {
+                        foreach (TestCase test in tests)
+                        {
+                            FailTest(test, ex, frameworkHandle);
+                        }
                     }
                 }
             }
