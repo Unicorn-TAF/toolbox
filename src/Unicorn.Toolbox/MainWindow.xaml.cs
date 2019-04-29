@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -8,6 +7,7 @@ using Microsoft.Win32;
 using Unicorn.Toolbox.Analysis;
 using Unicorn.Toolbox.Analysis.Filtering;
 using Unicorn.Toolbox.Coverage;
+using Unicorn.Toolbox.LaunchAnalasys;
 using Unicorn.Toolbox.Visualization;
 using Unicorn.Toolbox.Visualization.Palettes;
 
@@ -41,6 +41,9 @@ namespace Unicorn.Toolbox
 
             this.tabControl.IsEnabled = true;
             this.buttonGetCoverage.IsEnabled = false;
+            this.buttonVisualize.IsEnabled = true;
+            this.comboBoxPalette.IsEnabled = true;
+            this.checkBoxModern.IsEnabled = true;
 
             this.analyzer = new Analyzer(assemblyFile);
             this.analyzer.GetTestsStatistics();
@@ -268,6 +271,35 @@ namespace Unicorn.Toolbox
             {
                 return gridAuthors;
             }
+        }
+
+        private void btnVisualizeLaunch_Click(object sender, RoutedEventArgs e)
+        {
+            var openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Trx files|*.trx";
+            openFileDialog.Multiselect = true;
+            openFileDialog.ShowDialog();
+
+            var trxFiles = openFileDialog.FileNames;
+
+            if (!trxFiles.Any())
+            {
+                return;
+            }
+
+            List<List<TestResult>> resultsList = new List<List<TestResult>>();
+
+            foreach (var trxFile in trxFiles)
+            {
+                resultsList.Add(new TrxParser(trxFile).GetAllTests());
+            }
+
+            var visualization = new WindowVisualization();
+            visualization.ShowActivated = false;
+            visualization.Title = $"Launch visualization";
+            visualization.Show();
+
+            LaunchVisualizer.VisualizeAllData(resultsList, visualization.canvasVisualization);
         }
     }
 }

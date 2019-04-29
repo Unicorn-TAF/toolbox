@@ -70,6 +70,8 @@
     <Compile Include="Coverage\AppSpecs.cs" />
     <Compile Include="Coverage\SpecsCoverage.cs" />
     <Compile Include="Coverage\Module.cs" />
+    <Compile Include="LaunchAnalasys\TestResult.cs" />
+    <Compile Include="LaunchAnalasys\TrxParser.cs" />
     <Compile Include="packages.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -79,6 +81,7 @@
     <Compile Include="Visualization\Palettes\LightGreen.cs" />
     <Compile Include="Visualization\Palettes\DeepPurple.cs" />
     <Compile Include="Visualization\Palettes\IPalette.cs" />
+    <Compile Include="Visualization\LaunchVisualizer.cs" />
     <Compile Include="Visualization\VizualizerBars.cs" />
     <Compile Include="Visualization\VisualizerCircles.cs" />
     <Compile Include="Visualization\WindowVisualization.xaml.cs">

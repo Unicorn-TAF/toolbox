@@ -110,13 +110,14 @@
         </TabControl>
         <Button x:Name="buttonLoadTestsAssembly" Content="Load tests assembly" VerticalAlignment="Top" Click="LoadTestsAssembly" Margin="0,12,10,0" Grid.ColumnSpan="2" HorizontalAlignment="Right" Width="115"/>
         <TextBox x:Name="textBoxStatistics" Text="" Margin="0,686,0,0" IsEnabled="False" Grid.ColumnSpan="2"/>
-        <CheckBox x:Name="checkBoxModern" FlowDirection="RightToLeft" Grid.ColumnSpan="2" Content="Circles" Margin="155,82,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.274,0.533" HorizontalAlignment="Left" Width="66"/>
-        <Button x:Name="buttonVisualize" Content="Visualize" Width="80" Margin="25,79,0,0" VerticalAlignment="Top" Click="Visualize" HorizontalAlignment="Left" Grid.ColumnSpan="2"/>
-        <ComboBox x:Name="comboBoxPalette" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="110,79,0,0" VerticalAlignment="Top" Width="95">
+        <CheckBox x:Name="checkBoxModern" FlowDirection="RightToLeft" Grid.ColumnSpan="2" Content="Circles" Margin="155,82,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.274,0.533" HorizontalAlignment="Left" Width="66" IsEnabled="False"/>
+        <Button x:Name="buttonVisualize" Content="Visualize" Width="80" Margin="25,79,0,0" VerticalAlignment="Top" Click="Visualize" HorizontalAlignment="Left" Grid.ColumnSpan="2" IsEnabled="False"/>
+        <ComboBox x:Name="comboBoxPalette" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="110,79,0,0" VerticalAlignment="Top" Width="95" IsEnabled="False">
             <ComboBoxItem Content="Light Green" Background="#558B2F" IsSelected="True"/>
             <ComboBoxItem Content="Deep Purple" Background="#311B92"/>
             <ComboBoxItem Content="Orange" Background="#EF6C00"/>
         </ComboBox>
+        <Button x:Name="btnVisualizeLaunch" Content="Visualize launch" HorizontalAlignment="Left" VerticalAlignment="Top" Width="115" Grid.ColumnSpan="2" Margin="949,12,0,0" Click="btnVisualizeLaunch_Click"/>
 
     </Grid>
 </Window>
