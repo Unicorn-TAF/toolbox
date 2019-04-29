@@ -20,10 +20,11 @@ namespace Unicorn.Toolbox.Visualization
         private static int margin = 30;
         private static List<Rect> rects = new List<Rect>();
 
-        private static IPalette palette = new LightGreen();
+        private static IPalette palette;
 
-        public static void VisualizeAllData(AutomationData data, FilterType filterType, Canvas canvas)
+        public static void VisualizeAllData(AutomationData data, FilterType filterType, IPalette activePalette, Canvas canvas)
         {
+            palette = activePalette;
             canvas.Background = palette.BackColor;
             rects.Clear();
             canvas.Children.Clear();
@@ -46,8 +47,9 @@ namespace Unicorn.Toolbox.Visualization
             }
         }
 
-        public static void VisualizeCoverage(AppSpecs specs, Canvas canvas)
+        public static void VisualizeCoverage(AppSpecs specs, IPalette activePalette, Canvas canvas)
         {
+            palette = activePalette;
             canvas.Background = palette.BackColor;
             rects.Clear();
             canvas.Children.Clear();

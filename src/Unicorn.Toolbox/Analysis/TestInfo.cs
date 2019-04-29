@@ -9,26 +9,22 @@ namespace Unicorn.Toolbox.Analysis
     {
         public const string NoCategory = "<CATEGORY NOT SPECIFIED>";
 
-        private readonly List<string> categories;
-        private readonly string name;
-        private readonly string author;
-
         public TestInfo(string testName, string author, IEnumerable<string> categories)
         {
-            this.name = testName;
-            this.author = author;
-            this.categories = new List<string>(categories);
+            this.Name = testName;
+            this.Author = author;
+            this.Categories = new List<string>(categories);
 
-            if (!this.categories.Any())
+            if (!this.Categories.Any())
             {
-                this.categories.Add(NoCategory);
+                this.Categories.Add(NoCategory);
             }
         }
 
-        public string Name => this.name;
+        public string Name { get; set; }
 
-        public string Author => this.author;
+        public string Author { get; set; }
 
-        public List<string> Categories => this.categories;
+        public List<string> Categories { get; set; }
     }
 }

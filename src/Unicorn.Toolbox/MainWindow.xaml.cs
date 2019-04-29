@@ -9,6 +9,7 @@ using Unicorn.Toolbox.Analysis;
 using Unicorn.Toolbox.Analysis.Filtering;
 using Unicorn.Toolbox.Coverage;
 using Unicorn.Toolbox.Visualization;
+using Unicorn.Toolbox.Visualization.Palettes;
 
 namespace Unicorn.Toolbox
 {
@@ -40,7 +41,6 @@ namespace Unicorn.Toolbox
 
             this.tabControl.IsEnabled = true;
             this.buttonGetCoverage.IsEnabled = false;
-            this.buttonVisualizeCoverage.IsEnabled = false;
 
             this.analyzer = new Analyzer(assemblyFile);
             this.analyzer.GetTestsStatistics();
@@ -50,6 +50,7 @@ namespace Unicorn.Toolbox
 
             FillFiltersFrom(analyzer.Data);
             ShowAll();
+            this.checkBoxShowHide.IsChecked = true;
         }
 
         private void FillFiltersFrom(AutomationData data)
@@ -133,7 +134,6 @@ namespace Unicorn.Toolbox
             }
 
             this.buttonGetCoverage.IsEnabled = true;
-            this.buttonVisualizeCoverage.IsEnabled = true;
 
             this.coverage = new SpecsCoverage(specFileName);
 
@@ -147,19 +147,13 @@ namespace Unicorn.Toolbox
 
         private void Visualize(object sender, RoutedEventArgs e)
         {
-            var filter = GetFilter();
-            var visualization = new WindowVisualization();
-            visualization.ShowActivated = false;
-            visualization.Title = $"Overall tests statistics: {filter}";
-            visualization.Show();
-
-            if (checkBoxModern.IsChecked.HasValue && checkBoxModern.IsChecked.Value)
+            if (tabStatistics.IsSelected)
             {
-                VisualizerCircles.VisualizeAllData(analyzer.Data, filter, visualization.canvasVisualization);
+                VisualizeStatistics();
             }
             else
             {
-                VizualizerBars.VisualizeAllData(analyzer.Data, filter, visualization.canvasVisualization);
+                VisualizeCoverage();
             }
         }
 
@@ -192,7 +186,7 @@ namespace Unicorn.Toolbox
             }
         }
 
-        private void VisualizeCoverage(object sender, RoutedEventArgs e)
+        private void VisualizeCoverage()
         {
             var visualization = new WindowVisualization();
             visualization.ShowActivated = false;
@@ -201,11 +195,42 @@ namespace Unicorn.Toolbox
 
             if (checkBoxModern.IsChecked.HasValue && checkBoxModern.IsChecked.Value)
             {
-                VisualizerCircles.VisualizeCoverage(coverage.Specs, visualization.canvasVisualization);
+                VisualizerCircles.VisualizeCoverage(coverage.Specs, GetPalette(), visualization.canvasVisualization);
             }
             else
             {
-                VizualizerBars.VisualizeCoverage(coverage.Specs, visualization.canvasVisualization);
+                VizualizerBars.VisualizeCoverage(coverage.Specs, GetPalette(), visualization.canvasVisualization);
+            }
+        }
+
+        private void VisualizeStatistics()
+        {
+            var filter = GetFilter();
+            var visualization = new WindowVisualization();
+            visualization.ShowActivated = false;
+            visualization.Title = $"Overall tests statistics: {filter}";
+            visualization.Show();
+
+            if (checkBoxModern.IsChecked.HasValue && checkBoxModern.IsChecked.Value)
+            {
+                VisualizerCircles.VisualizeAllData(analyzer.Data, filter, GetPalette(), visualization.canvasVisualization);
+            }
+            else
+            {
+                VizualizerBars.VisualizeAllData(analyzer.Data, filter, GetPalette(), visualization.canvasVisualization);
+            }
+        }
+
+        private IPalette GetPalette()
+        {
+            switch (comboBoxPalette.Text)
+            {
+                case "Deep Purple":
+                    return new DeepPurple();
+                case "Orange":
+                    return new Orange();
+                default:
+                    return new LightGreen();
             }
         }
 

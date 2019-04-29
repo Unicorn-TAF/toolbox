@@ -9,35 +9,28 @@ namespace Unicorn.Toolbox.Analysis
     {
         public const string NoFeature = "<FEATURE NOT SPECIFIED>";
 
-        private readonly string name;
-        private List<TestInfo> testsInfos;
-        private readonly List<string> features;
-        private readonly Dictionary<string, string> metadata;
-
         public SuiteInfo(string suiteName, IEnumerable<string> features, Dictionary<string, string> metadata)
         {
-            this.name = suiteName;
-            this.testsInfos = new List<TestInfo>();
-            this.features = new List<string>(features);
-            this.metadata = metadata;
+            this.Name = suiteName;
+            this.TestsInfos = new List<TestInfo>();
+            this.Features = new List<string>(features);
+            this.Metadata = metadata;
 
-            if (!this.features.Any())
+            if (!this.Features.Any())
             {
-                this.features.Add(NoFeature);
+                this.Features.Add(NoFeature);
             }
         }
 
-        public string Name => this.name;
+        public string Name { get; set; }
 
-        public List<TestInfo> TestsInfos => this.testsInfos;
+        public List<TestInfo> TestsInfos { get; set; }
 
-        public List<string> Features => this.features;
+        public List<string> Features { get; set; }
 
-        public Dictionary<string, string> Metadata => this.metadata;
+        public Dictionary<string, string> Metadata { get; set; }
 
-        public void SetTestInfo(List<TestInfo> newInfos)
-        {
-            this.testsInfos = newInfos;
-        }
+        public void SetTestInfo(List<TestInfo> newInfos) =>
+            this.TestsInfos = newInfos;
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Windows;
@@ -18,10 +17,11 @@ namespace Unicorn.Toolbox.Visualization
     {
         private static int margin = 15;
 
-        private static IPalette palette = new LightGreen();
+        private static IPalette palette;
 
-        public static void VisualizeAllData(AutomationData data, FilterType filterType, Canvas canvas)
+        public static void VisualizeAllData(AutomationData data, FilterType filterType, IPalette activePalette, Canvas canvas)
         {
+            palette = activePalette;
             canvas.Background = palette.BackColor;
             canvas.Children.Clear();
 
@@ -42,8 +42,9 @@ namespace Unicorn.Toolbox.Visualization
             }
         }
 
-        public static void VisualizeCoverage(AppSpecs specs, Canvas canvas)
+        public static void VisualizeCoverage(AppSpecs specs, IPalette activePalette, Canvas canvas)
         {
+            palette = activePalette;
             canvas.Background = palette.BackColor;
             canvas.Children.Clear();
 

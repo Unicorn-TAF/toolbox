@@ -28,10 +28,8 @@ namespace Unicorn.Toolbox.Analysis
 
         public HashSet<string> UniqueAuthors { get; protected set; }
 
-        public void ClearFilters()
-        {
+        public void ClearFilters() =>
             this.FilteredInfo = this.SuitesInfos;
-        }
 
         public void FilterBy(ISuitesFilter filter)
         {
