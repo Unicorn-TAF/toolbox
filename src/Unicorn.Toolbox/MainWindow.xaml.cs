@@ -296,10 +296,10 @@ namespace Unicorn.Toolbox
 
             var visualization = new WindowVisualization();
             visualization.ShowActivated = false;
-            visualization.Title = $"Launch visualization";
+            visualization.Title = "Launch visualization";
             visualization.Show();
 
-            LaunchVisualizer.VisualizeAllData(resultsList, visualization.canvasVisualization);
+            new LaunchVisualizer(visualization.canvasVisualization, resultsList).Visualize();
         }
     }
 }

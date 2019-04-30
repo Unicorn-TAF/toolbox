@@ -117,7 +117,7 @@
             <ComboBoxItem Content="Deep Purple" Background="#311B92"/>
             <ComboBoxItem Content="Orange" Background="#EF6C00"/>
         </ComboBox>
-        <Button x:Name="btnVisualizeLaunch" Content="Visualize launch" HorizontalAlignment="Left" VerticalAlignment="Top" Width="115" Grid.ColumnSpan="2" Margin="949,12,0,0" Click="btnVisualizeLaunch_Click"/>
+        <Button x:Name="btnVisualizeLaunch" Content="Visualize launch" HorizontalAlignment="Right" VerticalAlignment="Top" Width="115" Grid.ColumnSpan="2" Margin="0,12,130,0" Click="btnVisualizeLaunch_Click"/>
 
     </Grid>
 </Window>

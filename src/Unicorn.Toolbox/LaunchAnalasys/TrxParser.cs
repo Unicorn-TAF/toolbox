@@ -31,8 +31,9 @@ namespace Unicorn.Toolbox.LaunchAnalasys
                 var xResult = results.First(r => r.Attribute("testId").Value.Equals(id));
                 var startTime = Convert.ToDateTime(xResult.Attribute("startTime").Value);
                 var endTime = Convert.ToDateTime(xResult.Attribute("endTime").Value);
-
-                var testResult = new TestResult(description, startTime, endTime);
+                var testListId = xResult.Attribute("testListId").Value;
+                
+                var testResult = new TestResult(description, startTime, endTime, testListId);
 
                 tests.Add(testResult);
             }
