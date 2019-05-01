@@ -291,7 +291,12 @@ namespace Unicorn.Toolbox
 
             foreach (var trxFile in trxFiles)
             {
-                resultsList.Add(new TrxParser(trxFile).GetAllTests());
+                var results = new TrxParser(trxFile).GetAllTests();
+
+                if (results.Any())
+                {
+                    resultsList.Add(results);
+                }
             }
 
             var visualization = new WindowVisualization();

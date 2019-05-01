@@ -32,7 +32,14 @@ namespace Unicorn.Toolbox.LaunchAnalasys
                 var startTime = Convert.ToDateTime(xResult.Attribute("startTime").Value);
                 var endTime = Convert.ToDateTime(xResult.Attribute("endTime").Value);
                 var testListId = xResult.Attribute("testListId").Value;
-                
+
+
+
+                if (xResult.Attribute("duration").Value.Equals("00:00:00.0000000", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    continue;
+                }
+
                 var testResult = new TestResult(description, startTime, endTime, testListId);
 
                 tests.Add(testResult);
