@@ -38,6 +38,9 @@ namespace Unicorn.Toolbox.Visualization
         private readonly Rectangle currentStampBar;
         private readonly TextBlock currentStamp;
 
+        private Rectangle currentSuite;
+        private bool newSuite = false;
+
         public LaunchVisualizer(Canvas canvas, List<List<TestResult>> resultsList)
         {
             this.canvas = canvas;
@@ -93,6 +96,7 @@ namespace Unicorn.Toolbox.Visualization
             int currentIndex = 0;
 
             var listId = resultsList[0][0].TestListId;
+            newSuite = true;
 
             foreach (var results in resultsList)
             {
@@ -102,10 +106,11 @@ namespace Unicorn.Toolbox.Visualization
                     {
                         SetRandomColor();
                         listId = result.TestListId;
+                        newSuite = true;
                     }
 
                     var start = result.StartTime.ToUniversalTime().Subtract(utcStart).TotalMilliseconds;
-                    DrawResult(result.Name, currentIndex, result.Duration.TotalMilliseconds, start, canvas);
+                    DrawResult(result, currentIndex, start, canvas);
                 }
 
                 currentIndex++;
@@ -122,17 +127,45 @@ namespace Unicorn.Toolbox.Visualization
             canvas.MouseMove += MoveLine;
         }
 
-        private void DrawResult(string name, int index, double duration, double start, Canvas canvas)
+        private void DrawResult(TestResult result, int index, double start, Canvas canvas)
         {
             double height = (workHeight / threadsCount) - Margin;
-            double width = duration * ratio;
+            double width = result.Duration.TotalMilliseconds * ratio;
 
             double x = Margin + (start - earliestTime) * ratio;
             double y = Margin + (index * (height + Margin));
 
-            var tooltipText = name + Environment.NewLine + utcStart.AddMilliseconds(start).ToLocalTime();
+            if (newSuite)
+            {
+                newSuite = false;
 
-            var bar = new Rectangle()
+                var brush = new SolidColorBrush();
+                brush.Opacity = 0.2;
+                brush.Color = currentBrush.Color;
+
+                currentSuite = new Rectangle
+                {
+                    Fill = brush,
+                    Width = width,
+                    Height = height + 10,
+                    StrokeThickness = 1,
+                    Stroke = Brushes.Gray,
+                    StrokeDashArray = new DoubleCollection() { 5, 1 },
+                    ToolTip = result.TestListName,
+                };
+
+                Canvas.SetLeft(currentSuite, x);
+                Canvas.SetTop(currentSuite, y);
+                canvas.Children.Add(currentSuite);
+            }
+            else
+            {
+                currentSuite.Width += width;
+            }
+
+            var tooltipText = result.Name + Environment.NewLine + utcStart.AddMilliseconds(start).ToLocalTime();
+
+            var bar = new Rectangle
             {
                 Fill = currentBrush,
                 Width = width,

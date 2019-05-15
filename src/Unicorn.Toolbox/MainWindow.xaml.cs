@@ -302,7 +302,9 @@ namespace Unicorn.Toolbox
             var visualization = new WindowVisualization();
             visualization.ShowActivated = false;
             visualization.Title = "Launch visualization";
+            
             visualization.Show();
+            ////visualization.WindowState = WindowState.Maximized;
 
             new LaunchVisualizer(visualization.canvasVisualization, resultsList).Visualize();
         }
