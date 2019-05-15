@@ -6,7 +6,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Effects;
 using System.Windows.Shapes;
 using Unicorn.Toolbox.LaunchAnalasys;
 
@@ -36,8 +35,8 @@ namespace Unicorn.Toolbox.Visualization
 
         private SolidColorBrush currentBrush;
 
-        private Rectangle currentStampBar;
-        private TextBlock currentStamp;
+        private readonly Rectangle currentStampBar;
+        private readonly TextBlock currentStamp;
 
         public LaunchVisualizer(Canvas canvas, List<List<TestResult>> resultsList)
         {
@@ -140,7 +139,6 @@ namespace Unicorn.Toolbox.Visualization
                 Height = height,
                 StrokeThickness = 1,
                 Stroke = Brushes.Black,
-                Effect = new DropShadowEffect(),
                 ToolTip = tooltipText,
             };
 
@@ -192,9 +190,11 @@ namespace Unicorn.Toolbox.Visualization
             var pos = Mouse.GetPosition(canvas);
             Canvas.SetLeft(currentStampBar, pos.X + 2);
 
+            currentStamp.Text = utcStart.AddMilliseconds(earliestTime).AddMilliseconds((pos.X + Margin) / ratio).ToLocalTime().ToString("yyyy-MM-ddTHH:mm:ss.fff");
+
             var formattedText = new FormattedText(
                 currentStamp.Text,
-                CultureInfo.CurrentCulture,
+                CultureInfo.InvariantCulture,
                 FlowDirection.LeftToRight,
                 new Typeface(currentStamp.FontFamily, currentStamp.FontStyle, currentStamp.FontWeight, currentStamp.FontStretch),
                 currentStamp.FontSize,
@@ -202,9 +202,19 @@ namespace Unicorn.Toolbox.Visualization
                 new NumberSubstitution(),
                 TextFormattingMode.Display);
 
-            Canvas.SetLeft(currentStamp, pos.X);
+            var xPosition = pos.X;
+
+            if (xPosition + formattedText.Width > this.canvas.RenderSize.Width - 20)
+            {
+                xPosition -= formattedText.Width + 10;
+            }
+            else
+            {
+                xPosition += 5;
+            }
+
+            Canvas.SetLeft(currentStamp, xPosition);
             Canvas.SetTop(currentStamp, canvas.RenderSize.Height - formattedText.Height);
-            currentStamp.Text = utcStart.AddMilliseconds(earliestTime).AddMilliseconds((pos.X + Margin) / ratio).ToLocalTime().ToString("yyyy-MM-ddTHH:mm:ss.fff");
         }
     }
 }
