@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace Unicorn.Toolbox.LaunchAnalasys
+namespace Unicorn.Toolbox.LaunchAnalysis
 {
     public class TrxParser
     {

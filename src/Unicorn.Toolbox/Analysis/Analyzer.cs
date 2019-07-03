@@ -49,7 +49,7 @@ namespace Unicorn.Toolbox.Analysis
                         foreach (var parametersSet in AdapterUtilities.GetSuiteData(suiteType))
                         {
                             var parameterizedSuite = testsAssembly.CreateInstance(suiteType.FullName, true, BindingFlags.Default, null, parametersSet.Parameters.ToArray(), null, null);
-                            ((TestSuite)parameterizedSuite).Outcome.Name += $" [{parametersSet.Name}]";
+                            ((TestSuite)parameterizedSuite).Outcome.DataSetName = parametersSet.Name;
                             data.AddSuiteData(GetSuiteInfo(parameterizedSuite));
                         }
                     }
@@ -74,7 +74,15 @@ namespace Unicorn.Toolbox.Analysis
                 }
 
                 var testSuite = suiteInstance as TestSuite;
-                var suiteInfo = new SuiteInfo(testSuite.Outcome.Name, testSuite.Tags, testSuite.Metadata);
+
+                var suiteName = testSuite.Outcome.Name;
+
+                if (!string.IsNullOrEmpty(testSuite.Outcome.DataSetName))
+                {
+                    suiteName += "[" + testSuite.Outcome.DataSetName + "]";
+                }
+
+                var suiteInfo = new SuiteInfo(suiteName, testSuite.Tags, testSuite.Metadata);
 
                 var fieldInfo = currentType.GetField("tests", BindingFlags.NonPublic | BindingFlags.Instance);
                 var tests = fieldInfo.GetValue(suiteInstance) as Test[];

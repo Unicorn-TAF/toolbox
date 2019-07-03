@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Unicorn.Toolbox.LaunchAnalasys
+namespace Unicorn.Toolbox.LaunchAnalysis
 {
     public struct TestResult
     {

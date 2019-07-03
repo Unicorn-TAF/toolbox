@@ -7,7 +7,8 @@
         mc:Ignorable="d"
         Title="Visualizator" Height="750" Width="1100" ResizeMode="NoResize">
     <Grid>
-        <Canvas x:Name="canvasVisualization" Background="#FF1E1E1E"/>
-
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <Canvas x:Name="canvasVisualization" Background="#FF1E1E1E" Width="1094"/>
+        </ScrollViewer>
     </Grid>
 </Window>

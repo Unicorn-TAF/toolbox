@@ -7,7 +7,7 @@ using Microsoft.Win32;
 using Unicorn.Toolbox.Analysis;
 using Unicorn.Toolbox.Analysis.Filtering;
 using Unicorn.Toolbox.Coverage;
-using Unicorn.Toolbox.LaunchAnalasys;
+using Unicorn.Toolbox.LaunchAnalysis;
 using Unicorn.Toolbox.Visualization;
 using Unicorn.Toolbox.Visualization.Palettes;
 

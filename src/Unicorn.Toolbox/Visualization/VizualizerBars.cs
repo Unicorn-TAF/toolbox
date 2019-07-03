@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Windows;
@@ -16,6 +17,7 @@ namespace Unicorn.Toolbox.Visualization
     public static class VizualizerBars
     {
         private static int margin = 15;
+        private static int minBarHeight = 20;
 
         private static IPalette palette;
 
@@ -33,6 +35,14 @@ namespace Unicorn.Toolbox.Visualization
             var items = from pair in stats
                         orderby pair.Value descending
                         select pair;
+
+            var expectedHeight = (minBarHeight + margin) * items.Count() + margin;
+
+            if (canvas.RenderSize.Height < expectedHeight)
+            {
+                canvas.Height = expectedHeight;
+            }
+
 
             int currentIndex = 0;
 
@@ -79,7 +89,7 @@ namespace Unicorn.Toolbox.Visualization
             var workHeight = canvas.RenderSize.Height - (2 * margin);
             var workWidth = canvas.RenderSize.Width - (2 * margin);
 
-            double height = (workHeight / featuresCount) - margin;
+            double height = Math.Max(minBarHeight, (workHeight / featuresCount) - margin);
             double width = tests == 0 ? 1 : workWidth * ((double)tests / max); 
 
             double x = margin;
