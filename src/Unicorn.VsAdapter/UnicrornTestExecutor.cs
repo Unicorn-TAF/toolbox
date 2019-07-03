@@ -33,6 +33,7 @@ namespace Unicorn.TestAdapter
                 {
                     using (var isolation = new UnicornAppDomainIsolation<IsolatedTestsRunner>(Path.GetDirectoryName(source)))
                     {
+                        Environment.CurrentDirectory = Path.GetDirectoryName(source);
                         outcome = isolation.Instance.RunTests(source);
                     }
                 }
@@ -61,6 +62,7 @@ namespace Unicorn.TestAdapter
                 {
                     using (var loader = new UnicornAppDomainIsolation<IsolatedTestsRunner>(Path.GetDirectoryName(source)))
                     {
+                        Environment.CurrentDirectory = Path.GetDirectoryName(source);
                         outcome = loader.Instance.RunTests(source, tests.Select(t => t.FullyQualifiedName).ToArray());
 
                         foreach (TestCase test in tests)
