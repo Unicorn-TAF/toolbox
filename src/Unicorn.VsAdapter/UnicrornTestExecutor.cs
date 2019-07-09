@@ -26,15 +26,21 @@ namespace Unicorn.TestAdapter
             frameworkHandle.SendMessage(TestMessageLevel.Informational, RunStarting);
             m_cancelled = false;
 
+            var runDir = ExecutorUtilities.PrepareRunDirectory(runContext.SolutionDirectory);
+            ExecutorUtilities.CopyDeploymentItems(runContext, runDir, frameworkHandle);
+
             foreach (var source in sources)
             {
+                ExecutorUtilities.CopySourceFilesToRunDir(Path.GetDirectoryName(source), runDir);
                 LaunchOutcome outcome = null;
 
                 try
                 {
-                    using (var isolation = new UnicornAppDomainIsolation<IsolatedTestsRunner>(Path.GetDirectoryName(source)))
+                    using (var isolation = new UnicornAppDomainIsolation<IsolatedTestsRunner>(runDir))
                     {
-                        Environment.CurrentDirectory = Path.GetDirectoryName(source);
+                        Environment.CurrentDirectory = runDir;
+                        var newSource = source.Replace(Path.GetDirectoryName(source), runDir);
+
                         outcome = isolation.Instance.RunTests(source);
                     }
                 }
@@ -54,11 +60,12 @@ namespace Unicorn.TestAdapter
             frameworkHandle.SendMessage(TestMessageLevel.Informational, RunStarting);
             m_cancelled = false;
 
-            var runDir = PrepareRunDirectory(runContext.SolutionDirectory);
+            var runDir = ExecutorUtilities.PrepareRunDirectory(runContext.SolutionDirectory);
+            ExecutorUtilities.CopyDeploymentItems(runContext, runDir, frameworkHandle);
 
             foreach (var source in sources)
             {
-                CopySourceFilesToRunDir(Path.GetDirectoryName(source), runDir);
+                ExecutorUtilities.CopySourceFilesToRunDir(Path.GetDirectoryName(source), runDir);
 
                 LaunchOutcome outcome = null;
                 var succeeded = false;
@@ -69,6 +76,7 @@ namespace Unicorn.TestAdapter
                     {
                         Environment.CurrentDirectory = runDir;
                         var newSource = source.Replace(Path.GetDirectoryName(source), runDir);
+
                         outcome = loader.Instance.RunTests(newSource, tests.Select(t => t.FullyQualifiedName).ToArray());
 
                         foreach (TestCase test in tests)
@@ -146,28 +154,6 @@ namespace Unicorn.TestAdapter
             }
 
             return testResult;
-        }
-
-        private string PrepareRunDirectory(string baseDir)
-        {
-            var runDir = Path.Combine(baseDir, "TestResults", $"{Environment.MachineName}_{DateTime.Now.ToString("MM-dd-yyyy_hh-mm")}");
-
-            if (!Directory.Exists(runDir))
-            {
-                Directory.CreateDirectory(runDir);
-            }
-
-            return runDir;
-        }
-
-        private void CopySourceFilesToRunDir(string sourceDir, string targetDir)
-        {
-            foreach (var source in Directory.GetFiles(sourceDir))
-            {
-                //Copy the file from sourcepath and place into mentioned target path, 
-                //Overwrite the file if same file is exist in target path
-                File.Copy(source, source.Replace(sourceDir, targetDir), true);
-            }
         }
 
         public void Cancel() =>
