@@ -18,6 +18,7 @@ namespace Unicorn.TestAdapter
         private const string RunComplete = "Unicorn Adapter: Test run complete";
 
         public static readonly Uri ExecutorUri = new Uri(ExecutorUriString);
+
         private bool m_cancelled;
 
         public void RunTests(IEnumerable<string> sources, IRunContext runContext, IFrameworkHandle frameworkHandle)
@@ -53,17 +54,22 @@ namespace Unicorn.TestAdapter
             frameworkHandle.SendMessage(TestMessageLevel.Informational, RunStarting);
             m_cancelled = false;
 
+            var runDir = PrepareRunDirectory(runContext.SolutionDirectory);
+
             foreach (var source in sources)
             {
+                CopySourceFilesToRunDir(Path.GetDirectoryName(source), runDir);
+
                 LaunchOutcome outcome = null;
                 var succeeded = false;
 
                 try
                 {
-                    using (var loader = new UnicornAppDomainIsolation<IsolatedTestsRunner>(Path.GetDirectoryName(source)))
+                    using (var loader = new UnicornAppDomainIsolation<IsolatedTestsRunner>(runDir))
                     {
-                        Environment.CurrentDirectory = Path.GetDirectoryName(source);
-                        outcome = loader.Instance.RunTests(source, tests.Select(t => t.FullyQualifiedName).ToArray());
+                        Environment.CurrentDirectory = runDir;
+                        var newSource = source.Replace(Path.GetDirectoryName(source), runDir);
+                        outcome = loader.Instance.RunTests(newSource, tests.Select(t => t.FullyQualifiedName).ToArray());
 
                         foreach (TestCase test in tests)
                         {
@@ -140,6 +146,28 @@ namespace Unicorn.TestAdapter
             }
 
             return testResult;
+        }
+
+        private string PrepareRunDirectory(string baseDir)
+        {
+            var runDir = Path.Combine(baseDir, "TestResults", $"{Environment.MachineName}_{DateTime.Now.ToString("MM-dd-yyyy_hh-mm")}");
+
+            if (!Directory.Exists(runDir))
+            {
+                Directory.CreateDirectory(runDir);
+            }
+
+            return runDir;
+        }
+
+        private void CopySourceFilesToRunDir(string sourceDir, string targetDir)
+        {
+            foreach (var source in Directory.GetFiles(sourceDir))
+            {
+                //Copy the file from sourcepath and place into mentioned target path, 
+                //Overwrite the file if same file is exist in target path
+                File.Copy(source, source.Replace(sourceDir, targetDir), true);
+            }
         }
 
         public void Cancel() =>
