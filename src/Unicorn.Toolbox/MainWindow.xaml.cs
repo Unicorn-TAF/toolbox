@@ -65,19 +65,21 @@ namespace Unicorn.Toolbox
 
         private void FillGrid(Grid grid, HashSet<string> items)
         {
+            var sortedItems = items.OrderBy(s => s).ToList();
+
             grid.Children.Clear();
             grid.RowDefinitions.Clear();
 
-            grid.Height = (items.Count + 2) * 20;
+            grid.Height = (sortedItems.Count + 2) * 20;
 
-            for (int i = 0; i < items.Count + 2; i++)
+            for (int i = 0; i < sortedItems.Count + 2; i++)
             {
                 grid.RowDefinitions.Add(new RowDefinition());
             }
 
             int index = 2;
 
-            foreach (var item in items)
+            foreach (var item in sortedItems)
             {
                 var itemCheckbox = new CheckBox();
                 itemCheckbox.Content = item;
@@ -97,6 +99,16 @@ namespace Unicorn.Toolbox
             this.analyzer.Data.FilterBy(new FeaturesFilter(features));
             this.analyzer.Data.FilterBy(new CategoriesFilter(categories));
             this.analyzer.Data.FilterBy(new AuthorsFilter(authors));
+
+            if (checkOnlyDisabledTests.IsChecked.Value)
+            {
+                this.analyzer.Data.FilterBy(new OnlyDisabledFilter());
+            }
+
+            if (checkOnlyEnabledTests.IsChecked.Value)
+            {
+                this.analyzer.Data.FilterBy(new OnlyEnabledFilter());
+            }
 
             gridResults.ItemsSource = analyzer.Data.FilteredInfo;
 
@@ -308,5 +320,11 @@ namespace Unicorn.Toolbox
 
             new LaunchVisualizer(visualization.canvasVisualization, resultsList).Visualize();
         }
+
+        private void checkOnlyDisabledTests_Checked(object sender, RoutedEventArgs e) =>
+            checkOnlyEnabledTests.IsChecked = false;
+
+        private void checkOnlyEnabledTests_Checked(object sender, RoutedEventArgs e) =>
+            checkOnlyDisabledTests.IsChecked = false;
     }
 }

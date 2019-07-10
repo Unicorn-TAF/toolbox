@@ -12,9 +12,9 @@ namespace Unicorn.Toolbox.Analysis.Filtering
             this.features = features;
         }
 
-        public List<SuiteInfo> FilterSuites(List<SuiteInfo> input)
-        {
-            return input.Where(s => s.Features.Intersect(this.features).Any()).ToList();
-        }
+        public List<SuiteInfo> FilterSuites(List<SuiteInfo> suitesInfos) =>
+            suitesInfos
+            .Where(s => s.Features.Intersect(this.features).Any())
+            .ToList();
     }
 }

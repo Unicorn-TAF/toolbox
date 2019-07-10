@@ -65,11 +65,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Analysis\Filtering\OnlyEnabledFilter.cs" />
+    <Compile Include="Analysis\Filtering\OnlyDisabledFilter.cs" />
     <Compile Include="Analysis\Filtering\AuthorsFilter.cs" />
     <Compile Include="Analysis\Filtering\CategoriesFilter.cs" />
     <Compile Include="Analysis\Filtering\FeaturesFilter.cs" />
     <Compile Include="Analysis\Filtering\FilterType.cs" />
     <Compile Include="Analysis\Filtering\ITestsFilter.cs" />
+    <Compile Include="Analysis\GetTestsStatisticsWorker.cs" />
     <Compile Include="Coverage\AppSpecs.cs" />
     <Compile Include="Coverage\SpecsCoverage.cs" />
     <Compile Include="Coverage\Module.cs" />

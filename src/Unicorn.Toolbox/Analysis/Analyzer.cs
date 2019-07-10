@@ -1,8 +1,6 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Reflection;
 using Unicorn.Taf.Core.Engine;
-using Unicorn.Taf.Core.Testing;
 
 namespace Unicorn.Toolbox.Analysis
 {
@@ -30,73 +28,6 @@ namespace Unicorn.Toolbox.Analysis
             {
                 this.Data = loader.Instance.GetTestsStatistics(assemblyFile);
             }
-        }
-
-        public class GetTestsStatisticsWorker : MarshalByRefObject
-        {
-            private readonly Type baseSuiteType = typeof(TestSuite);
-
-            public AutomationData GetTestsStatistics(string assemblyPath)
-            {
-                var data = new AutomationData();
-                var testsAssembly = Assembly.LoadFrom(assemblyPath);
-                var allSuites = TestsObserver.ObserveTestSuites(testsAssembly);
-
-                foreach (var suiteType in allSuites)
-                {
-                    if (AdapterUtilities.IsSuiteParameterized(suiteType))
-                    {
-                        foreach (var parametersSet in AdapterUtilities.GetSuiteData(suiteType))
-                        {
-                            var parameterizedSuite = testsAssembly.CreateInstance(suiteType.FullName, true, BindingFlags.Default, null, parametersSet.Parameters.ToArray(), null, null);
-                            ((TestSuite)parameterizedSuite).Outcome.DataSetName = parametersSet.Name;
-                            data.AddSuiteData(GetSuiteInfo(parameterizedSuite));
-                        }
-                    }
-                    else
-                    {
-                        var nonParameterizedSuite = testsAssembly.CreateInstance(suiteType.FullName);
-                        data.AddSuiteData(GetSuiteInfo(nonParameterizedSuite));
-                    }
-                }
-
-                return data;
-            }
-
-            private SuiteInfo GetSuiteInfo(object suiteInstance)
-            {
-                int inheritanceCounter = 0;
-                var currentType = suiteInstance.GetType();
-
-                while (!currentType.Equals(baseSuiteType) && inheritanceCounter++ < 50)
-                {
-                    currentType = currentType.BaseType;
-                }
-
-                var testSuite = suiteInstance as TestSuite;
-
-                var suiteName = testSuite.Outcome.Name;
-
-                if (!string.IsNullOrEmpty(testSuite.Outcome.DataSetName))
-                {
-                    suiteName += "[" + testSuite.Outcome.DataSetName + "]";
-                }
-
-                var suiteInfo = new SuiteInfo(suiteName, testSuite.Tags, testSuite.Metadata);
-
-                var fieldInfo = currentType.GetField("tests", BindingFlags.NonPublic | BindingFlags.Instance);
-                var tests = fieldInfo.GetValue(suiteInstance) as Test[];
-
-                foreach (var test in tests)
-                {
-                    suiteInfo.TestsInfos.Add(GetTestInfo(test));
-                }
-
-                return suiteInfo;
-            }
-
-            private TestInfo GetTestInfo(Test test) => 
-                new TestInfo(test.Outcome.Title, test.Outcome.Author, test.Categories);
         }
     }
 }

@@ -9,10 +9,11 @@ namespace Unicorn.Toolbox.Analysis
     {
         public const string NoCategory = "<CATEGORY NOT SPECIFIED>";
 
-        public TestInfo(string testName, string author, IEnumerable<string> categories)
+        public TestInfo(string testName, string author, bool disabled, IEnumerable<string> categories)
         {
             this.Name = testName;
             this.Author = author;
+            this.Disabled = disabled;
             this.Categories = new List<string>(categories);
 
             if (!this.Categories.Any())
@@ -24,6 +25,8 @@ namespace Unicorn.Toolbox.Analysis
         public string Name { get; set; }
 
         public string Author { get; set; }
+
+        public bool Disabled { get; set; }
 
         public List<string> Categories { get; set; }
     }

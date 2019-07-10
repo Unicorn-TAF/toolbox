@@ -12,14 +12,14 @@ namespace Unicorn.Toolbox.Analysis.Filtering
             this.categories = categories;
         }
 
-        public List<SuiteInfo> FilterSuites(List<SuiteInfo> input)
-        {
-            return input.Where(s => s.TestsInfos.Any(t => categories.Intersect(t.Categories).Any())).ToList();
-        }
+        public List<SuiteInfo> FilterSuites(List<SuiteInfo> suitesInfos) =>
+            suitesInfos
+            .Where(s => s.TestsInfos.Any(t => categories.Intersect(t.Categories).Any()))
+            .ToList();
 
-        public List<TestInfo> FilterTests(List<TestInfo> input)
-        {
-            return input.Where(t => this.categories.Intersect(t.Categories).Any()).ToList();
-        }
+        public List<TestInfo> FilterTests(List<TestInfo> testInfos) =>
+            testInfos
+            .Where(t => this.categories.Intersect(t.Categories).Any())
+            .ToList();
     }
 }

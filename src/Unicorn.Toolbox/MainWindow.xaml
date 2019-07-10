@@ -56,27 +56,29 @@
                             </DataGridTemplateColumn>
                         </DataGrid.Columns>
                     </DataGrid>
-                    <TabControl x:Name="tabControlFilters" HorizontalAlignment="Left" Margin="10,88,0,10" Width="200">
+                    <TabControl x:Name="tabControlFilters" HorizontalAlignment="Left" Margin="10,69,0,10" Width="200">
                         <TabItem x:Name="tabFeaures" Header="Tags" Margin="-2,-2,-23,-1">
-                            <ScrollViewer Margin="0,60,0,0" VerticalScrollBarVisibility="Auto">
+                            <ScrollViewer Margin="0,95,0,0" VerticalScrollBarVisibility="Auto">
                                 <Grid x:Name="gridFeatures" Background="White"/>
                             </ScrollViewer>
                         </TabItem>
                         <TabItem x:Name="tabCategories" Header="Categories" Margin="22,-2,-26,-1">
-                            <ScrollViewer Margin="0,60,0,0" VerticalScrollBarVisibility="Auto">
+                            <ScrollViewer Margin="0,95,0,0" VerticalScrollBarVisibility="Auto">
                                 <Grid x:Name="gridCategories" Background="White"/>
                             </ScrollViewer>
                         </TabItem>
                         <TabItem x:Name="tabAuthors" Header="Authors" Margin="25,-2,-33,-1">
-                            <ScrollViewer Margin="0,60,0,0" VerticalScrollBarVisibility="Auto">
+                            <ScrollViewer Margin="0,95,0,0" VerticalScrollBarVisibility="Auto">
                                 <Grid x:Name="gridAuthors" Background="White"/>
                             </ScrollViewer>
                         </TabItem>
                     </TabControl>
-                    <Button x:Name="buttonShowAll" Content="Show all" HorizontalAlignment="Left" VerticalAlignment="Top" Width="80" Margin="24,124,0,0" Click="ShowAllClick"/>
+                    <Button x:Name="buttonShowAll" Content="Show all" HorizontalAlignment="Left" VerticalAlignment="Top" Width="80" Margin="24,100,0,0" Click="ShowAllClick"/>
                     <TextBox x:Name="textBoxCurrentFilter" Text="" Margin="224,0,10,10" IsEnabled="False" FontSize="10" Height="53" VerticalAlignment="Bottom"/>
-                    <Button x:Name="buttonApplyFilter" Content="Apply Filter" HorizontalAlignment="Left" VerticalAlignment="Top" Width="80" Margin="118,124,0,0" Click="ApplyFilter"/>
-                    <CheckBox x:Name="checkBoxShowHide" Content="Show/Hide all" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="65,151,0,0" RenderTransformOrigin="0.633,1.422" Unchecked="checkBox_Unchecked" Checked="checkBox_Checked"/>
+                    <Button x:Name="buttonApplyFilter" Content="Apply Filter" HorizontalAlignment="Left" VerticalAlignment="Top" Width="80" Margin="118,100,0,0" Click="ApplyFilter"/>
+                    <CheckBox x:Name="checkBoxShowHide" Content="Show/Hide all" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="24,127,0,0" RenderTransformOrigin="0.633,1.422" Unchecked="checkBox_Unchecked" Checked="checkBox_Checked"/>
+                    <CheckBox x:Name="checkOnlyEnabledTests" Content="Only Enabled tests" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="24,167,0,0" RenderTransformOrigin="0.633,1.422" Checked="checkOnlyEnabledTests_Checked"/>
+                    <CheckBox x:Name="checkOnlyDisabledTests" Content="Only Disabled tests" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="24,147,0,0" RenderTransformOrigin="0.633,1.422" Checked="checkOnlyDisabledTests_Checked"/>
                 </Grid>
             </TabItem>
             <TabItem x:Name="tabCoverage" Header="Coverage" Height="23" VerticalAlignment="Bottom">
