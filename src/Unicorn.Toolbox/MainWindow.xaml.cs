@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -303,12 +304,20 @@ namespace Unicorn.Toolbox
 
             foreach (var trxFile in trxFiles)
             {
-                var results = new TrxParser(trxFile).GetAllTests();
-
-                if (results.Any())
+                try
                 {
-                    resultsList.Add(results);
+                    var results = new TrxParser(trxFile).GetAllTests();
+
+                    if (results.Any())
+                    {
+                        resultsList.Add(results);
+                    }
                 }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error parsing {trxFile} file:" + ex.ToString());
+                }
+
             }
 
             var visualization = new WindowVisualization();
