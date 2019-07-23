@@ -45,6 +45,7 @@ namespace Unicorn.Toolbox
             this.buttonVisualize.IsEnabled = true;
             this.comboBoxPalette.IsEnabled = true;
             this.checkBoxModern.IsEnabled = true;
+            this.checkBoxFullscreen.IsEnabled = true;
 
             this.analyzer = new Analyzer(assemblyFile);
             this.analyzer.GetTestsStatistics();
@@ -153,13 +154,40 @@ namespace Unicorn.Toolbox
 
             this.coverage = new SpecsCoverage(specFileName);
 
+            FillGrid(gridModules, new HashSet<string>(this.coverage.Specs.Modules.Select(m => m.Name)));
+
+            foreach (var checkbox in gridModules.Children)
+            {
+                ((CheckBox)checkbox).IsChecked = false;
+                ((CheckBox)checkbox).Checked += new RoutedEventHandler(this.UpdateRunTagsText);
+                ((CheckBox)checkbox).Unchecked += new RoutedEventHandler(this.UpdateRunTagsText);
+            }
+
             GetCoverage();
         }
 
-        private void GetAutomationCoverage(object sender, RoutedEventArgs e)
+
+        private void UpdateRunTagsText(object sender, RoutedEventArgs e)
         {
-            GetCoverage();
+            var runTags = new HashSet<string>();
+
+            foreach (var child in gridModules.Children)
+            {
+                var checkbox = child as CheckBox;
+
+                if (checkbox.IsChecked.Value)
+                {
+                    runTags.UnionWith(this.coverage.Specs.Modules
+                        .First(m => m.Name.Equals(checkbox.Content.ToString(), StringComparison.InvariantCultureIgnoreCase))
+                        .Features);
+                }
+            }
+
+            this.textBoxRunTags.Text = "#" + string.Join(" #", runTags);
         }
+
+        private void GetAutomationCoverage(object sender, RoutedEventArgs e) =>
+            GetCoverage();
 
         private void Visualize(object sender, RoutedEventArgs e)
         {
@@ -205,8 +233,18 @@ namespace Unicorn.Toolbox
         private void VisualizeCoverage()
         {
             var visualization = new WindowVisualization();
-            visualization.ShowActivated = false;
+            
             visualization.Title = "Modules coverage by tests";
+
+            if (this.checkBoxFullscreen.IsChecked.HasValue && this.checkBoxFullscreen.IsChecked.Value)
+            {
+                visualization.WindowState = WindowState.Maximized;
+            }
+            else
+            {
+                visualization.ShowActivated = false;
+            }
+
             visualization.Show();
 
             if (checkBoxModern.IsChecked.HasValue && checkBoxModern.IsChecked.Value)
@@ -223,8 +261,18 @@ namespace Unicorn.Toolbox
         {
             var filter = GetFilter();
             var visualization = new WindowVisualization();
-            visualization.ShowActivated = false;
+            
             visualization.Title = $"Overall tests statistics: {filter}";
+
+            if (this.checkBoxFullscreen.IsChecked.HasValue && this.checkBoxFullscreen.IsChecked.Value)
+            {
+                visualization.WindowState = WindowState.Maximized;
+            }
+            else
+            {
+                visualization.ShowActivated = false;
+            }
+
             visualization.Show();
 
             if (checkBoxModern.IsChecked.HasValue && checkBoxModern.IsChecked.Value)

@@ -159,9 +159,8 @@ namespace Unicorn.Toolbox.Visualization
                 Fill = palette.DataColors[currentColorIndex],
                 Width = radius * 2,
                 Height = radius * 2,
-                StrokeThickness = 1,
-                Stroke = Brushes.Black,
-                Effect = new DropShadowEffect()
+                StrokeThickness = 0.1,
+                Stroke = Brushes.Black
             };
 
             Canvas.SetLeft(ellipse, x - radius);
