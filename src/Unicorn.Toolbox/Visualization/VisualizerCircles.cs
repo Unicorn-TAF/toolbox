@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Media.Effects;
 using System.Windows.Shapes;
 using Unicorn.Toolbox.Analysis;
 using Unicorn.Toolbox.Analysis.Filtering;
@@ -160,19 +160,22 @@ namespace Unicorn.Toolbox.Visualization
                 Width = radius * 2,
                 Height = radius * 2,
                 StrokeThickness = 0.1,
-                Stroke = Brushes.Black
+                Stroke = Brushes.Black,
+                ToolTip = tests
             };
 
             Canvas.SetLeft(ellipse, x - radius);
             Canvas.SetTop(ellipse, y - radius);
             canvas.Children.Add(ellipse);
 
-            var label = new TextBlock();
-            label.Text = $"{name}\n{tests}";
-            label.TextAlignment = TextAlignment.Center;
-            
-            label.FontFamily = new FontFamily("Calibri");
-            label.FontSize = 15;
+            var label = new TextBlock
+            {
+                Text = CamelCase($"{name}: {tests}"),
+                TextAlignment = TextAlignment.Center,
+                FontFamily = new FontFamily("Calibri"),
+                FontSize = 15,
+                Foreground = palette.DataFontColor
+            };
 
             var formattedText = new FormattedText(
                 label.Text,
@@ -184,11 +187,22 @@ namespace Unicorn.Toolbox.Visualization
                 new NumberSubstitution(), 
                 TextFormattingMode.Display);
 
-            label.Foreground = formattedText.Width > radius * 2 ? palette.FontColor : palette.DataFontColor;
-
             canvas.Children.Add(label);
             Canvas.SetLeft(label, x - (formattedText.Width / 2));
-            Canvas.SetTop(label, y - (formattedText.Height / 2));
+            Canvas.SetTop(label, y - radius - formattedText.Height);
+
+            ////var labelCount = new TextBlock
+            ////{
+            ////    Text = tests.ToString(),
+            ////    TextAlignment = TextAlignment.Center,
+            ////    FontFamily = new FontFamily("Calibri"),
+            ////    FontSize = 15,
+            ////    Foreground = palette.DataFontColor
+            ////};
+
+            ////canvas.Children.Add(labelCount);
+            ////Canvas.SetLeft(labelCount, x - (formattedText.Width / 2));
+            ////Canvas.SetTop(labelCount, y - (formattedText.Height / 2));
         }
 
         private static int CalculateRadius(int capacity, int max, int count, int canvasSize)
@@ -201,6 +215,15 @@ namespace Unicorn.Toolbox.Visualization
             double radius = (double)canvasSize / Math.Sqrt(count + margin);
             double ratio = (double)capacity / (double)max;
             return (int)(radius * ratio / 2);
+        }
+
+        private static string CamelCase(string s)
+        {
+            var x = s.Replace("_", "");
+            if (x.Length == 0) return "Null";
+            x = Regex.Replace(x, "([A-Z])([A-Z]+)",
+                m => m.Groups[1].Value + m.Groups[2].Value.ToLower());
+            return char.ToUpper(x[0]) + x.Substring(1);
         }
     }
 }
