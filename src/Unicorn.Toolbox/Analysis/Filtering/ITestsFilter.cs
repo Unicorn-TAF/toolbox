@@ -4,6 +4,6 @@ namespace Unicorn.Toolbox.Analysis.Filtering
 {
     public interface ITestsFilter
     {
-        List<TestInfo> FilterTests(List<TestInfo> input);
+        List<TestInfo> FilterTests(List<TestInfo> testInfos);
     }
 }

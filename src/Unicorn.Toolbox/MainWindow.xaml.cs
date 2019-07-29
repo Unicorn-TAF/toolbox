@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -44,6 +45,7 @@ namespace Unicorn.Toolbox
             this.buttonVisualize.IsEnabled = true;
             this.comboBoxPalette.IsEnabled = true;
             this.checkBoxModern.IsEnabled = true;
+            this.checkBoxFullscreen.IsEnabled = true;
 
             this.analyzer = new Analyzer(assemblyFile);
             this.analyzer.GetTestsStatistics();
@@ -65,19 +67,21 @@ namespace Unicorn.Toolbox
 
         private void FillGrid(Grid grid, HashSet<string> items)
         {
+            var sortedItems = items.OrderBy(s => s).ToList();
+
             grid.Children.Clear();
             grid.RowDefinitions.Clear();
 
-            grid.Height = (items.Count + 2) * 20;
+            grid.Height = (sortedItems.Count + 2) * 20;
 
-            for (int i = 0; i < items.Count + 2; i++)
+            for (int i = 0; i < sortedItems.Count + 2; i++)
             {
                 grid.RowDefinitions.Add(new RowDefinition());
             }
 
             int index = 2;
 
-            foreach (var item in items)
+            foreach (var item in sortedItems)
             {
                 var itemCheckbox = new CheckBox();
                 itemCheckbox.Content = item;
@@ -97,6 +101,16 @@ namespace Unicorn.Toolbox
             this.analyzer.Data.FilterBy(new FeaturesFilter(features));
             this.analyzer.Data.FilterBy(new CategoriesFilter(categories));
             this.analyzer.Data.FilterBy(new AuthorsFilter(authors));
+
+            if (checkOnlyDisabledTests.IsChecked.Value)
+            {
+                this.analyzer.Data.FilterBy(new OnlyDisabledFilter());
+            }
+
+            if (checkOnlyEnabledTests.IsChecked.Value)
+            {
+                this.analyzer.Data.FilterBy(new OnlyEnabledFilter());
+            }
 
             gridResults.ItemsSource = analyzer.Data.FilteredInfo;
 
@@ -140,13 +154,40 @@ namespace Unicorn.Toolbox
 
             this.coverage = new SpecsCoverage(specFileName);
 
+            FillGrid(gridModules, new HashSet<string>(this.coverage.Specs.Modules.Select(m => m.Name)));
+
+            foreach (var checkbox in gridModules.Children)
+            {
+                ((CheckBox)checkbox).IsChecked = false;
+                ((CheckBox)checkbox).Checked += new RoutedEventHandler(this.UpdateRunTagsText);
+                ((CheckBox)checkbox).Unchecked += new RoutedEventHandler(this.UpdateRunTagsText);
+            }
+
             GetCoverage();
         }
 
-        private void GetAutomationCoverage(object sender, RoutedEventArgs e)
+
+        private void UpdateRunTagsText(object sender, RoutedEventArgs e)
         {
-            GetCoverage();
+            var runTags = new HashSet<string>();
+
+            foreach (var child in gridModules.Children)
+            {
+                var checkbox = child as CheckBox;
+
+                if (checkbox.IsChecked.Value)
+                {
+                    runTags.UnionWith(this.coverage.Specs.Modules
+                        .First(m => m.Name.Equals(checkbox.Content.ToString(), StringComparison.InvariantCultureIgnoreCase))
+                        .Features);
+                }
+            }
+
+            this.textBoxRunTags.Text = "#" + string.Join(" #", runTags);
         }
+
+        private void GetAutomationCoverage(object sender, RoutedEventArgs e) =>
+            GetCoverage();
 
         private void Visualize(object sender, RoutedEventArgs e)
         {
@@ -192,8 +233,18 @@ namespace Unicorn.Toolbox
         private void VisualizeCoverage()
         {
             var visualization = new WindowVisualization();
-            visualization.ShowActivated = false;
+            
             visualization.Title = "Modules coverage by tests";
+
+            if (this.checkBoxFullscreen.IsChecked.HasValue && this.checkBoxFullscreen.IsChecked.Value)
+            {
+                visualization.WindowState = WindowState.Maximized;
+            }
+            else
+            {
+                visualization.ShowActivated = false;
+            }
+
             visualization.Show();
 
             if (checkBoxModern.IsChecked.HasValue && checkBoxModern.IsChecked.Value)
@@ -210,8 +261,18 @@ namespace Unicorn.Toolbox
         {
             var filter = GetFilter();
             var visualization = new WindowVisualization();
-            visualization.ShowActivated = false;
+            
             visualization.Title = $"Overall tests statistics: {filter}";
+
+            if (this.checkBoxFullscreen.IsChecked.HasValue && this.checkBoxFullscreen.IsChecked.Value)
+            {
+                visualization.WindowState = WindowState.Maximized;
+            }
+            else
+            {
+                visualization.ShowActivated = false;
+            }
+
             visualization.Show();
 
             if (checkBoxModern.IsChecked.HasValue && checkBoxModern.IsChecked.Value)
@@ -291,12 +352,20 @@ namespace Unicorn.Toolbox
 
             foreach (var trxFile in trxFiles)
             {
-                var results = new TrxParser(trxFile).GetAllTests();
-
-                if (results.Any())
+                try
                 {
-                    resultsList.Add(results);
+                    var results = new TrxParser(trxFile).GetAllTests();
+
+                    if (results.Any())
+                    {
+                        resultsList.Add(results);
+                    }
                 }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error parsing {trxFile} file:" + ex.ToString());
+                }
+
             }
 
             var visualization = new WindowVisualization();
@@ -308,5 +377,11 @@ namespace Unicorn.Toolbox
 
             new LaunchVisualizer(visualization.canvasVisualization, resultsList).Visualize();
         }
+
+        private void checkOnlyDisabledTests_Checked(object sender, RoutedEventArgs e) =>
+            checkOnlyEnabledTests.IsChecked = false;
+
+        private void checkOnlyEnabledTests_Checked(object sender, RoutedEventArgs e) =>
+            checkOnlyDisabledTests.IsChecked = false;
     }
 }
