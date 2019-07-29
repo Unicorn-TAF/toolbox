@@ -121,7 +121,7 @@
                 <CheckBox x:Name="checkBoxModern" Content="Circles" Margin="105,9,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.274,0.533" HorizontalAlignment="Left" Width="66" IsEnabled="False"/>
                 <CheckBox x:Name="checkBoxFullscreen" Content="Fullscreen" Margin="105,35,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.274,0.533" HorizontalAlignment="Left" Width="78" IsEnabled="False"/>
                 <Button x:Name="buttonVisualize" Content="Visualize" Width="91" Margin="9,6,0,0" VerticalAlignment="Top" Click="Visualize" HorizontalAlignment="Left" IsEnabled="False"/>
-                <ComboBox x:Name="comboBoxPalette" HorizontalAlignment="Left" Margin="9,31,0,0" VerticalAlignment="Top" Width="91" IsEnabled="False" Height="20">
+                <ComboBox x:Name="comboBoxPalette" HorizontalAlignment="Left" Margin="9,31,0,0" VerticalAlignment="Top" Width="91" IsEnabled="False" Height="20" FontSize="11" HorizontalContentAlignment="Center">
                     <ComboBoxItem Content="Light Green" Background="#558B2F" IsSelected="True"/>
                     <ComboBoxItem Content="Deep Purple" Background="#311B92"/>
                     <ComboBoxItem Content="Orange" Background="#EF6C00"/>

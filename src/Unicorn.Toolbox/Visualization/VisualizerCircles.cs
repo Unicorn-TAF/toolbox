@@ -170,7 +170,8 @@ namespace Unicorn.Toolbox.Visualization
 
             var label = new TextBlock
             {
-                Text = CamelCase($"{name}: {tests}"),
+                ////Text = CamelCase($"{name}: {tests}"),
+                Text = CamelCase(name),
                 TextAlignment = TextAlignment.Center,
                 FontFamily = new FontFamily("Calibri"),
                 FontSize = 15,
