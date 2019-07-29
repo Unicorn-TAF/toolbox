@@ -11,9 +11,9 @@
             <ColumnDefinition Width="0*"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <TabControl x:Name="tabControl" Margin="10,10,10,0" Grid.ColumnSpan="2" Height="671" VerticalAlignment="Top" IsEnabled="False">
+        <TabControl x:Name="tabControl" Margin="10,10,10,0" Grid.ColumnSpan="2" Height="671" VerticalAlignment="Top">
             <TabItem x:Name="tabStatistics" Header="Tests statistics">
-                <Grid Background="#FFE5E5E5" Margin="0,0,0,1">
+                <Grid x:Name="gridStatistics" Background="#FFE5E5E5" Margin="0,0,0,1" IsEnabled="False">
                     <DataGrid x:Name="gridResults" HorizontalScrollBarVisibility="Disabled" HeadersVisibility="All" Grid.Column="0" RowHeaderWidth="0" CanUserAddRows="False" AutoGenerateColumns="False"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="224,80,10,0" Height="549" VerticalAlignment="Top">
                         <DataGrid.Columns>
                             <DataGridTemplateColumn Header="Test Suite"  Width="350">
@@ -84,7 +84,7 @@
             <TabItem x:Name="tabCoverage" Header="Coverage" Height="23" VerticalAlignment="Bottom">
                 <Grid Background="#FFE5E5E5">
                     <Button x:Name="buttonLoadSpecs" Content="Load Specs" HorizontalAlignment="Left" Margin="224,24,0,0" VerticalAlignment="Top" Width="95" Click="LoadSpecs"/>
-                    <Button x:Name="buttonGetCoverage" Content="Get coverage" HorizontalAlignment="Left" Margin="224,49,0,0" VerticalAlignment="Top" Width="95" Click="GetAutomationCoverage"/>
+                    <Button x:Name="buttonGetCoverage" Content="Get coverage" HorizontalAlignment="Left" Margin="224,49,0,0" VerticalAlignment="Top" Width="95" Click="GetAutomationCoverage" IsEnabled="False"/>
                     <DataGrid x:Name="gridCoverage" HorizontalScrollBarVisibility="Disabled" HeadersVisibility="All" Grid.Column="0" RowHeaderWidth="0" CanUserAddRows="False" AutoGenerateColumns="False"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="10,80,535,10">
                         <DataGrid.Columns>
                             <DataGridTemplateColumn Header="Module"  Width="500">

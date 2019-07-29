@@ -40,8 +40,7 @@ namespace Unicorn.Toolbox
                 return;
             }
 
-            this.tabControl.IsEnabled = true;
-            this.buttonGetCoverage.IsEnabled = false;
+            this.gridStatistics.IsEnabled = true;
             this.buttonVisualize.IsEnabled = true;
             this.comboBoxPalette.IsEnabled = true;
             this.checkBoxModern.IsEnabled = true;
@@ -163,7 +162,10 @@ namespace Unicorn.Toolbox
                 ((CheckBox)checkbox).Unchecked += new RoutedEventHandler(this.UpdateRunTagsText);
             }
 
-            GetCoverage();
+            if (!gridStatistics.IsEnabled)
+            {
+                this.buttonGetCoverage.IsEnabled = true;
+            }
         }
 
 
