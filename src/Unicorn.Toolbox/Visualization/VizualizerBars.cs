@@ -98,6 +98,8 @@ namespace Unicorn.Toolbox.Visualization
             double colorIndexStep = (double)palette.DataColors.Count / featuresCount;
             int currentColorIndex = (int)(((index + 1) * colorIndexStep) - 1);
 
+            var shadowEffect = palette is DeepPurple ? new DropShadowEffect() { Color = Color.FromRgb(137, 137, 137) } : new DropShadowEffect();
+
             var bar = new Rectangle()
             {
                 Fill = palette.DataColors[currentColorIndex],
@@ -105,7 +107,7 @@ namespace Unicorn.Toolbox.Visualization
                 Height = height,
                 StrokeThickness = 1,
                 Stroke = Brushes.Black,
-                Effect = new DropShadowEffect()
+                Effect = shadowEffect
             };
 
             Canvas.SetLeft(bar, x);

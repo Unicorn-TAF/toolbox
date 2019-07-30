@@ -20,12 +20,12 @@ namespace Unicorn.Toolbox.Visualization
             };
         }
 
-        public Brush BackColor { get; } = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#EDE7F6"));
+        public Brush BackColor { get; } = Brushes.Black; ////new SolidColorBrush((Color)ColorConverter.ConvertFromString("#EDE7F6"));
 
         public List<Brush> DataColors { get; protected set; }
 
         public Brush DataFontColor { get; } = Brushes.WhiteSmoke;
 
-        public Brush FontColor { get; } = Brushes.Black;
+        public Brush FontColor { get; } = Brushes.WhiteSmoke;
     }
 }

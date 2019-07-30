@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Effects;
 using System.Windows.Shapes;
 using Unicorn.Toolbox.Analysis;
 using Unicorn.Toolbox.Analysis.Filtering;
@@ -154,6 +155,8 @@ namespace Unicorn.Toolbox.Visualization
             double colorIndexStep = (double)palette.DataColors.Count / featuresCount;
             int currentColorIndex = (int)(((index + 1) * colorIndexStep) - 1);
 
+            var shadowEffect = palette is DeepPurple ? new DropShadowEffect() { Color = Color.FromRgb(137, 137, 137) } : new DropShadowEffect();
+
             var ellipse = new Ellipse()
             {
                 Fill = palette.DataColors[currentColorIndex],
@@ -161,6 +164,7 @@ namespace Unicorn.Toolbox.Visualization
                 Height = radius * 2,
                 StrokeThickness = 0.1,
                 Stroke = Brushes.Black,
+                Effect = shadowEffect,
                 ToolTip = tests
             };
 
@@ -170,7 +174,6 @@ namespace Unicorn.Toolbox.Visualization
 
             var label = new TextBlock
             {
-                ////Text = CamelCase($"{name}: {tests}"),
                 Text = CamelCase(name),
                 TextAlignment = TextAlignment.Center,
                 FontFamily = new FontFamily("Calibri"),
