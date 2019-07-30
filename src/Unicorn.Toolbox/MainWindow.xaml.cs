@@ -40,11 +40,8 @@ namespace Unicorn.Toolbox
                 return;
             }
 
-            this.gridStatistics.IsEnabled = true;
-            this.buttonVisualize.IsEnabled = true;
-            this.comboBoxPalette.IsEnabled = true;
-            this.checkBoxModern.IsEnabled = true;
-            this.checkBoxFullscreen.IsEnabled = true;
+            this.gridFilters.IsEnabled = true;
+            this.groupBoxVisualization.IsEnabled = true;
 
             this.analyzer = new Analyzer(assemblyFile);
             this.analyzer.GetTestsStatistics();

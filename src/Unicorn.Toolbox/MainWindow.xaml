@@ -13,10 +13,10 @@
         </Grid.ColumnDefinitions>
         <TabControl x:Name="tabControl" Margin="10,10,10,0" Grid.ColumnSpan="2" Height="671" VerticalAlignment="Top">
             <TabItem x:Name="tabStatistics" Header="Tests statistics">
-                <Grid x:Name="gridStatistics" Background="#FFE5E5E5" Margin="0,0,0,1" IsEnabled="False">
-                    <DataGrid x:Name="gridResults" HorizontalScrollBarVisibility="Disabled" HeadersVisibility="All" Grid.Column="0" RowHeaderWidth="0" CanUserAddRows="False" AutoGenerateColumns="False"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="224,80,10,0" Height="549" VerticalAlignment="Top">
+                <Grid x:Name="gridStatistics" Background="#FFE5E5E5" Margin="0,0,0,1">
+                    <DataGrid x:Name="gridResults" HorizontalScrollBarVisibility="Disabled" HeadersVisibility="All" Grid.Column="0" RowHeaderWidth="0" CanUserAddRows="False" AutoGenerateColumns="False"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="224,70,10,80">
                         <DataGrid.Columns>
-                            <DataGridTemplateColumn Header="Test Suite"  Width="350">
+                            <DataGridTemplateColumn Header="Test Suite" Width="350">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <Grid>
@@ -56,38 +56,41 @@
                             </DataGridTemplateColumn>
                         </DataGrid.Columns>
                     </DataGrid>
-                    <TabControl x:Name="tabControlFilters" HorizontalAlignment="Left" Margin="10,80,0,10" Width="200">
-                        <TabItem x:Name="tabFeaures" Header="Tags" Margin="-2,-2,-29,-1">
-                            <ScrollViewer Margin="0,95,0,0" VerticalScrollBarVisibility="Auto">
-                                <Grid x:Name="gridFeatures" Background="White"/>
-                            </ScrollViewer>
-                        </TabItem>
-                        <TabItem x:Name="tabCategories" Header="Categories" Margin="28,-2,-30,-1">
-                            <ScrollViewer Margin="0,95,0,0" VerticalScrollBarVisibility="Auto">
-                                <Grid x:Name="gridCategories" Background="White"/>
-                            </ScrollViewer>
-                        </TabItem>
-                        <TabItem x:Name="tabAuthors" Header="Authors" Margin="29,-2,-41,-1">
-                            <ScrollViewer Margin="0,95,0,0" VerticalScrollBarVisibility="Auto">
-                                <Grid x:Name="gridAuthors" Background="White"/>
-                            </ScrollViewer>
-                        </TabItem>
-                    </TabControl>
-                    <Button x:Name="buttonShowAll" Content="Show all" HorizontalAlignment="Left" VerticalAlignment="Top" Width="80" Margin="24,112,0,0" Click="ShowAllClick"/>
-                    <TextBox x:Name="textBoxCurrentFilter" Text="" Margin="224,10,10,0" IsEnabled="False" FontSize="10" Height="65" VerticalAlignment="Top"/>
-                    <Button x:Name="buttonApplyFilter" Content="Apply Filter" HorizontalAlignment="Left" VerticalAlignment="Top" Width="80" Margin="118,112,0,0" Click="ApplyFilter"/>
-                    <CheckBox x:Name="checkBoxShowHide" Content="Show/Hide all" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="24,138,0,0" RenderTransformOrigin="0.633,1.422" Unchecked="checkBox_Unchecked" Checked="checkBox_Checked"/>
-                    <CheckBox x:Name="checkOnlyEnabledTests" Content="Only Enabled tests" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="24,178,0,0" RenderTransformOrigin="0.633,1.422" Checked="checkOnlyEnabledTests_Checked"/>
-                    <CheckBox x:Name="checkOnlyDisabledTests" Content="Only Disabled tests" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="24,158,0,0" RenderTransformOrigin="0.633,1.422" Checked="checkOnlyDisabledTests_Checked"/>
+                    <Grid x:Name="gridFilters" Margin="0,70,950,80" IsEnabled="False">
+                        <TabControl x:Name="tabControlFilters" HorizontalAlignment="Left" Margin="10,0,0,0" Width="200">
+                            <TabItem x:Name="tabFeaures" Header="Tags">
+                                <ScrollViewer Margin="0,95,0,0" VerticalScrollBarVisibility="Auto">
+                                    <Grid x:Name="gridFeatures" Background="White"/>
+                                </ScrollViewer>
+                            </TabItem>
+                            <TabItem x:Name="tabCategories" Header="Categories">
+                                <ScrollViewer Margin="0,95,0,0" VerticalScrollBarVisibility="Auto">
+                                    <Grid x:Name="gridCategories" Background="White"/>
+                                </ScrollViewer>
+                            </TabItem>
+                            <TabItem x:Name="tabAuthors" Header="Authors">
+                                <ScrollViewer Margin="0,95,0,0" VerticalScrollBarVisibility="Auto">
+                                    <Grid x:Name="gridAuthors" Background="White"/>
+                                </ScrollViewer>
+                            </TabItem>
+                        </TabControl>
+                        <Button x:Name="buttonShowAll" Content="Show all" HorizontalAlignment="Left" VerticalAlignment="Top" Width="80" Margin="24,30,0,0" Click="ShowAllClick"/>
+                        <Button x:Name="buttonApplyFilter" Content="Apply Filter" HorizontalAlignment="Left" VerticalAlignment="Top" Width="80" Margin="118,30,0,0" Click="ApplyFilter"/>
+                        <CheckBox x:Name="checkBoxShowHide" Content="Show/Hide all" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="24,56,0,0" RenderTransformOrigin="0.633,1.422" Unchecked="checkBox_Unchecked" Checked="checkBox_Checked"/>
+                        <CheckBox x:Name="checkOnlyEnabledTests" Content="Only Enabled tests" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="24,96,0,0" RenderTransformOrigin="0.633,1.422" Checked="checkOnlyEnabledTests_Checked"/>
+                        <CheckBox x:Name="checkOnlyDisabledTests" Content="Only Disabled tests" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="24,76,0,0" RenderTransformOrigin="0.633,1.422" Checked="checkOnlyDisabledTests_Checked"/>
+                    </Grid>
+                    <TextBox x:Name="textBoxCurrentFilter" Text="" Margin="10,0,10,10" IsEnabled="False" FontSize="10" Height="65" VerticalAlignment="Bottom"/>
+                    <Button x:Name="buttonLoadTestsAssembly" Content="Load tests dll" VerticalAlignment="Top" Click="LoadTestsAssembly" Margin="10,24,0,0" HorizontalAlignment="Left" Width="90"/>
                 </Grid>
             </TabItem>
             <TabItem x:Name="tabCoverage" Header="Coverage" Height="23" VerticalAlignment="Bottom">
                 <Grid Background="#FFE5E5E5">
-                    <Button x:Name="buttonLoadSpecs" Content="Load Specs" HorizontalAlignment="Left" Margin="224,24,0,0" VerticalAlignment="Top" Width="95" Click="LoadSpecs"/>
-                    <Button x:Name="buttonGetCoverage" Content="Get coverage" HorizontalAlignment="Left" Margin="224,49,0,0" VerticalAlignment="Top" Width="95" Click="GetAutomationCoverage" IsEnabled="False"/>
-                    <DataGrid x:Name="gridCoverage" HorizontalScrollBarVisibility="Disabled" HeadersVisibility="All" Grid.Column="0" RowHeaderWidth="0" CanUserAddRows="False" AutoGenerateColumns="False"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="10,80,535,10">
+                    <Button x:Name="buttonLoadSpecs" Content="Load Specs" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="90" Click="LoadSpecs"/>
+                    <Button x:Name="buttonGetCoverage" Content="Get coverage" HorizontalAlignment="Left" Margin="10,35,0,0" VerticalAlignment="Top" Width="90" Click="GetAutomationCoverage" IsEnabled="False"/>
+                    <DataGrid x:Name="gridCoverage" HorizontalScrollBarVisibility="Disabled" HeadersVisibility="All" Grid.Column="0" RowHeaderWidth="0" CanUserAddRows="False" AutoGenerateColumns="False"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="10,70,315,80">
                         <DataGrid.Columns>
-                            <DataGridTemplateColumn Header="Module"  Width="500">
+                            <DataGridTemplateColumn Header="Module"  Width="720">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <Grid>
@@ -105,23 +108,22 @@
                             </DataGridTemplateColumn>
                         </DataGrid.Columns>
                     </DataGrid>
-                    <ScrollViewer Margin="638,80,250,10" VerticalScrollBarVisibility="Auto">
-                        <Grid x:Name="gridModules" Background="White"/>
+                    <ScrollViewer Margin="0,70,10,80" VerticalScrollBarVisibility="Auto" HorizontalAlignment="Right" Width="300">
+                        <Grid x:Name="gridModules"/>
                     </ScrollViewer>
-                    <TextBox x:Name="textBoxRunTags" Text="" Margin="923,80,10,0" FontSize="10" Height="248" VerticalAlignment="Top" TextWrapping="Wrap"/>
+                    <TextBox x:Name="textBoxRunTags" Text="" Margin="10,0,10,10" FontSize="10" TextWrapping="Wrap" Height="65" VerticalAlignment="Bottom"/>
                 </Grid>
             </TabItem>
         </TabControl>
-        <Button x:Name="buttonLoadTestsAssembly" Content="Load tests assembly" VerticalAlignment="Top" Click="LoadTestsAssembly" Margin="0,12,10,0" Grid.ColumnSpan="2" HorizontalAlignment="Right" Width="115"/>
         <TextBox x:Name="textBoxStatistics" Text="" Margin="0,686,0,0" IsEnabled="False" Grid.ColumnSpan="2"/>
 
         <Button x:Name="btnVisualizeLaunch" Content="Visualize launch" HorizontalAlignment="Right" VerticalAlignment="Top" Width="115" Grid.ColumnSpan="2" Margin="0,12,130,0" Click="btnVisualizeLaunch_Click"/>
-        <GroupBox x:Name="groupBox" Grid.ColumnSpan="2" Header="Visualization" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="22,39,0,0" Height="76" Width="200">
+        <GroupBox x:Name="groupBoxVisualization" Grid.ColumnSpan="2" Header="Visualization" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="125,40,0,0" Height="55" Width="411" IsEnabled="False">
             <Grid>
-                <CheckBox x:Name="checkBoxModern" Content="Circles" Margin="105,9,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.274,0.533" HorizontalAlignment="Left" Width="66" IsEnabled="False"/>
-                <CheckBox x:Name="checkBoxFullscreen" Content="Fullscreen" Margin="105,35,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.274,0.533" HorizontalAlignment="Left" Width="78" IsEnabled="False"/>
-                <Button x:Name="buttonVisualize" Content="Visualize" Width="91" Margin="9,6,0,0" VerticalAlignment="Top" Click="Visualize" HorizontalAlignment="Left" IsEnabled="False"/>
-                <ComboBox x:Name="comboBoxPalette" HorizontalAlignment="Left" Margin="9,31,0,0" VerticalAlignment="Top" Width="91" IsEnabled="False" Height="20" FontSize="11" HorizontalContentAlignment="Center">
+                <CheckBox x:Name="checkBoxModern" Content="Circles" Margin="210,9,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.274,0.533" HorizontalAlignment="Left" Width="66"/>
+                <CheckBox x:Name="checkBoxFullscreen" Content="Fullscreen" Margin="281,9,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.274,0.533" HorizontalAlignment="Left" Width="78"/>
+                <Button x:Name="buttonVisualize" Content="Visualize" Width="90" Margin="9,6,0,0" VerticalAlignment="Top" Click="Visualize" HorizontalAlignment="Left" />
+                <ComboBox x:Name="comboBoxPalette" HorizontalAlignment="Left" Margin="105,6,0,0" VerticalAlignment="Top" Width="100" Height="20" FontSize="11" HorizontalContentAlignment="Center">
                     <ComboBoxItem Content="Light Green" Background="#558B2F" IsSelected="True"/>
                     <ComboBoxItem Content="Deep Purple" Background="#311B92"/>
                     <ComboBoxItem Content="Orange" Background="#EF6C00"/>
