@@ -6,7 +6,6 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Media.Effects;
 using System.Windows.Shapes;
 using Unicorn.Toolbox.Analysis;
 using Unicorn.Toolbox.Analysis.Filtering;
@@ -15,22 +14,29 @@ using Unicorn.Toolbox.Visualization.Palettes;
 
 namespace Unicorn.Toolbox.Visualization
 {
-    public static class VisualizerCircles
+    public class VisualizerCircles : AbstractVisualizer
     {
-        private static Random random = new Random();
-        private static int margin = 30;
-        private static List<Rect> rects = new List<Rect>();
+        private const int Margin = 30;
 
-        private static IPalette palette;
+        private readonly Random random;
+        private readonly List<Rect> rects;
 
-        public static void VisualizeAllData(AutomationData data, FilterType filterType, IPalette activePalette, Canvas canvas)
+        public VisualizerCircles(Canvas canvas, IPalette palette) : base(canvas, palette)
         {
-            palette = activePalette;
-            canvas.Background = palette.BackColor;
-            rects.Clear();
-            canvas.Children.Clear();
+            this.rects = new List<Rect>();
 
-            var stats = GetStats(data, filterType);
+#pragma warning disable S2245 // Using pseudorandom number generators (PRNGs) is security-sensitive
+            this.random = new Random();
+#pragma warning restore S2245 // Using pseudorandom number generators (PRNGs) is security-sensitive
+        }
+
+        public override void VisualizeAutomationData(AutomationData data, FilterType filterType)
+        {
+            PrepareCanvas();
+
+            rects.Clear();
+
+            var stats = GetAutomationStatistics(data, filterType);
 
             int max = stats.Values.Max();
             int featuresCount = stats.Values.Count;
@@ -43,17 +49,16 @@ namespace Unicorn.Toolbox.Visualization
 
             foreach (KeyValuePair<string, int> pair in items)
             {
-                int radius = CalculateRadius(pair.Value, max, featuresCount, (int)canvas.RenderSize.Width);
-                DrawFeature(pair.Key, pair.Value, radius, currentIndex++, featuresCount, canvas);
+                int radius = CalculateRadius(pair.Value, max, featuresCount, (int)Canvas.RenderSize.Width);
+                DrawFeature(pair.Key, pair.Value, radius, currentIndex++, featuresCount, Canvas);
             }
         }
 
-        public static void VisualizeCoverage(AppSpecs specs, IPalette activePalette, Canvas canvas)
+        public override void VisualizeCoverage(AppSpecs specs)
         {
-            palette = activePalette;
-            canvas.Background = palette.BackColor;
+            PrepareCanvas();
+
             rects.Clear();
-            canvas.Children.Clear();
 
             var featuresStats = new Dictionary<string, int>();
 
@@ -77,65 +82,12 @@ namespace Unicorn.Toolbox.Visualization
 
             foreach (KeyValuePair<string, int> pair in items)
             {
-                int radius = CalculateRadius(pair.Value, max, featuresCount, (int)canvas.RenderSize.Width);
-                DrawFeature(pair.Key, pair.Value, radius, currentIndex++, featuresCount, canvas);
+                int radius = CalculateRadius(pair.Value, max, featuresCount, (int)Canvas.RenderSize.Width);
+                DrawFeature(pair.Key, pair.Value, radius, currentIndex++, featuresCount, Canvas);
             }
         }
 
-        public static Dictionary<string, int> GetStats(AutomationData data, FilterType filterType)
-        {
-            var stats = new Dictionary<string, int>();
-
-            switch (filterType)
-            {
-                case FilterType.Feature:
-                    {
-                        foreach (var feature in data.UniqueFeatures)
-                        {
-                            var suites = data.SuitesInfos.Where(s => s.Features.Contains(feature));
-                            var tests = from SuiteInfo s
-                                        in suites
-                                        select s.TestsInfos;
-
-                            stats.Add(feature, tests.Sum(t => t.Count));
-                        }
-
-                        return stats;
-                    }
-
-                case FilterType.Category:
-                    {
-                        foreach (var category in data.UniqueCategories)
-                        {
-                            var tests = from SuiteInfo s
-                                        in data.SuitesInfos
-                                        select s.TestsInfos.Where(ti => ti.Categories.Contains(category));
-
-                            stats.Add(category, tests.Sum(t => t.Count()));
-                        }
-
-                        return stats;
-                    }
-
-                case FilterType.Author:
-                    {
-                        foreach (var author in data.UniqueAuthors)
-                        {
-                            var tests = from SuiteInfo s
-                                        in data.SuitesInfos
-                                        select s.TestsInfos.Where(ti => ti.Author.Equals(author));
-
-                            stats.Add(author, tests.Sum(t => t.Count()));
-                        }
-
-                        return stats;
-                    }
-            }
-
-            throw new ArgumentException("please check args");
-        }
-
-        private static void DrawFeature(string name, int tests, int radius, int index, int featuresCount, Canvas canvas)
+        private void DrawFeature(string name, int tests, int radius, int index, int featuresCount, Canvas canvas)
         {
             int x = 0;
             int y = 0;
@@ -143,42 +95,45 @@ namespace Unicorn.Toolbox.Visualization
 
             do
             {
-                x = random.Next(margin + radius, (int)canvas.RenderSize.Width - radius - margin);
-                y = random.Next(margin + radius, (int)canvas.RenderSize.Height - radius - margin);
+                x = random.Next(Margin + radius, (int)canvas.RenderSize.Width - radius - Margin);
+                y = random.Next(Margin + radius, (int)canvas.RenderSize.Height - radius - Margin);
 
-                rect = new Rect(x - radius - margin, y - radius - margin, (radius + margin) * 2, (radius + margin) * 2);
+                rect = new Rect(x - radius - Margin, y - radius - Margin, (radius + Margin) * 2, (radius + Margin) * 2);
             }
             while (rects.Any(r => r.IntersectsWith(rect)));
 
             rects.Add(rect);
 
-            double colorIndexStep = (double)palette.DataColors.Count / featuresCount;
+            double colorIndexStep = (double)Palette.DataColors.Count / featuresCount;
             int currentColorIndex = (int)(((index + 1) * colorIndexStep) - 1);
 
-            var shadowEffect = palette is DeepPurple ? new DropShadowEffect() { Color = Color.FromRgb(137, 137, 137) } : new DropShadowEffect();
-
-            var ellipse = new Ellipse()
+            var ellipse = new Ellipse
             {
-                Fill = palette.DataColors[currentColorIndex],
+                Fill = Palette.DataColors[currentColorIndex],
                 Width = radius * 2,
                 Height = radius * 2,
                 StrokeThickness = 0.1,
                 Stroke = Brushes.Black,
-                Effect = shadowEffect,
+                Effect = Shadow,
                 ToolTip = tests
             };
 
+            canvas.Children.Add(ellipse);
             Canvas.SetLeft(ellipse, x - radius);
             Canvas.SetTop(ellipse, y - radius);
-            canvas.Children.Add(ellipse);
 
+            AddLabel(x, y, radius, name);
+        }
+
+        private void AddLabel(double x, double y, double yOffset, string labelText)
+        {
             var label = new TextBlock
             {
-                Text = CamelCase(name),
+                Text = CamelCase(labelText),
                 TextAlignment = TextAlignment.Center,
                 FontFamily = new FontFamily("Calibri"),
                 FontSize = 15,
-                Foreground = palette.DataFontColor
+                Foreground = Palette.DataFontColor
             };
 
             var formattedText = new FormattedText(
@@ -188,45 +143,37 @@ namespace Unicorn.Toolbox.Visualization
                 new Typeface(label.FontFamily, label.FontStyle, label.FontWeight, label.FontStretch),
                 label.FontSize,
                 Brushes.Black,
-                new NumberSubstitution(), 
+                new NumberSubstitution(),
                 TextFormattingMode.Display);
 
-            canvas.Children.Add(label);
+            Canvas.Children.Add(label);
             Canvas.SetLeft(label, x - (formattedText.Width / 2));
-            Canvas.SetTop(label, y - radius - formattedText.Height);
-
-            ////var labelCount = new TextBlock
-            ////{
-            ////    Text = tests.ToString(),
-            ////    TextAlignment = TextAlignment.Center,
-            ////    FontFamily = new FontFamily("Calibri"),
-            ////    FontSize = 15,
-            ////    Foreground = palette.DataFontColor
-            ////};
-
-            ////canvas.Children.Add(labelCount);
-            ////Canvas.SetLeft(labelCount, x - (formattedText.Width / 2));
-            ////Canvas.SetTop(labelCount, y - (formattedText.Height / 2));
+            Canvas.SetTop(label, y - yOffset - formattedText.Height);
         }
 
-        private static int CalculateRadius(int capacity, int max, int count, int canvasSize)
+        private int CalculateRadius(int capacity, int max, int count, int canvasSize)
         {
             if (capacity == 0)
             {
                 return 1;
             }
 
-            double radius = (double)canvasSize / Math.Sqrt(count + margin);
+            double radius = (double)canvasSize / Math.Sqrt(count + Margin);
             double ratio = (double)capacity / (double)max;
             return (int)(radius * ratio / 2);
         }
 
-        private static string CamelCase(string s)
+        private string CamelCase(string s)
         {
-            var x = s.Replace("_", "");
-            if (x.Length == 0) return "Null";
-            x = Regex.Replace(x, "([A-Z])([A-Z]+)",
-                m => m.Groups[1].Value + m.Groups[2].Value.ToLower());
+            var x = s.Replace("_", " ");
+
+            if (x.Length == 0)
+            {
+                return "Null";
+            }
+
+            x = Regex.Replace(x, "([A-Z])([A-Z]+)", m => m.Groups[1].Value + m.Groups[2].Value.ToLower());
+
             return char.ToUpper(x[0]) + x.Substring(1);
         }
     }

@@ -86,6 +86,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>packages.config</DependentUpon>
     </Compile>
+    <Compile Include="Visualization\AbstractVisualizer.cs" />
     <Compile Include="Visualization\Palettes\Orange.cs" />
     <Compile Include="Visualization\Palettes\LightGreen.cs" />
     <Compile Include="Visualization\Palettes\DeepPurple.cs" />

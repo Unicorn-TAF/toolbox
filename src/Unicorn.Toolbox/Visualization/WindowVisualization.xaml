@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Unicorn.Toolbox.Visualization"
         mc:Ignorable="d"
-        Title="Visualizator" Height="750" Width="1100" ResizeMode="NoResize">
+        Title="Visualizer" Height="750" Width="1100" ResizeMode="NoResize" Icon="/Unicorn.Toolbox;component/unicornIcon.ico">
     <Grid>
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <Canvas x:Name="canvasVisualization" Background="#FF1E1E1E"/>

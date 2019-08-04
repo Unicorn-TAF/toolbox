@@ -5,7 +5,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Media.Effects;
 using System.Windows.Shapes;
 using Unicorn.Toolbox.Analysis;
 using Unicorn.Toolbox.Analysis.Filtering;
@@ -14,20 +13,20 @@ using Unicorn.Toolbox.Visualization.Palettes;
 
 namespace Unicorn.Toolbox.Visualization
 {
-    public static class VizualizerBars
+    public class VisualizerBars : AbstractVisualizer
     {
-        private static int margin = 15;
-        private static int minBarHeight = 20;
+        private const int margin = 15;
+        private const int minBarHeight = 20;
 
-        private static IPalette palette;
-
-        public static void VisualizeAllData(AutomationData data, FilterType filterType, IPalette activePalette, Canvas canvas)
+        public VisualizerBars(Canvas canvas, IPalette palette) : base(canvas, palette)
         {
-            palette = activePalette;
-            canvas.Background = palette.BackColor;
-            canvas.Children.Clear();
+        }
 
-            var stats = VisualizerCircles.GetStats(data, filterType);
+        public override void VisualizeAutomationData(AutomationData data, FilterType filterType)
+        {
+            PrepareCanvas();
+
+            var stats = GetAutomationStatistics(data, filterType);
 
             int max = stats.Values.Max();
             int featuresCount = stats.Values.Count;
@@ -38,9 +37,9 @@ namespace Unicorn.Toolbox.Visualization
 
             var expectedHeight = (minBarHeight + margin) * items.Count() + margin;
 
-            if (canvas.RenderSize.Height < expectedHeight)
+            if (Canvas.RenderSize.Height < expectedHeight)
             {
-                canvas.Height = expectedHeight;
+                Canvas.Height = expectedHeight;
             }
 
 
@@ -48,15 +47,13 @@ namespace Unicorn.Toolbox.Visualization
 
             foreach (KeyValuePair<string, int> pair in items)
             {
-                DrawFeature(pair.Key, pair.Value, currentIndex++, max, featuresCount, canvas);
+                DrawFeature(pair.Key, pair.Value, currentIndex++, max, featuresCount, Canvas);
             }
         }
 
-        public static void VisualizeCoverage(AppSpecs specs, IPalette activePalette, Canvas canvas)
+        public override void VisualizeCoverage(AppSpecs specs)
         {
-            palette = activePalette;
-            canvas.Background = palette.BackColor;
-            canvas.Children.Clear();
+            PrepareCanvas();
 
             var featuresStats = new Dictionary<string, int>();
 
@@ -80,11 +77,11 @@ namespace Unicorn.Toolbox.Visualization
 
             foreach (KeyValuePair<string, int> pair in items)
             {
-                DrawFeature(pair.Key, pair.Value, currentIndex++, max, featuresCount, canvas);
+                DrawFeature(pair.Key, pair.Value, currentIndex++, max, featuresCount, Canvas);
             }
         }
 
-        private static void DrawFeature(string name, int tests, int index, int max, int featuresCount, Canvas canvas)
+        private void DrawFeature(string name, int tests, int index, int max, int featuresCount, Canvas canvas)
         {
             var workHeight = canvas.RenderSize.Height - (2 * margin);
             var workWidth = canvas.RenderSize.Width - (2 * margin);
@@ -95,19 +92,17 @@ namespace Unicorn.Toolbox.Visualization
             double x = margin;
             double y = margin + (index * (height + margin));
 
-            double colorIndexStep = (double)palette.DataColors.Count / featuresCount;
+            double colorIndexStep = (double)Palette.DataColors.Count / featuresCount;
             int currentColorIndex = (int)(((index + 1) * colorIndexStep) - 1);
-
-            var shadowEffect = palette is DeepPurple ? new DropShadowEffect() { Color = Color.FromRgb(137, 137, 137) } : new DropShadowEffect();
 
             var bar = new Rectangle()
             {
-                Fill = palette.DataColors[currentColorIndex],
+                Fill = Palette.DataColors[currentColorIndex],
                 Width = width,
                 Height = height,
                 StrokeThickness = 1,
                 Stroke = Brushes.Black,
-                Effect = shadowEffect
+                Effect = Shadow
             };
 
             Canvas.SetLeft(bar, x);
@@ -130,7 +125,7 @@ namespace Unicorn.Toolbox.Visualization
                 new NumberSubstitution(), 
                 TextFormattingMode.Display);
 
-            label.Foreground = formattedText.Width > width ? palette.FontColor : palette.DataFontColor;
+            label.Foreground = formattedText.Width > width ? Palette.FontColor : Palette.DataFontColor;
 
             canvas.Children.Add(label);
             Canvas.SetLeft(label, x + 2);

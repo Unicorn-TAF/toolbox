@@ -248,11 +248,11 @@ namespace Unicorn.Toolbox
 
             if (checkBoxModern.IsChecked.HasValue && checkBoxModern.IsChecked.Value)
             {
-                VisualizerCircles.VisualizeCoverage(coverage.Specs, GetPalette(), visualization.canvasVisualization);
+                new VisualizerCircles(visualization.canvasVisualization, GetPalette()).VisualizeCoverage(coverage.Specs);
             }
             else
             {
-                VizualizerBars.VisualizeCoverage(coverage.Specs, GetPalette(), visualization.canvasVisualization);
+                new VisualizerBars(visualization.canvasVisualization, GetPalette()).VisualizeCoverage(coverage.Specs);
             }
         }
 
@@ -276,11 +276,11 @@ namespace Unicorn.Toolbox
 
             if (checkBoxModern.IsChecked.HasValue && checkBoxModern.IsChecked.Value)
             {
-                VisualizerCircles.VisualizeAllData(analyzer.Data, filter, GetPalette(), visualization.canvasVisualization);
+                new VisualizerCircles(visualization.canvasVisualization, GetPalette()).VisualizeAutomationData(analyzer.Data, filter);
             }
             else
             {
-                VizualizerBars.VisualizeAllData(analyzer.Data, filter, GetPalette(), visualization.canvasVisualization);
+                new VisualizerBars(visualization.canvasVisualization, GetPalette()).VisualizeAutomationData(analyzer.Data, filter);
             }
         }
 
