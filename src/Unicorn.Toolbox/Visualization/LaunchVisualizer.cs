@@ -14,6 +14,8 @@ namespace Unicorn.Toolbox.Visualization
     public class LaunchVisualizer
     {
         private const int Margin = 20;
+        private const double MaxBarHeight = 100;
+        private const double MinBarHeight = 50;
 
         private readonly Random random;
         private readonly Brush fontColor;
@@ -130,6 +132,9 @@ namespace Unicorn.Toolbox.Visualization
         private void DrawResult(TestResult result, int index, double start, Canvas canvas)
         {
             double height = (workHeight / threadsCount) - Margin;
+            height = Math.Min(MaxBarHeight, height);
+            height = Math.Max(MinBarHeight, height);
+
             double width = result.Duration.TotalMilliseconds * ratio;
 
             double x = Margin + (start - earliestTime) * ratio;
@@ -147,7 +152,7 @@ namespace Unicorn.Toolbox.Visualization
                 {
                     Fill = brush,
                     Width = width,
-                    Height = height + 10,
+                    Height = height,
                     StrokeThickness = 1,
                     Stroke = Brushes.Gray,
                     StrokeDashArray = new DoubleCollection() { 5, 1 },
@@ -169,7 +174,7 @@ namespace Unicorn.Toolbox.Visualization
             {
                 Fill = currentBrush,
                 Width = width,
-                Height = height,
+                Height = height * 0.75,
                 StrokeThickness = 1,
                 Stroke = Brushes.Black,
                 ToolTip = tooltipText,

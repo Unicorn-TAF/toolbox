@@ -11,7 +11,7 @@
             <ColumnDefinition Width="0*"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <TabControl x:Name="tabControl" Margin="10,10,10,0" Grid.ColumnSpan="2" Height="671" VerticalAlignment="Top">
+        <TabControl x:Name="tabControl" Margin="10,10,10,0" Grid.ColumnSpan="2" Height="671" VerticalAlignment="Top" SelectionChanged="tabControl_SelectionChanged">
             <TabItem x:Name="tabStatistics" Header="Tests statistics">
                 <Grid x:Name="gridStatistics" Background="#FFE5E5E5" Margin="0,0,0,1">
                     <DataGrid x:Name="gridResults" HorizontalScrollBarVisibility="Disabled" HeadersVisibility="All" Grid.Column="0" RowHeaderWidth="0" CanUserAddRows="False" AutoGenerateColumns="False"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="224,70,10,80">
@@ -81,7 +81,7 @@
                         <CheckBox x:Name="checkOnlyDisabledTests" Content="Only Disabled tests" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="24,76,0,0" RenderTransformOrigin="0.633,1.422" Checked="checkOnlyDisabledTests_Checked"/>
                     </Grid>
                     <TextBox x:Name="textBoxCurrentFilter" Text="" Margin="10,0,10,10" IsEnabled="False" FontSize="10" Height="65" VerticalAlignment="Bottom"/>
-                    <Button x:Name="buttonLoadTestsAssembly" Content="Load tests dll" VerticalAlignment="Top" Click="LoadTestsAssembly" Margin="10,24,0,0" HorizontalAlignment="Left" Width="90"/>
+                    <Button x:Name="buttonLoadTestsAssembly" Content="Load tests dll" VerticalAlignment="Top" Click="LoadTestsAssembly" Margin="10,22,0,0" HorizontalAlignment="Left" Width="90"/>
                 </Grid>
             </TabItem>
             <TabItem x:Name="tabCoverage" Header="Coverage" Height="23" VerticalAlignment="Bottom">
@@ -114,16 +114,20 @@
                     <TextBox x:Name="textBoxRunTags" Text="" Margin="10,0,10,10" FontSize="10" TextWrapping="Wrap" Height="65" VerticalAlignment="Bottom"/>
                 </Grid>
             </TabItem>
+            <TabItem x:Name="tabResultsAnalysis" Header="Results Analysis">
+                <Grid Background="#FFE5E5E5">
+                    <Button x:Name="btnVisualizeLaunch" Content="Visualize launch" VerticalAlignment="Top" Margin="10,37,0,0" Click="btnVisualizeLaunch_Click" HorizontalAlignment="Left" Width="90" IsEnabled="False"/>
+                    <Button x:Name="btnLoadTrx" Content="Load TRX files" VerticalAlignment="Top" Margin="10,10,0,0" Click="btnLoadTrx_Click" HorizontalAlignment="Left" Width="90"/>
+                </Grid>
+            </TabItem>
         </TabControl>
         <TextBox x:Name="textBoxStatistics" Text="" Margin="0,686,0,0" IsEnabled="False" Grid.ColumnSpan="2"/>
-
-        <Button x:Name="btnVisualizeLaunch" Content="Visualize launch" HorizontalAlignment="Right" VerticalAlignment="Top" Width="115" Grid.ColumnSpan="2" Margin="0,12,130,0" Click="btnVisualizeLaunch_Click"/>
         <GroupBox x:Name="groupBoxVisualization" Grid.ColumnSpan="2" Header="Visualization" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="125,40,0,0" Height="55" Width="411" IsEnabled="False">
             <Grid>
                 <CheckBox x:Name="checkBoxModern" Content="Circles" Margin="210,9,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.274,0.533" HorizontalAlignment="Left" Width="66"/>
                 <CheckBox x:Name="checkBoxFullscreen" Content="Fullscreen" Margin="281,9,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.274,0.533" HorizontalAlignment="Left" Width="78"/>
                 <Button x:Name="buttonVisualize" Content="Visualize" Width="90" Margin="9,6,0,0" VerticalAlignment="Top" Click="Visualize" HorizontalAlignment="Left" />
-                <ComboBox x:Name="comboBoxPalette" HorizontalAlignment="Left" Margin="105,6,0,0" VerticalAlignment="Top" Width="100" Height="20" FontSize="11" HorizontalContentAlignment="Center">
+                <ComboBox x:Name="comboBoxPalette" HorizontalAlignment="Left" Margin="105,6,0,0" VerticalAlignment="Top" Width="100" Height="22" FontSize="11" HorizontalContentAlignment="Center">
                     <ComboBoxItem Content="Light Green" Background="#558B2F" IsSelected="True"/>
                     <ComboBoxItem Content="Deep Purple" Background="#311B92"/>
                     <ComboBoxItem Content="Orange" Background="#EF6C00"/>

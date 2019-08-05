@@ -17,7 +17,7 @@ namespace Unicorn.Toolbox.LaunchAnalysis
         public List<TestResult> GetAllTests()
         {
             var tests = new List<TestResult>();
-            XNamespace ns = "http://microsoft.com/schemas/VisualStudio/TeamTest/2010";
+            XNamespace ns = trx.Root.GetDefaultNamespace();
             var xUnitTests = trx.Root.Element(ns + "TestDefinitions").Elements(ns + "UnitTest");
             var xTestLists = trx.Root.Element(ns + "TestLists").Elements(ns + "TestList");
             var results = trx.Root.Element(ns + "Results").Elements(ns + "UnitTestResult");
@@ -25,7 +25,10 @@ namespace Unicorn.Toolbox.LaunchAnalysis
             foreach (var xUnitTest in xUnitTests)
             {
                 var id = xUnitTest.Attribute("id").Value;
-                var description = xUnitTest.Element(ns + "Description").Value;
+
+                var name = xUnitTest.Attribute("name").Value;
+                var description = xUnitTest.Element(ns + "Description")?.Value;
+                var title = description == null ? name : description;
 
                 var xResult = results.First(r => r.Attribute("testId").Value.Equals(id));
                 var startTime = Convert.ToDateTime(xResult.Attribute("startTime").Value);
@@ -39,7 +42,7 @@ namespace Unicorn.Toolbox.LaunchAnalysis
                     continue;
                 }
 
-                var testResult = new TestResult(description, startTime, endTime, testListId, testListName);
+                var testResult = new TestResult(title, startTime, endTime, testListId, testListName);
 
                 tests.Add(testResult);
             }

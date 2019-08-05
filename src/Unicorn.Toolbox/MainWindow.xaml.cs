@@ -21,6 +21,7 @@ namespace Unicorn.Toolbox
     {
         private Analyzer analyzer;
         private SpecsCoverage coverage;
+        private LaunchResult launchResult;
 
         public MainWindow()
         {
@@ -165,7 +166,6 @@ namespace Unicorn.Toolbox
             }
         }
 
-
         private void UpdateRunTagsText(object sender, RoutedEventArgs e)
         {
             var runTags = new HashSet<string>();
@@ -231,19 +231,7 @@ namespace Unicorn.Toolbox
 
         private void VisualizeCoverage()
         {
-            var visualization = new WindowVisualization();
-            
-            visualization.Title = "Modules coverage by tests";
-
-            if (this.checkBoxFullscreen.IsChecked.HasValue && this.checkBoxFullscreen.IsChecked.Value)
-            {
-                visualization.WindowState = WindowState.Maximized;
-            }
-            else
-            {
-                visualization.ShowActivated = false;
-            }
-
+            var visualization = GetVisualizationWindow("Modules coverage by tests");
             visualization.Show();
 
             if (checkBoxModern.IsChecked.HasValue && checkBoxModern.IsChecked.Value)
@@ -259,19 +247,8 @@ namespace Unicorn.Toolbox
         private void VisualizeStatistics()
         {
             var filter = GetFilter();
-            var visualization = new WindowVisualization();
-            
-            visualization.Title = $"Overall tests statistics: {filter}";
 
-            if (this.checkBoxFullscreen.IsChecked.HasValue && this.checkBoxFullscreen.IsChecked.Value)
-            {
-                visualization.WindowState = WindowState.Maximized;
-            }
-            else
-            {
-                visualization.ShowActivated = false;
-            }
-
+            var visualization = GetVisualizationWindow($"Overall tests statistics: {filter}");
             visualization.Show();
 
             if (checkBoxModern.IsChecked.HasValue && checkBoxModern.IsChecked.Value)
@@ -333,48 +310,65 @@ namespace Unicorn.Toolbox
             }
         }
 
-        private void btnVisualizeLaunch_Click(object sender, RoutedEventArgs e)
+        private void btnLoadTrx_Click(object sender, RoutedEventArgs e)
         {
-            var openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Trx files|*.trx";
-            openFileDialog.Multiselect = true;
+            btnVisualizeLaunch.IsEnabled = false;
+
+            var openFileDialog = new OpenFileDialog
+            {
+                Filter = "Trx files|*.trx",
+                Multiselect = true
+            };
+
             openFileDialog.ShowDialog();
 
             var trxFiles = openFileDialog.FileNames;
 
-            if (!trxFiles.Any())
+            if (trxFiles.Any())
             {
-                return;
-            }
+                launchResult = new LaunchResult();
 
-            List<List<TestResult>> resultsList = new List<List<TestResult>>();
-
-            foreach (var trxFile in trxFiles)
-            {
-                try
+                foreach (var trxFile in trxFiles)
                 {
-                    var results = new TrxParser(trxFile).GetAllTests();
-
-                    if (results.Any())
+                    try
                     {
-                        resultsList.Add(results);
+                        launchResult.AppendResultsFromTrx(trxFile);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error parsing {trxFile} file:" + ex.ToString());
                     }
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Error parsing {trxFile} file:" + ex.ToString());
-                }
-
             }
 
-            var visualization = new WindowVisualization();
-            visualization.ShowActivated = false;
-            visualization.Title = "Launch visualization";
-            
-            visualization.Show();
-            ////visualization.WindowState = WindowState.Maximized;
+            btnVisualizeLaunch.IsEnabled = true;
+        }
 
-            new LaunchVisualizer(visualization.canvasVisualization, resultsList).Visualize();
+        private void btnVisualizeLaunch_Click(object sender, RoutedEventArgs e)
+        {
+            var visualization = GetVisualizationWindow("Launch visualization");
+            visualization.Show();
+
+            new LaunchVisualizer(visualization.canvasVisualization, launchResult.ResultsList).Visualize();
+        }
+
+        private WindowVisualization GetVisualizationWindow(string title)
+        {
+            var visualization = new WindowVisualization
+            {
+                Title = title
+            };
+
+            if (this.checkBoxFullscreen.IsChecked.HasValue && this.checkBoxFullscreen.IsChecked.Value)
+            {
+                visualization.WindowState = WindowState.Maximized;
+            }
+            else
+            {
+                visualization.ShowActivated = false;
+            }
+
+            return visualization;
         }
 
         private void checkOnlyDisabledTests_Checked(object sender, RoutedEventArgs e) =>
@@ -382,5 +376,17 @@ namespace Unicorn.Toolbox
 
         private void checkOnlyEnabledTests_Checked(object sender, RoutedEventArgs e) =>
             checkOnlyDisabledTests.IsChecked = false;
+
+        private void tabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (tabResultsAnalysis.IsSelected)
+            {
+                groupBoxVisualization.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                groupBoxVisualization.Visibility = Visibility.Visible;
+            }
+        }
     }
 }
