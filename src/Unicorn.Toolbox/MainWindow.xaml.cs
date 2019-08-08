@@ -38,6 +38,7 @@ namespace Unicorn.Toolbox
             openFileDialog.ShowDialog();
 
             groupBoxVisualization.IsEnabled = true;
+            groupBoxVisualizationStateTemp = true;
             string assemblyFile = openFileDialog.FileName;
 
             if (string.IsNullOrEmpty(assemblyFile))
