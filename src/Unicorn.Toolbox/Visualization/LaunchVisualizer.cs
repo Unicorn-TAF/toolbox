@@ -15,7 +15,7 @@ namespace Unicorn.Toolbox.Visualization
     {
         private const int Margin = 20;
         private const double MaxBarHeight = 100;
-        private const double MinBarHeight = 50;
+        private const double MinBarHeight = 30;
 
         private readonly Random random;
         private readonly Brush fontColor;
@@ -46,6 +46,7 @@ namespace Unicorn.Toolbox.Visualization
         public LaunchVisualizer(Canvas canvas, List<List<TestResult>> resultsList)
         {
             this.canvas = canvas;
+            this.canvas.Height = Math.Max(canvas.RenderSize.Height, resultsList.Count * (MinBarHeight + Margin) + Margin);
             this.resultsList = resultsList;
 
             this.random = new Random();
@@ -74,7 +75,7 @@ namespace Unicorn.Toolbox.Visualization
             currentStampBar = new Rectangle
             {
                 Width = 2,
-                Height = canvas.RenderSize.Height,
+                Height = this.canvas.Height,
                 Fill = fontColor,
                 StrokeThickness = 1
             };

@@ -81,7 +81,7 @@
                         <CheckBox x:Name="checkOnlyDisabledTests" Content="Only Disabled tests" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="24,76,0,0" RenderTransformOrigin="0.633,1.422" Checked="checkOnlyDisabledTests_Checked"/>
                     </Grid>
                     <TextBox x:Name="textBoxCurrentFilter" Text="" Margin="10,0,10,10" IsEnabled="False" FontSize="10" Height="65" VerticalAlignment="Bottom"/>
-                    <Button x:Name="buttonLoadTestsAssembly" Content="Load tests dll" VerticalAlignment="Top" Click="LoadTestsAssembly" Margin="10,22,0,0" HorizontalAlignment="Left" Width="90"/>
+                    <Button x:Name="buttonLoadTestsAssembly" Content="Load tests dll" VerticalAlignment="Top" Click="LoadTestsAssembly" Margin="10,24,0,0" HorizontalAlignment="Left" Width="90"/>
                 </Grid>
             </TabItem>
             <TabItem x:Name="tabCoverage" Header="Coverage" Height="23" VerticalAlignment="Bottom">
@@ -116,8 +116,7 @@
             </TabItem>
             <TabItem x:Name="tabResultsAnalysis" Header="Results Analysis">
                 <Grid Background="#FFE5E5E5">
-                    <Button x:Name="btnVisualizeLaunch" Content="Visualize launch" VerticalAlignment="Top" Margin="10,37,0,0" Click="btnVisualizeLaunch_Click" HorizontalAlignment="Left" Width="90" IsEnabled="False"/>
-                    <Button x:Name="btnLoadTrx" Content="Load TRX files" VerticalAlignment="Top" Margin="10,10,0,0" Click="btnLoadTrx_Click" HorizontalAlignment="Left" Width="90"/>
+                    <Button x:Name="btnLoadTrx" Content="Load TRX files" VerticalAlignment="Top" Margin="10,24,0,0" Click="btnLoadTrx_Click" HorizontalAlignment="Left" Width="90"/>
                 </Grid>
             </TabItem>
         </TabControl>
@@ -127,7 +126,7 @@
                 <CheckBox x:Name="checkBoxModern" Content="Circles" Margin="210,9,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.274,0.533" HorizontalAlignment="Left" Width="66"/>
                 <CheckBox x:Name="checkBoxFullscreen" Content="Fullscreen" Margin="281,9,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.274,0.533" HorizontalAlignment="Left" Width="78"/>
                 <Button x:Name="buttonVisualize" Content="Visualize" Width="90" Margin="9,6,0,0" VerticalAlignment="Top" Click="Visualize" HorizontalAlignment="Left" />
-                <ComboBox x:Name="comboBoxPalette" HorizontalAlignment="Left" Margin="105,6,0,0" VerticalAlignment="Top" Width="100" Height="22" FontSize="11" HorizontalContentAlignment="Center">
+                <ComboBox x:Name="comboBoxPalette" HorizontalAlignment="Left" Margin="105,6,0,0" VerticalAlignment="Top" Width="100" Height="20" FontSize="11" HorizontalContentAlignment="Center">
                     <ComboBoxItem Content="Light Green" Background="#558B2F" IsSelected="True"/>
                     <ComboBoxItem Content="Deep Purple" Background="#311B92"/>
                     <ComboBoxItem Content="Orange" Background="#EF6C00"/>

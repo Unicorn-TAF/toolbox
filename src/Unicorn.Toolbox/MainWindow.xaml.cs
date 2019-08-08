@@ -23,6 +23,9 @@ namespace Unicorn.Toolbox
         private SpecsCoverage coverage;
         private LaunchResult launchResult;
 
+        private bool groupBoxVisualizationStateTemp = false;
+        private bool trxLoaded = false;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -34,6 +37,7 @@ namespace Unicorn.Toolbox
             openFileDialog.Filter = "Unicorn tests assemblies|*.dll";
             openFileDialog.ShowDialog();
 
+            groupBoxVisualization.IsEnabled = true;
             string assemblyFile = openFileDialog.FileName;
 
             if (string.IsNullOrEmpty(assemblyFile))
@@ -42,7 +46,6 @@ namespace Unicorn.Toolbox
             }
 
             this.gridFilters.IsEnabled = true;
-            this.groupBoxVisualization.IsEnabled = true;
 
             this.analyzer = new Analyzer(assemblyFile);
             this.analyzer.GetTestsStatistics();
@@ -194,9 +197,13 @@ namespace Unicorn.Toolbox
             {
                 VisualizeStatistics();
             }
-            else
+            else if (tabCoverage.IsSelected)
             {
                 VisualizeCoverage();
+            }
+            else if (tabResultsAnalysis.IsSelected)
+            {
+                VisualizeResults();
             }
         }
 
@@ -312,7 +319,8 @@ namespace Unicorn.Toolbox
 
         private void btnLoadTrx_Click(object sender, RoutedEventArgs e)
         {
-            btnVisualizeLaunch.IsEnabled = false;
+            buttonVisualize.IsEnabled = false;
+            checkBoxFullscreen.IsEnabled = false;
 
             var openFileDialog = new OpenFileDialog
             {
@@ -341,10 +349,12 @@ namespace Unicorn.Toolbox
                 }
             }
 
-            btnVisualizeLaunch.IsEnabled = true;
+            buttonVisualize.IsEnabled = true;
+            checkBoxFullscreen.IsEnabled = true;
+            trxLoaded = true;
         }
 
-        private void btnVisualizeLaunch_Click(object sender, RoutedEventArgs e)
+        private void VisualizeResults()
         {
             var visualization = GetVisualizationWindow("Launch visualization");
             visualization.Show();
@@ -381,11 +391,20 @@ namespace Unicorn.Toolbox
         {
             if (tabResultsAnalysis.IsSelected)
             {
-                groupBoxVisualization.Visibility = Visibility.Hidden;
+                groupBoxVisualizationStateTemp = groupBoxVisualization.IsEnabled;
+                groupBoxVisualization.IsEnabled = true;
+                buttonVisualize.IsEnabled = trxLoaded;
+                checkBoxFullscreen.IsEnabled = trxLoaded;
+                checkBoxModern.IsEnabled = false;
+                comboBoxPalette.IsEnabled = false;
             }
             else
             {
-                groupBoxVisualization.Visibility = Visibility.Visible;
+                buttonVisualize.IsEnabled = true;
+                checkBoxFullscreen.IsEnabled = true;
+                checkBoxModern.IsEnabled = true;
+                comboBoxPalette.IsEnabled = true;
+                groupBoxVisualization.IsEnabled = groupBoxVisualizationStateTemp;
             }
         }
     }
