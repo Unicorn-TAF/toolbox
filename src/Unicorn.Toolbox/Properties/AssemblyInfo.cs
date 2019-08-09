@@ -11,8 +11,8 @@ using System.Windows;
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Vitaliy Dobriyan")]
-[assembly: AssemblyProduct("Unicorn")]
-[assembly: AssemblyCopyright("Copyright © Vitaliy Dobriyan 2018")]
+[assembly: AssemblyProduct("Unicorn.Toolbox")]
+[assembly: AssemblyCopyright("Copyright © 2019 Vitaliy Dobriyan")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -48,5 +48,5 @@ using System.Windows;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("2.1.0.0")]
+[assembly: AssemblyFileVersion("2.1.0.0")]
