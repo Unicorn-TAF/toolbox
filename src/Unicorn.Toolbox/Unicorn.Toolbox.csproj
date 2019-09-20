@@ -79,6 +79,7 @@
     <Compile Include="Coverage\AppSpecs.cs" />
     <Compile Include="Coverage\SpecsCoverage.cs" />
     <Compile Include="Coverage\Module.cs" />
+    <Compile Include="LaunchAnalysis\Execution.cs" />
     <Compile Include="LaunchAnalysis\LaunchResult.cs" />
     <Compile Include="LaunchAnalysis\TestResult.cs" />
     <Compile Include="LaunchAnalysis\TrxParser.cs" />

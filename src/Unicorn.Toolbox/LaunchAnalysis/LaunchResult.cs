@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace Unicorn.Toolbox.LaunchAnalysis
 {
@@ -7,10 +10,10 @@ namespace Unicorn.Toolbox.LaunchAnalysis
     {
         public LaunchResult()
         {
-            this.ResultsList = new List<List<TestResult>>();
+            this.Executions = new List<Execution>();
         }
 
-        public List<List<TestResult>> ResultsList { get; } 
+        public List<Execution> Executions { get; } 
 
         public void AppendResultsFromTrx(string trxFile)
         {
@@ -18,8 +21,40 @@ namespace Unicorn.Toolbox.LaunchAnalysis
 
             if (results.Any())
             {
-                ResultsList.Add(results);
+                var exeution = new Execution(Path.GetFileNameWithoutExtension(trxFile));
+                exeution.TestResults.AddRange(results);
+                Executions.Add(exeution);
             }
         }
+
+        public override string ToString() =>
+            new StringBuilder()
+            .AppendFormat("Threads: {0}\n", Executions.Count)
+            .AppendFormat("Launch duration: {0:F1} minutes\n", LaunchDuration / 60000)
+            .AppendFormat("Total execution time: {0:F1} minutes", Executions.SelectMany(e => e.TestResults).Sum(tr => tr.Duration.TotalMinutes))
+            .ToString();
+
+
+        public double LaunchDuration
+        {
+            get
+            {
+                var utcStart = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+                var earliestTime = double.MaxValue;
+                var latestTime = double.MinValue;
+
+                foreach (var execution in Executions)
+                {
+                    var min = execution.TestResults.Min(r => r.StartTime).ToUniversalTime().Subtract(utcStart).TotalMilliseconds;
+                    earliestTime = Math.Min(earliestTime, min);
+
+                    var max = execution.TestResults.Max(r => r.EndTime).ToUniversalTime().Subtract(utcStart).TotalMilliseconds;
+                    latestTime = Math.Max(latestTime, max);
+                }
+
+                return latestTime - earliestTime;
+            }
+        } 
     }
 }

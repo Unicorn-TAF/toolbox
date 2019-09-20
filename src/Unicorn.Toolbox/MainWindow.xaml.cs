@@ -350,6 +350,11 @@ namespace Unicorn.Toolbox
                 }
             }
 
+            this.gridTestResults.ItemsSource = null;
+            this.gridTestResults.ItemsSource = launchResult.Executions;
+
+            this.textBoxLaunchSummary.Text = launchResult.ToString();
+
             buttonVisualize.IsEnabled = true;
             checkBoxFullscreen.IsEnabled = true;
             trxLoaded = true;
@@ -360,7 +365,7 @@ namespace Unicorn.Toolbox
             var visualization = GetVisualizationWindow("Launch visualization");
             visualization.Show();
 
-            new LaunchVisualizer(visualization.canvasVisualization, launchResult.ResultsList).Visualize();
+            new LaunchVisualizer(visualization.canvasVisualization, launchResult.Executions).Visualize();
         }
 
         private WindowVisualization GetVisualizationWindow(string title)

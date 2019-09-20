@@ -22,7 +22,7 @@ namespace Unicorn.Toolbox.Visualization
         private readonly Brush backColor;
         
         private readonly Canvas canvas;
-        private readonly List<List<TestResult>> resultsList;
+        private readonly List<Execution> resultsList;
 
         private readonly int threadsCount;
 
@@ -43,7 +43,7 @@ namespace Unicorn.Toolbox.Visualization
         private Rectangle currentSuite;
         private bool newSuite = false;
 
-        public LaunchVisualizer(Canvas canvas, List<List<TestResult>> resultsList)
+        public LaunchVisualizer(Canvas canvas, List<Execution> resultsList)
         {
             this.canvas = canvas;
             this.canvas.Height = Math.Max(canvas.RenderSize.Height, resultsList.Count * (MinBarHeight + Margin) + Margin);
@@ -60,12 +60,12 @@ namespace Unicorn.Toolbox.Visualization
 
             utcStart = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
-            foreach (var list in resultsList)
+            foreach (var execution in resultsList)
             {
-                var min = list.Min(r => r.StartTime).ToUniversalTime().Subtract(utcStart).TotalMilliseconds;
+                var min = execution.TestResults.Min(r => r.StartTime).ToUniversalTime().Subtract(utcStart).TotalMilliseconds;
                 earliestTime = Math.Min(earliestTime, min);
 
-                var max = list.Max(r => r.EndTime).ToUniversalTime().Subtract(utcStart).TotalMilliseconds;
+                var max = execution.TestResults.Max(r => r.EndTime).ToUniversalTime().Subtract(utcStart).TotalMilliseconds;
                 latestTime = Math.Max(latestTime, max);
             }
 
@@ -98,12 +98,12 @@ namespace Unicorn.Toolbox.Visualization
             SetRandomColor();
             int currentIndex = 0;
 
-            var listId = resultsList[0][0].TestListId;
+            var listId = resultsList[0].TestResults[0].TestListId;
             newSuite = true;
 
-            foreach (var results in resultsList)
+            foreach (var execution in resultsList)
             {
-                foreach (var result in results)
+                foreach (var result in execution.TestResults)
                 {
                     if (!result.TestListId.Equals(listId, StringComparison.InvariantCultureIgnoreCase))
                     {
