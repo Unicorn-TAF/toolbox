@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Id="UnicornTestAdapter.Microsoft.84087b45-c972-4af6-9b61-5f3a4691b3f1" Version="2.0" Language="en-US" Publisher="Vitaliy Dobriyan" />
+    <Identity Id="UnicornTestAdapter.Microsoft.84087b45-c972-4af6-9b61-5f3a4691b3f1" Version="2.2" Language="en-US" Publisher="Vitaliy Dobriyan" />
     <DisplayName>Unicorn VS Adapter</DisplayName>
     <Description xml:space="preserve">Unicorn Test Adapter for Visual Studio</Description>
     <MoreInfo>https://bitbucket.org/dobriyanchik/unicorntools/wiki/Home</MoreInfo>
