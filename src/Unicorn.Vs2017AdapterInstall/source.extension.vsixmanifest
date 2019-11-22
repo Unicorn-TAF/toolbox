@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
+    <Metadata>
+        <Identity Id="Unicorn.TestAdapter" Version="2.0" Language="en-US" Publisher="Vitaliy Dobriyan" />
+        <DisplayName>Unicorn TestAdapter</DisplayName>
+        <Description xml:space="preserve">Unicorn Test Adapter for Visual Studio</Description>
+        <License>LICENSE.txt</License>
+        <Icon>unicornLogo.png</Icon>
+        <PreviewImage>unicornLogo.png</PreviewImage>
+    </Metadata>
+    <Installation>
+        <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="[15.0, 16.0)" />
+    </Installation>
+    <Dependencies>
+        <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="4.5.2" />
+    </Dependencies>
+    <Assets>
+        <Asset Type="UnitTestExtension" d:Source="Project" d:ProjectName="Unicorn.TestAdapter" Path="|Unicorn.TestAdapter|" />
+    </Assets>
+    <Prerequisites>
+        <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[15.0,16.0)" DisplayName="Visual Studio core editor" />
+    </Prerequisites>
+</PackageManifest>
