@@ -9,12 +9,14 @@ namespace Unicorn.Toolbox.Analysis
 {
     public class GetTestsStatisticsWorker : MarshalByRefObject
     {
-        private readonly Type baseSuiteType = typeof(TestSuite);
+        private readonly Type _baseSuiteType = typeof(TestSuite);
 
         public AutomationData GetTestsStatistics(string assemblyPath)
         {
             var data = new AutomationData();
+#pragma warning disable S3885 // "Assembly.Load" should be used
             var testsAssembly = Assembly.LoadFrom(assemblyPath);
+#pragma warning restore S3885 // "Assembly.Load" should be used
             var allSuites = TestsObserver.ObserveTestSuites(testsAssembly);
 
             foreach (var suiteType in allSuites)
@@ -43,7 +45,7 @@ namespace Unicorn.Toolbox.Analysis
             int inheritanceCounter = 0;
             var currentType = suiteInstance.GetType();
 
-            while (!currentType.Equals(baseSuiteType) && inheritanceCounter++ < 50)
+            while (!currentType.Equals(_baseSuiteType) && inheritanceCounter++ < 50)
             {
                 currentType = currentType.BaseType;
             }

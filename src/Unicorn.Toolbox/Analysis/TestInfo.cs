@@ -11,14 +11,14 @@ namespace Unicorn.Toolbox.Analysis
 
         public TestInfo(string testName, string author, bool disabled, IEnumerable<string> categories)
         {
-            this.Name = testName;
-            this.Author = author;
-            this.Disabled = disabled;
-            this.Categories = new List<string>(categories);
+            Name = testName;
+            Author = author;
+            Disabled = disabled;
+            Categories = new List<string>(categories);
 
-            if (!this.Categories.Any())
+            if (!Categories.Any())
             {
-                this.Categories.Add(NoCategory);
+                Categories.Add(NoCategory);
             }
         }
 

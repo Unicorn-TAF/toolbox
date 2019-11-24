@@ -7,20 +7,20 @@ namespace Unicorn.Toolbox.LaunchAnalysis
 {
     public class TrxParser
     {
-        private readonly XDocument trx;
+        private readonly XDocument _trx;
 
         public TrxParser(string fileName)
         {
-            trx = XDocument.Load(fileName);
+            _trx = XDocument.Load(fileName);
         }
 
         public List<TestResult> GetAllTests()
         {
             var tests = new List<TestResult>();
-            XNamespace ns = trx.Root.GetDefaultNamespace();
-            var xUnitTests = trx.Root.Element(ns + "TestDefinitions").Elements(ns + "UnitTest");
-            var xTestLists = trx.Root.Element(ns + "TestLists").Elements(ns + "TestList");
-            var results = trx.Root.Element(ns + "Results").Elements(ns + "UnitTestResult");
+            XNamespace ns = _trx.Root.GetDefaultNamespace();
+            var xUnitTests = _trx.Root.Element(ns + "TestDefinitions").Elements(ns + "UnitTest");
+            var xTestLists = _trx.Root.Element(ns + "TestLists").Elements(ns + "TestList");
+            var results = _trx.Root.Element(ns + "Results").Elements(ns + "UnitTestResult");
 
             foreach (var xUnitTest in xUnitTests)
             {

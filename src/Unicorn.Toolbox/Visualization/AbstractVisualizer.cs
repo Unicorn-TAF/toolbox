@@ -15,10 +15,10 @@ namespace Unicorn.Toolbox.Visualization
     {
         protected AbstractVisualizer(Canvas canvas, IPalette palette)
         {
-            this.Canvas = canvas;
-            this.Palette = palette;
+            Canvas = canvas;
+            Palette = palette;
 
-            this.Shadow = new DropShadowEffect();
+            Shadow = new DropShadowEffect();
 
             if (Palette is DeepPurple)
             {

@@ -6,14 +6,14 @@ namespace Unicorn.Toolbox.Analysis
 {
     public class Analyzer
     {
-        private readonly string assemblyFile;
+        private readonly string _assemblyFile;
 
         public Analyzer(string fileName)
         {
-            this.assemblyFile = fileName;
-            this.AssemblyFileName = Path.GetFileName(fileName);
-            this.TestsAssemblyName = AssemblyName.GetAssemblyName(fileName).FullName;
-            this.Data = new AutomationData();
+            _assemblyFile = fileName;
+            AssemblyFileName = Path.GetFileName(fileName);
+            TestsAssemblyName = AssemblyName.GetAssemblyName(fileName).FullName;
+            Data = new AutomationData();
         }
 
         public AutomationData Data { get; protected set; }
@@ -24,9 +24,11 @@ namespace Unicorn.Toolbox.Analysis
 
         public void GetTestsStatistics()
         {
-            using (var loader = new UnicornAppDomainIsolation<GetTestsStatisticsWorker>(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)))
+            var location = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
+            using (var loader = new UnicornAppDomainIsolation<GetTestsStatisticsWorker>(location))
             {
-                this.Data = loader.Instance.GetTestsStatistics(assemblyFile);
+                Data = loader.Instance.GetTestsStatistics(_assemblyFile);
             }
         }
     }

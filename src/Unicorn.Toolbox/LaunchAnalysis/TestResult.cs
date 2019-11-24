@@ -6,12 +6,12 @@ namespace Unicorn.Toolbox.LaunchAnalysis
     {
         public TestResult(string name, DateTime start, DateTime end, string testListId, string testListName)
         {
-            this.Name = name;
-            this.StartTime = start;
-            this.EndTime = end;
-            this.Duration = this.EndTime - this.StartTime;
-            this.TestListId = testListId;
-            this.TestListName = testListName;
+            Name = name;
+            StartTime = start;
+            EndTime = end;
+            Duration = this.EndTime - this.StartTime;
+            TestListId = testListId;
+            TestListName = testListName;
         }
 
         public string Name { get; set; }

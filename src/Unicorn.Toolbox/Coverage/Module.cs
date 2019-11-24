@@ -17,15 +17,13 @@ namespace Unicorn.Toolbox.Coverage
         public string Name => name.ToUpper();
 
         [JsonIgnore]
-        public List<string> Features => this.features.Select(f => f.ToUpper()).ToList();
+        public List<string> Features => features.Select(f => f.ToUpperInvariant()).ToList();
 
         public List<SuiteInfo> Suites { get; set; } = new List<SuiteInfo>();
 
         public bool Covered => this.Suites.Any();
 
-        public override string ToString()
-        {
-            return $"Module '{this.Name}'";
-        }
+        public override string ToString() =>
+            $"Module '{Name}'";
     }
 }

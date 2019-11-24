@@ -8,8 +8,8 @@ namespace Unicorn.Toolbox.LaunchAnalysis
     {
         public Execution(string name)
         {
-            this.Name = name;
-            this.TestResults = new List<TestResult>();
+            Name = name;
+            TestResults = new List<TestResult>();
         }
 
         public string Name { get; protected set; }

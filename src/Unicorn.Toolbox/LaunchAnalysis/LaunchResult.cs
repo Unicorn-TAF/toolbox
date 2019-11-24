@@ -10,7 +10,7 @@ namespace Unicorn.Toolbox.LaunchAnalysis
     {
         public LaunchResult()
         {
-            this.Executions = new List<Execution>();
+            Executions = new List<Execution>();
         }
 
         public List<Execution> Executions { get; } 
