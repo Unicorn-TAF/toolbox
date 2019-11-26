@@ -52,6 +52,11 @@ namespace Unicorn.Toolbox.Visualization
                 int radius = CalculateRadius(pair.Value, max, featuresCount, (int)Canvas.RenderSize.Width);
                 DrawFeature(pair.Key, pair.Value, radius, currentIndex++, featuresCount, Canvas);
             }
+
+            var timer = new System.Windows.Forms.Timer();
+            timer.Tick += new EventHandler(DrawNextFrame);
+            timer.Interval = 1;
+            timer.Start();
         }
 
         public override void VisualizeCoverage(AppSpecs specs)
@@ -110,8 +115,8 @@ namespace Unicorn.Toolbox.Visualization
             var ellipse = new Ellipse
             {
                 Fill = Palette.DataColors[currentColorIndex],
-                Width = radius * 2,
-                Height = radius * 2,
+                Width = 1,//radius * 2,
+                Height = 1,//radius * 2,
                 StrokeThickness = 0.1,
                 Stroke = Brushes.Black,
                 Effect = Shadow,
@@ -175,6 +180,22 @@ namespace Unicorn.Toolbox.Visualization
             x = Regex.Replace(x, "([A-Z])([A-Z]+)", m => m.Groups[1].Value + m.Groups[2].Value.ToLower());
 
             return char.ToUpper(x[0]) + x.Substring(1);
+        }
+
+        private void DrawNextFrame(object sender, EventArgs e)
+        {
+            for (int i = 0; i < _rects.Count; i ++)
+            {
+                var el = (from UIElement shape in Canvas.Children where shape is Ellipse select shape).ToArray();
+
+                if ((el[i] as Ellipse).Width < _rects[i].Width - Margin * 2)
+                {
+                    (el[i] as Ellipse).Width++;
+                    (el[i] as Ellipse).Height++;
+                }
+                
+            }
+            System.Threading.Thread.Sleep(10);
         }
     }
 }
