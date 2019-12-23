@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
-using Microsoft.Win32;
 using Unicorn.Toolbox.Analysis;
 using Unicorn.Toolbox.Analysis.Filtering;
 using Unicorn.Toolbox.Coverage;
@@ -25,6 +27,7 @@ namespace Unicorn.Toolbox
 
         private bool groupBoxVisualizationStateTemp = false;
         private bool trxLoaded = false;
+        private ListCollectionView listCollectionView;
 
         public MainWindow()
         {
@@ -333,31 +336,47 @@ namespace Unicorn.Toolbox
 
             var trxFiles = openFileDialog.FileNames;
 
-            if (trxFiles.Any())
+            if (!trxFiles.Any())
             {
-                _launchResult = new LaunchResult();
+                return;
+            }
 
-                foreach (var trxFile in trxFiles)
+            _launchResult = new LaunchResult();
+
+            foreach (var trxFile in trxFiles)
+            {
+                try
                 {
-                    try
-                    {
-                        _launchResult.AppendResultsFromTrx(trxFile);
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show($"Error parsing {trxFile} file:" + ex.ToString());
-                    }
+                    _launchResult.AppendResultsFromTrx(trxFile);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error parsing {trxFile} file:" + ex.ToString());
                 }
             }
 
+            var obColl = new ObservableCollection<Execution>(_launchResult.Executions);
+
             gridTestResults.ItemsSource = null;
-            gridTestResults.ItemsSource = _launchResult.Executions;
+            listCollectionView = new ListCollectionView(obColl);
+
+            gridTestResults.ItemsSource = listCollectionView;
 
             textBoxLaunchSummary.Text = _launchResult.ToString();
 
             buttonVisualize.IsEnabled = true;
             checkBoxFullscreen.IsEnabled = true;
             trxLoaded = true;
+        }
+
+        private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (listCollectionView == null)
+            {
+                return;
+            }
+
+            listCollectionView.Filter = (item) => { return ((Execution)item).Name.Contains(((TextBox)sender).Text); };
         }
 
         private void VisualizeResults()
@@ -413,5 +432,6 @@ namespace Unicorn.Toolbox
                 groupBoxVisualization.IsEnabled = groupBoxVisualizationStateTemp;
             }
         }
+
     }
 }
