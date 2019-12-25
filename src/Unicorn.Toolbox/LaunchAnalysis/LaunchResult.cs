@@ -13,7 +13,7 @@ namespace Unicorn.Toolbox.LaunchAnalysis
             Executions = new List<Execution>();
         }
 
-        public List<Execution> Executions { get; } 
+        public List<Execution> Executions { get; }
 
         public void AppendResultsFromTrx(string trxFile)
         {
@@ -27,13 +27,16 @@ namespace Unicorn.Toolbox.LaunchAnalysis
             }
         }
 
-        public override string ToString() =>
-            new StringBuilder()
-            .AppendFormat("Threads: {0}\n", Executions.Count)
-            .AppendFormat("Launch duration: {0:F1} minutes\n", LaunchDuration / 60000)
-            .AppendFormat("Total execution time: {0:F1} minutes", Executions.SelectMany(e => e.TestResults).Sum(tr => tr.Duration.TotalMinutes))
-            .ToString();
-
+        public override string ToString()
+        {
+            var durationMinutes = LaunchDuration / 60000;
+            var durationHours = durationMinutes / 60;
+            return new StringBuilder()
+                .AppendFormat("Threads: {0}\n", Executions.Count)
+                .AppendFormat("Launch duration: {0:F1} minutes ({1:F1} h.)\n", durationMinutes, durationHours)
+                .AppendFormat("Total execution time: {0:F1} minutes", Executions.SelectMany(e => e.TestResults).Sum(tr => tr.Duration.TotalMinutes))
+                .ToString();
+        }
 
         public double LaunchDuration
         {
@@ -55,6 +58,6 @@ namespace Unicorn.Toolbox.LaunchAnalysis
 
                 return latestTime - earliestTime;
             }
-        } 
+        }
     }
 }
