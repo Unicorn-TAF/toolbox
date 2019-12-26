@@ -36,8 +36,10 @@ namespace Unicorn.Toolbox
 
         private void LoadTestsAssembly(object sender, RoutedEventArgs e)
         {
-            var openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Unicorn tests assemblies|*.dll";
+            var openFileDialog = new OpenFileDialog
+            {
+                Filter = "Unicorn tests assemblies|*.dll"
+            };
             openFileDialog.ShowDialog();
 
             groupBoxVisualization.IsEnabled = true;
@@ -136,15 +138,14 @@ namespace Unicorn.Toolbox
             }
         }
 
-        private void ShowAllClick(object sender, RoutedEventArgs e)
-        {
-            ShowAll();
-        }
+        private void ShowAllClick(object sender, RoutedEventArgs e) => ShowAll();
 
         private void LoadSpecs(object sender, RoutedEventArgs e)
         {
-            var openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Application specs|*.json";
+            var openFileDialog = new OpenFileDialog
+            {
+                Filter = "Application specs|*.json"
+            };
             openFileDialog.ShowDialog();
 
             string specFileName = openFileDialog.FileName;

@@ -17,12 +17,12 @@ namespace Unicorn.Toolbox.LaunchAnalysis
 
         public void AppendResultsFromTrx(string trxFile)
         {
-            var results = new TrxParser(trxFile).GetAllTests();
+            TrxParser trxParser = new TrxParser(trxFile);
+            var results = trxParser.AllTests;
 
             if (results.Any())
             {
-                var exeution = new Execution(Path.GetFileNameWithoutExtension(trxFile));
-                exeution.TestResults.AddRange(results);
+                var exeution = new Execution(Path.GetFileNameWithoutExtension(trxFile), results, trxParser.TrxDuration);
                 Executions.Add(exeution);
             }
         }
@@ -34,9 +34,11 @@ namespace Unicorn.Toolbox.LaunchAnalysis
             return new StringBuilder()
                 .AppendFormat("Threads: {0}\n", Executions.Count)
                 .AppendFormat("Launch duration: {0:F1} minutes ({1:F1} h.)\n", durationMinutes, durationHours)
-                .AppendFormat("Total execution time: {0:F1} minutes", Executions.SelectMany(e => e.TestResults).Sum(tr => tr.Duration.TotalMinutes))
+                .AppendFormat("Total execution time: {0:F1} minutes", ExecutionsSumMinutes)
                 .ToString();
         }
+
+        private double ExecutionsSumMinutes => Executions.Sum(e => e.DurationFull.TotalMinutes);
 
         public double LaunchDuration
         {

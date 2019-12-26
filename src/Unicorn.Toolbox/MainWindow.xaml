@@ -121,7 +121,8 @@
                         <ColumnDefinition Width="1043*"/>
                     </Grid.ColumnDefinitions>
                     <Button x:Name="btnLoadTrx" Content="Load TRX files" VerticalAlignment="Top" Margin="10,24,0,0" Click="btnLoadTrx_Click" HorizontalAlignment="Left" Width="90"/>
-                    <DataGrid x:Name="gridTestResults" HorizontalScrollBarVisibility="Disabled" HeadersVisibility="All" Grid.Column="1" RowHeaderWidth="0" CanUserAddRows="False" CanUserSortColumns="True" AutoGenerateColumns="False"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="402.315,70,10,10">
+                    <DataGrid x:Name="gridTestResults" HorizontalScrollBarVisibility="Disabled" HeadersVisibility="All" Grid.Column="1" RowHeaderWidth="0" CanUserAddRows="False" 
+                              CanUserSortColumns="True" AutoGenerateColumns="False"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="402.315,70,10,10">
                         <DataGrid.Columns>
                             <DataGridTemplateColumn Header="Execution" Width="*">
                                 <DataGridTemplateColumn.CellTemplate>
@@ -132,16 +133,25 @@
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-                            <DataGridTemplateColumn Header="Duration (min)" Width="100" SortMemberPath="DurationMin">
+                            <DataGridTemplateColumn Header="Duration total (min)" SortMemberPath="DurationFullMin">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <Grid>
-                                            <TextBlock VerticalAlignment="Center" Text="{Binding DurationMin, StringFormat={}{0:F1}}"/>
+                                            <TextBlock VerticalAlignment="Center" ToolTip="Full TRX duration (finish - start)" Text="{Binding DurationFullMin, StringFormat={}{0:F1}}"/>
                                         </Grid>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-                            <DataGridTemplateColumn Header="# of suites" Width="100">
+                            <DataGridTemplateColumn Header="Raw test duration (min)"  SortMemberPath="DurationMin">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <TextBlock VerticalAlignment="Center" ToolTip="Only tests duration(before/after suites and time in beetween tests excluded) (min)" Text="{Binding DurationMin, StringFormat={}{0:F1}}"/>
+                                        </Grid>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="# of suites" SortMemberPath="SuitesCount">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <Grid>
@@ -150,7 +160,7 @@
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-                            <DataGridTemplateColumn Header="# of tests" Width="100">
+                            <DataGridTemplateColumn Header="# of tests" SortMemberPath="TestsCount">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <Grid>

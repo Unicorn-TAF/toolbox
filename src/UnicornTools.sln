@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unicorn.ConsoleRunner", "Unicorn.ConsoleRunner\Unicorn.ConsoleRunner.csproj", "{460DF285-958E-4D30-AC94-F1E9F1AD3CAF}"
 EndProject
@@ -14,7 +14,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unicorn.TestAdapter", "Unicorn.VsAdapter\Unicorn.TestAdapter.csproj", "{BC4B3BED-9241-4DD6-8070-A9B66DFC08C1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unicorn.TestAdapterVSIX", "Unicorn.VsAdapterInstall\Unicorn.TestAdapterInstall.csproj", "{D519F9EB-22F8-4054-A039-EDE0EFA6F025}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unicorn.TestAdapterInstall", "Unicorn.VsAdapterInstall\Unicorn.TestAdapterInstall.csproj", "{D519F9EB-22F8-4054-A039-EDE0EFA6F025}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -77,5 +77,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {98153ECA-C1DF-4841-B8A1-8463A6098506}
 	EndGlobalSection
 EndGlobal

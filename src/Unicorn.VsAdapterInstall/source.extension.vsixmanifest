@@ -1,25 +1,28 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
-  <Metadata>
-    <Identity Id="UnicornTestAdapter.Microsoft.84087b45-c972-4af6-9b61-5f3a4691b3f1" Version="2.2" Language="en-US" Publisher="Vitaliy Dobriyan" />
-    <DisplayName>Unicorn VS Adapter</DisplayName>
-    <Description xml:space="preserve">Unicorn Test Adapter for Visual Studio</Description>
-    <MoreInfo>https://bitbucket.org/dobriyanchik/unicorntools/wiki/Home</MoreInfo>
-    <License>LICENSE.txt</License>
-    <Icon>unicornLogo.png</Icon>
-    <PreviewImage>unicornLogo.png</PreviewImage>
-    <Tags>unit-testing, adapter</Tags>
-  </Metadata>
-  <Installation>
-    <InstallationTarget Version="[14.0,15.0)" Id="Microsoft.VisualStudio.Ultimate" />
-    <InstallationTarget Version="[14.0,15.0)" Id="Microsoft.VisualStudio.Premium" />
-    <InstallationTarget Version="[14.0,15.0)" Id="Microsoft.VisualStudio.Pro" />
-  </Installation>
-  <Dependencies>
-    <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="4.5.2" />
-  </Dependencies>
-  <Assets>
-    <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="UnicornTestAdapter" Path="|UnicornTestAdapter|" />
-    <Asset Type="UnitTestExtension" d:Source="Project" d:ProjectName="UnicornTestAdapter" Path="|UnicornTestAdapter|" />
-  </Assets>
+    <Metadata>
+        <Identity Id="UnicornTestAdapter.Microsoft.84087b45-c972-4af6-9b61-5f3a4691b3f1" Version="2.2" Language="en-US" Publisher="Vitaliy Dobriyan" />
+        <DisplayName>Unicorn VS Adapter</DisplayName>
+        <Description xml:space="preserve">Unicorn Test Adapter for Visual Studio</Description>
+        <MoreInfo>https://bitbucket.org/dobriyanchik/unicorntools/wiki/Home</MoreInfo>
+        <License>LICENSE.txt</License>
+        <Icon>unicornLogo.png</Icon>
+        <PreviewImage>unicornLogo.png</PreviewImage>
+        <Tags>unit-testing, adapter</Tags>
+    </Metadata>
+    <Installation>
+        <InstallationTarget Version="[14.0,15.0)" Id="Microsoft.VisualStudio.Ultimate" />
+        <InstallationTarget Version="[14.0,15.0)" Id="Microsoft.VisualStudio.Premium" />
+        <InstallationTarget Version="[14.0,15.0)" Id="Microsoft.VisualStudio.Pro" />
+    </Installation>
+    <Dependencies>
+        <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="4.5.2" />
+    </Dependencies>
+    <Assets>
+        <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="UnicornTestAdapter" Path="|UnicornTestAdapter|" />
+        <Asset Type="UnitTestExtension" d:Source="Project" d:ProjectName="UnicornTestAdapter" Path="|UnicornTestAdapter|" />
+    </Assets>
+    <Prerequisites>
+        <Prerequisite DisplayName="Visual Studio core editor" Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[16.1.28811.260,17.0)" />
+    </Prerequisites>
 </PackageManifest>
