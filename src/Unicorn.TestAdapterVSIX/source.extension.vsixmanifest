@@ -2,14 +2,16 @@
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
         <Identity Id="Unicorn.TestAdapter" Version="2.0" Language="en-US" Publisher="Vitaliy Dobriyan" />
-        <DisplayName>Unicorn TestAdapter</DisplayName>
+        <DisplayName>Unicorn Test Adapter</DisplayName>
         <Description xml:space="preserve">Unicorn Test Adapter for Visual Studio</Description>
         <License>LICENSE.txt</License>
         <Icon>unicornLogo.png</Icon>
         <PreviewImage>unicornLogo.png</PreviewImage>
+        <Tags>testing, test adapter, vsix</Tags>
     </Metadata>
     <Installation>
-        <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="[15.0, 16.0)" />
+        <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="[14.0, 17.0)" />
+        <InstallationTarget Version="[14.0,17.0)" Id="Microsoft.VisualStudio.Enterprise" />
     </Installation>
     <Dependencies>
         <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="4.5.2" />
@@ -18,6 +20,6 @@
         <Asset Type="UnitTestExtension" d:Source="Project" d:ProjectName="Unicorn.TestAdapter" Path="|Unicorn.TestAdapter|" />
     </Assets>
     <Prerequisites>
-        <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[15.0,16.0)" DisplayName="Visual Studio core editor" />
+        <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[16.1.28811.260,17.0)" DisplayName="Visual Studio core editor" />
     </Prerequisites>
 </PackageManifest>

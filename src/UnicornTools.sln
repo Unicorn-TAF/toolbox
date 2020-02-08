@@ -14,9 +14,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unicorn.TestAdapter", "Unicorn.VsAdapter\Unicorn.TestAdapter.csproj", "{BC4B3BED-9241-4DD6-8070-A9B66DFC08C1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unicorn.TestAdapterVSIX", "Unicorn.VsAdapterInstall\Unicorn.TestAdapterInstall.csproj", "{D519F9EB-22F8-4054-A039-EDE0EFA6F025}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unicorn.Vs2017AdapterInstall", "Unicorn.Vs2017AdapterInstall\Unicorn.Vs2017AdapterInstall.csproj", "{65016FCD-FF77-4576-B90A-F5FF1E02C20B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unicorn.TestAdapterVSIX", "Unicorn.TestAdapterVSIX\Unicorn.TestAdapterVSIX.csproj", "{65016FCD-FF77-4576-B90A-F5FF1E02C20B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -64,18 +62,6 @@ Global
 		{BC4B3BED-9241-4DD6-8070-A9B66DFC08C1}.Release|x64.Build.0 = Release|Any CPU
 		{BC4B3BED-9241-4DD6-8070-A9B66DFC08C1}.Release|x86.ActiveCfg = Release|Any CPU
 		{BC4B3BED-9241-4DD6-8070-A9B66DFC08C1}.Release|x86.Build.0 = Release|Any CPU
-		{D519F9EB-22F8-4054-A039-EDE0EFA6F025}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D519F9EB-22F8-4054-A039-EDE0EFA6F025}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D519F9EB-22F8-4054-A039-EDE0EFA6F025}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{D519F9EB-22F8-4054-A039-EDE0EFA6F025}.Debug|x64.Build.0 = Debug|Any CPU
-		{D519F9EB-22F8-4054-A039-EDE0EFA6F025}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{D519F9EB-22F8-4054-A039-EDE0EFA6F025}.Debug|x86.Build.0 = Debug|Any CPU
-		{D519F9EB-22F8-4054-A039-EDE0EFA6F025}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D519F9EB-22F8-4054-A039-EDE0EFA6F025}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D519F9EB-22F8-4054-A039-EDE0EFA6F025}.Release|x64.ActiveCfg = Release|Any CPU
-		{D519F9EB-22F8-4054-A039-EDE0EFA6F025}.Release|x64.Build.0 = Release|Any CPU
-		{D519F9EB-22F8-4054-A039-EDE0EFA6F025}.Release|x86.ActiveCfg = Release|Any CPU
-		{D519F9EB-22F8-4054-A039-EDE0EFA6F025}.Release|x86.Build.0 = Release|Any CPU
 		{65016FCD-FF77-4576-B90A-F5FF1E02C20B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{65016FCD-FF77-4576-B90A-F5FF1E02C20B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{65016FCD-FF77-4576-B90A-F5FF1E02C20B}.Debug|x64.ActiveCfg = Debug|Any CPU
