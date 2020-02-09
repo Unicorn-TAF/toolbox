@@ -9,7 +9,7 @@ namespace Unicorn.Toolbox.LaunchAnalysis
             Name = name;
             StartTime = start;
             EndTime = end;
-            Duration = this.EndTime - this.StartTime;
+            Duration = EndTime - StartTime;
             TestListId = testListId;
             TestListName = testListName;
         }
