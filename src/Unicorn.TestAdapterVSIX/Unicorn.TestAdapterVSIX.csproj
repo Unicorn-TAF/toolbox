@@ -14,8 +14,8 @@
     <ProjectGuid>{65016FCD-FF77-4576-B90A-F5FF1E02C20B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Unicorn.Vs2017AdapterInstall</RootNamespace>
-    <AssemblyName>Unicorn.Vs2017AdapterInstall</AssemblyName>
+    <RootNamespace>Unicorn.TestAdapterVSIX</RootNamespace>
+    <AssemblyName>Unicorn.TestAdapterVSIX</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <GeneratePkgDefFile>false</GeneratePkgDefFile>
     <IncludeAssemblyInVSIXContainer>false</IncludeAssemblyInVSIXContainer>
