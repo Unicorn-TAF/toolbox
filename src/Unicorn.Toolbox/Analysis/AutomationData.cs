@@ -11,11 +11,11 @@ namespace Unicorn.Toolbox.Analysis
     {
         public AutomationData()
         {
-            this.SuitesInfos = new List<SuiteInfo>();
-            this.UniqueFeatures = new HashSet<string>();
-            this.UniqueCategories = new HashSet<string>();
-            this.UniqueAuthors = new HashSet<string>();
-            this.FilteredInfo = null;
+            SuitesInfos = new List<SuiteInfo>();
+            UniqueFeatures = new HashSet<string>();
+            UniqueCategories = new HashSet<string>();
+            UniqueAuthors = new HashSet<string>();
+            FilteredInfo = null;
         }
 
         public List<SuiteInfo> SuitesInfos { get; protected set; }
@@ -29,38 +29,38 @@ namespace Unicorn.Toolbox.Analysis
         public HashSet<string> UniqueAuthors { get; protected set; }
 
         public void ClearFilters() =>
-            this.FilteredInfo = this.SuitesInfos;
+            FilteredInfo = SuitesInfos;
 
         public void FilterBy(ISuitesFilter filter)
         {
-            this.FilteredInfo = filter.FilterSuites(this.FilteredInfo);
+            FilteredInfo = filter.FilterSuites(FilteredInfo);
 
             if (filter is ITestsFilter)
             {
-                for (int i = 0; i < this.FilteredInfo.Count; i++)
+                for (int i = 0; i < FilteredInfo.Count; i++)
                 {
-                    var info = this.FilteredInfo[i];
+                    var info = FilteredInfo[i];
 
                     info.SetTestInfo((filter as ITestsFilter).FilterTests(info.TestsInfos));
-                    this.FilteredInfo[i] = info;
+                    FilteredInfo[i] = info;
                 }
             }
         }
 
         public void AddSuiteData(SuiteInfo suiteData)
         {
-            this.SuitesInfos.Add(suiteData);
-            this.UniqueFeatures.UnionWith(suiteData.Features);
+            SuitesInfos.Add(suiteData);
+            UniqueFeatures.UnionWith(suiteData.Features);
 
             var authors = from TestInfo ti 
                           in suiteData.TestsInfos
                           select ti.Author;
 
-            this.UniqueAuthors.UnionWith(authors);
+            UniqueAuthors.UnionWith(authors);
 
             foreach (var testInfo in suiteData.TestsInfos)
             {
-                this.UniqueCategories.UnionWith(testInfo.Categories);
+                UniqueCategories.UnionWith(testInfo.Categories);
             }
         }
 
@@ -68,11 +68,11 @@ namespace Unicorn.Toolbox.Analysis
         {
             StringBuilder statistics = new StringBuilder();
 
-            statistics.Append($"suites: {this.SuitesInfos.Count}    |    ")
-                .Append($"tests: {this.SuitesInfos.Sum(s => s.TestsInfos.Count)}    |    ")
-                .Append($"features: {this.UniqueFeatures.Count}    |    ")
-                .Append($"categories: {this.UniqueCategories.Count}    |    ")
-                .Append($"authors: {this.UniqueAuthors.Count}");
+            statistics.Append($"suites: {SuitesInfos.Count}    |    ")
+                .Append($"tests: {SuitesInfos.Sum(s => s.TestsInfos.Count)}    |    ")
+                .Append($"features: {UniqueFeatures.Count}    |    ")
+                .Append($"categories: {UniqueCategories.Count}    |    ")
+                .Append($"authors: {UniqueAuthors.Count}");
 
             return statistics.ToString();
         }

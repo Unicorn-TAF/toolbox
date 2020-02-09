@@ -5,21 +5,21 @@ namespace Unicorn.Toolbox.Analysis.Filtering
 {
     public class CategoriesFilter : ISuitesFilter, ITestsFilter
     {
-        private readonly IEnumerable<string> categories;
+        private readonly IEnumerable<string> _categories;
 
         public CategoriesFilter(IEnumerable<string> categories)
         {
-            this.categories = categories;
+            _categories = categories;
         }
 
         public List<SuiteInfo> FilterSuites(List<SuiteInfo> suitesInfos) =>
             suitesInfos
-            .Where(s => s.TestsInfos.Any(t => categories.Intersect(t.Categories).Any()))
+            .Where(s => s.TestsInfos.Any(t => _categories.Intersect(t.Categories).Any()))
             .ToList();
 
         public List<TestInfo> FilterTests(List<TestInfo> testInfos) =>
             testInfos
-            .Where(t => this.categories.Intersect(t.Categories).Any())
+            .Where(t => _categories.Intersect(t.Categories).Any())
             .ToList();
     }
 }

@@ -54,11 +54,11 @@ namespace Unicorn.ConsoleRunner
                 throw new ArgumentException($"'{ConstConfiguration}' parameter was not specified");
             }
 
-            Uri assemblyUri = Path.IsPathRooted(assemblyPath) ? 
+            var assemblyUri = Path.IsPathRooted(assemblyPath) ? 
                 new Uri(assemblyPath, UriKind.Absolute) : 
                 new Uri(assemblyPath, UriKind.Relative);
 
-            Uri configUri = Path.IsPathRooted(propertiesPath) ?
+            var configUri = Path.IsPathRooted(propertiesPath) ?
                 new Uri(propertiesPath, UriKind.Absolute) :
                 new Uri(propertiesPath, UriKind.Relative);
 
@@ -69,9 +69,13 @@ namespace Unicorn.ConsoleRunner
 
             try
             {
-                using (var executor = new UnicornAppDomainIsolation<IsolatedTestsRunner>(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)))
+                var location = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
+                using (var executor = new UnicornAppDomainIsolation<IsolatedTestsRunner>(location))
                 {
-                    outcome = executor.Instance.RunTests(assemblyUri.AbsolutePath, configUri.AbsolutePath);
+                    outcome = executor.Instance.RunTests(
+                        assemblyUri.AbsolutePath, 
+                        configUri.AbsolutePath);
                 }
             }
             catch (Exception ex)
@@ -84,14 +88,16 @@ namespace Unicorn.ConsoleRunner
 
         private static void ReportResults(LaunchOutcome outcome)
         {
-            StringBuilder header = new StringBuilder();
+            var header = new StringBuilder()
+                .AppendLine("\n\n\n")
+                .AppendLine(Delimiter)
+                .AppendLine()
+                .AppendLine($"Tests run {outcome.RunStatus}")
+                .AppendLine();
 
-            header.AppendLine().AppendLine().AppendLine().AppendLine()
-                .AppendLine(Delimiter).AppendLine()
-                .AppendLine($"Tests run {outcome.RunStatus}").AppendLine();
-
-            var color = outcome.RunStatus.Equals(Status.Passed) ? ConsoleColor.Green : ConsoleColor.Red;
-            Console.ForegroundColor = color;
+            Console.ForegroundColor = outcome.RunStatus.Equals(Status.Passed) ? 
+                ConsoleColor.Green : 
+                ConsoleColor.Red;
 
             Console.Write(header.ToString());
 

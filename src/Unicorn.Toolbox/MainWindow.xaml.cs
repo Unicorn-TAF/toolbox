@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
-using Microsoft.Win32;
 using Unicorn.Toolbox.Analysis;
 using Unicorn.Toolbox.Analysis.Filtering;
 using Unicorn.Toolbox.Coverage;
@@ -19,12 +21,13 @@ namespace Unicorn.Toolbox
     /// </summary>
     public partial class MainWindow : Window
     {
-        private Analyzer analyzer;
-        private SpecsCoverage coverage;
-        private LaunchResult launchResult;
+        private Analyzer _analyzer;
+        private SpecsCoverage _coverage;
+        private LaunchResult _launchResult;
 
         private bool groupBoxVisualizationStateTemp = false;
         private bool trxLoaded = false;
+        private ListCollectionView listCollectionView;
 
         public MainWindow()
         {
@@ -33,30 +36,32 @@ namespace Unicorn.Toolbox
 
         private void LoadTestsAssembly(object sender, RoutedEventArgs e)
         {
-            var openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Unicorn tests assemblies|*.dll";
+            var openFileDialog = new OpenFileDialog
+            {
+                Filter = "Unicorn tests assemblies|*.dll"
+            };
             openFileDialog.ShowDialog();
 
             groupBoxVisualization.IsEnabled = true;
             groupBoxVisualizationStateTemp = true;
-            string assemblyFile = openFileDialog.FileName;
+            var assemblyFile = openFileDialog.FileName;
 
             if (string.IsNullOrEmpty(assemblyFile))
             {
                 return;
             }
 
-            this.gridFilters.IsEnabled = true;
+            gridFilters.IsEnabled = true;
 
-            this.analyzer = new Analyzer(assemblyFile);
-            this.analyzer.GetTestsStatistics();
+            _analyzer = new Analyzer(assemblyFile);
+            _analyzer.GetTestsStatistics();
 
-            var statusLine = $"Assembly: {this.analyzer.AssemblyFileName} ({this.analyzer.TestsAssemblyName})    |    " + this.analyzer.Data.ToString();
-            this.textBoxStatistics.Text = statusLine;
+            var statusLine = $"Assembly: {_analyzer.AssemblyFileName} ({_analyzer.TestsAssemblyName})    |    " + this._analyzer.Data.ToString();
+            textBoxStatistics.Text = statusLine;
 
-            FillFiltersFrom(analyzer.Data);
+            FillFiltersFrom(_analyzer.Data);
             ShowAll();
-            this.checkBoxShowHide.IsChecked = true;
+            checkBoxShowHide.IsChecked = true;
         }
 
         private void FillFiltersFrom(AutomationData data)
@@ -98,22 +103,22 @@ namespace Unicorn.Toolbox
             var categories = from CheckBox cBox in gridCategories.Children where cBox.IsChecked.Value select (string)cBox.Content;
             var authors = from CheckBox cBox in gridAuthors.Children where cBox.IsChecked.Value select (string)cBox.Content;
 
-            this.analyzer.Data.ClearFilters();
-            this.analyzer.Data.FilterBy(new FeaturesFilter(features));
-            this.analyzer.Data.FilterBy(new CategoriesFilter(categories));
-            this.analyzer.Data.FilterBy(new AuthorsFilter(authors));
+            _analyzer.Data.ClearFilters();
+            _analyzer.Data.FilterBy(new FeaturesFilter(features));
+            _analyzer.Data.FilterBy(new CategoriesFilter(categories));
+            _analyzer.Data.FilterBy(new AuthorsFilter(authors));
 
             if (checkOnlyDisabledTests.IsChecked.Value)
             {
-                this.analyzer.Data.FilterBy(new OnlyDisabledFilter());
+                _analyzer.Data.FilterBy(new OnlyDisabledFilter());
             }
 
             if (checkOnlyEnabledTests.IsChecked.Value)
             {
-                this.analyzer.Data.FilterBy(new OnlyEnabledFilter());
+                _analyzer.Data.FilterBy(new OnlyEnabledFilter());
             }
 
-            gridResults.ItemsSource = analyzer.Data.FilteredInfo;
+            gridResults.ItemsSource = _analyzer.Data.FilteredInfo;
 
             textBoxCurrentFilter.Text = $"Filter by:\nFeatures[{string.Join(",", features)}]\n";
             textBoxCurrentFilter.Text += $"Categories[{string.Join(",", categories)}]\n";
@@ -129,19 +134,18 @@ namespace Unicorn.Toolbox
                 var preview = new WindowTestPreview();
                 preview.ShowActivated = false;
                 preview.Show();
-                preview.gridResults.ItemsSource = analyzer.Data.FilteredInfo.First(s => s.Name.Equals(testSuiteName)).TestsInfos;
+                preview.gridResults.ItemsSource = _analyzer.Data.FilteredInfo.First(s => s.Name.Equals(testSuiteName)).TestsInfos;
             }
         }
 
-        private void ShowAllClick(object sender, RoutedEventArgs e)
-        {
-            ShowAll();
-        }
+        private void ShowAllClick(object sender, RoutedEventArgs e) => ShowAll();
 
         private void LoadSpecs(object sender, RoutedEventArgs e)
         {
-            var openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Application specs|*.json";
+            var openFileDialog = new OpenFileDialog
+            {
+                Filter = "Application specs|*.json"
+            };
             openFileDialog.ShowDialog();
 
             string specFileName = openFileDialog.FileName;
@@ -151,22 +155,22 @@ namespace Unicorn.Toolbox
                 return;
             }
 
-            this.buttonGetCoverage.IsEnabled = true;
+            buttonGetCoverage.IsEnabled = true;
 
-            this.coverage = new SpecsCoverage(specFileName);
+            _coverage = new SpecsCoverage(specFileName);
 
-            FillGrid(gridModules, new HashSet<string>(this.coverage.Specs.Modules.Select(m => m.Name)));
+            FillGrid(gridModules, new HashSet<string>(_coverage.Specs.Modules.Select(m => m.Name)));
 
             foreach (var checkbox in gridModules.Children)
             {
                 ((CheckBox)checkbox).IsChecked = false;
-                ((CheckBox)checkbox).Checked += new RoutedEventHandler(this.UpdateRunTagsText);
-                ((CheckBox)checkbox).Unchecked += new RoutedEventHandler(this.UpdateRunTagsText);
+                ((CheckBox)checkbox).Checked += new RoutedEventHandler(UpdateRunTagsText);
+                ((CheckBox)checkbox).Unchecked += new RoutedEventHandler(UpdateRunTagsText);
             }
 
             if (!gridStatistics.IsEnabled)
             {
-                this.buttonGetCoverage.IsEnabled = true;
+                buttonGetCoverage.IsEnabled = true;
             }
         }
 
@@ -180,13 +184,13 @@ namespace Unicorn.Toolbox
 
                 if (checkbox.IsChecked.Value)
                 {
-                    runTags.UnionWith(this.coverage.Specs.Modules
+                    runTags.UnionWith(_coverage.Specs.Modules
                         .First(m => m.Name.Equals(checkbox.Content.ToString(), StringComparison.InvariantCultureIgnoreCase))
                         .Features);
                 }
             }
 
-            this.textBoxRunTags.Text = "#" + string.Join(" #", runTags);
+            textBoxRunTags.Text = "#" + string.Join(" #", runTags);
         }
 
         private void GetAutomationCoverage(object sender, RoutedEventArgs e) =>
@@ -210,15 +214,15 @@ namespace Unicorn.Toolbox
 
         private void ShowAll()
         {
-            this.analyzer.Data.ClearFilters();
-            gridResults.ItemsSource = analyzer.Data.FilteredInfo;
+            _analyzer.Data.ClearFilters();
+            gridResults.ItemsSource = _analyzer.Data.FilteredInfo;
         }
 
         private void GetCoverage()
         {
-            this.coverage.Analyze(this.analyzer.Data.FilteredInfo);
-            this.gridCoverage.ItemsSource = null;
-            this.gridCoverage.ItemsSource = coverage.Specs.Modules;
+            _coverage.Analyze(_analyzer.Data.FilteredInfo);
+            gridCoverage.ItemsSource = null;
+            gridCoverage.ItemsSource = _coverage.Specs.Modules;
         }
 
         private FilterType GetFilter()
@@ -244,11 +248,11 @@ namespace Unicorn.Toolbox
 
             if (checkBoxModern.IsChecked.HasValue && checkBoxModern.IsChecked.Value)
             {
-                new VisualizerCircles(visualization.canvasVisualization, GetPalette()).VisualizeCoverage(coverage.Specs);
+                new VisualizerCircles(visualization.canvasVisualization, GetPalette()).VisualizeCoverage(_coverage.Specs);
             }
             else
             {
-                new VisualizerBars(visualization.canvasVisualization, GetPalette()).VisualizeCoverage(coverage.Specs);
+                new VisualizerBars(visualization.canvasVisualization, GetPalette()).VisualizeCoverage(_coverage.Specs);
             }
         }
 
@@ -261,11 +265,11 @@ namespace Unicorn.Toolbox
 
             if (checkBoxModern.IsChecked.HasValue && checkBoxModern.IsChecked.Value)
             {
-                new VisualizerCircles(visualization.canvasVisualization, GetPalette()).VisualizeAutomationData(analyzer.Data, filter);
+                new VisualizerCircles(visualization.canvasVisualization, GetPalette()).VisualizeAutomationData(_analyzer.Data, filter);
             }
             else
             {
-                new VisualizerBars(visualization.canvasVisualization, GetPalette()).VisualizeAutomationData(analyzer.Data, filter);
+                new VisualizerBars(visualization.canvasVisualization, GetPalette()).VisualizeAutomationData(_analyzer.Data, filter);
             }
         }
 
@@ -333,31 +337,47 @@ namespace Unicorn.Toolbox
 
             var trxFiles = openFileDialog.FileNames;
 
-            if (trxFiles.Any())
+            if (!trxFiles.Any())
             {
-                launchResult = new LaunchResult();
+                return;
+            }
 
-                foreach (var trxFile in trxFiles)
+            _launchResult = new LaunchResult();
+
+            foreach (var trxFile in trxFiles)
+            {
+                try
                 {
-                    try
-                    {
-                        launchResult.AppendResultsFromTrx(trxFile);
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show($"Error parsing {trxFile} file:" + ex.ToString());
-                    }
+                    _launchResult.AppendResultsFromTrx(trxFile);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error parsing {trxFile} file:" + ex.ToString());
                 }
             }
 
-            this.gridTestResults.ItemsSource = null;
-            this.gridTestResults.ItemsSource = launchResult.Executions;
+            var obColl = new ObservableCollection<Execution>(_launchResult.Executions);
 
-            this.textBoxLaunchSummary.Text = launchResult.ToString();
+            gridTestResults.ItemsSource = null;
+            listCollectionView = new ListCollectionView(obColl);
+
+            gridTestResults.ItemsSource = listCollectionView;
+
+            textBoxLaunchSummary.Text = _launchResult.ToString();
 
             buttonVisualize.IsEnabled = true;
             checkBoxFullscreen.IsEnabled = true;
             trxLoaded = true;
+        }
+
+        private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (listCollectionView == null)
+            {
+                return;
+            }
+
+            listCollectionView.Filter = (item) => { return ((Execution)item).Name.Contains(((TextBox)sender).Text); };
         }
 
         private void VisualizeResults()
@@ -365,7 +385,7 @@ namespace Unicorn.Toolbox
             var visualization = GetVisualizationWindow("Launch visualization");
             visualization.Show();
 
-            new LaunchVisualizer(visualization.canvasVisualization, launchResult.Executions).Visualize();
+            new LaunchVisualizer(visualization.canvasVisualization, _launchResult.Executions).Visualize();
         }
 
         private WindowVisualization GetVisualizationWindow(string title)
@@ -375,7 +395,7 @@ namespace Unicorn.Toolbox
                 Title = title
             };
 
-            if (this.checkBoxFullscreen.IsChecked.HasValue && this.checkBoxFullscreen.IsChecked.Value)
+            if (checkBoxFullscreen.IsChecked.HasValue && checkBoxFullscreen.IsChecked.Value)
             {
                 visualization.WindowState = WindowState.Maximized;
             }
@@ -413,5 +433,6 @@ namespace Unicorn.Toolbox
                 groupBoxVisualization.IsEnabled = groupBoxVisualizationStateTemp;
             }
         }
+
     }
 }

@@ -5,16 +5,16 @@ namespace Unicorn.Toolbox.Analysis.Filtering
 {
     public class FeaturesFilter : ISuitesFilter
     {
-        private readonly IEnumerable<string> features;
+        private readonly IEnumerable<string> _features;
 
         public FeaturesFilter(IEnumerable<string> features)
         {
-            this.features = features;
+            _features = features;
         }
 
         public List<SuiteInfo> FilterSuites(List<SuiteInfo> suitesInfos) =>
             suitesInfos
-            .Where(s => s.Features.Intersect(this.features).Any())
+            .Where(s => s.Features.Intersect(_features).Any())
             .ToList();
     }
 }

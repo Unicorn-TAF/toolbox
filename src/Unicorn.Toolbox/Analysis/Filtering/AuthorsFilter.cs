@@ -5,21 +5,21 @@ namespace Unicorn.Toolbox.Analysis.Filtering
 {
     public class AuthorsFilter : ISuitesFilter, ITestsFilter
     {
-        private readonly IEnumerable<string> authors;
+        private readonly IEnumerable<string> _authors;
 
         public AuthorsFilter(IEnumerable<string> authors)
         {
-            this.authors = authors;
+            _authors = authors;
         }
 
         public List<SuiteInfo> FilterSuites(List<SuiteInfo> suitesInfos) =>
             suitesInfos
-            .Where(s => s.TestsInfos.Any(t => authors.Contains(t.Author)))
+            .Where(s => s.TestsInfos.Any(t => _authors.Contains(t.Author)))
             .ToList();
 
         public List<TestInfo> FilterTests(List<TestInfo> testInfos) =>
             testInfos
-            .Where(t => this.authors.Contains(t.Author))
+            .Where(t => _authors.Contains(t.Author))
             .ToList();
     }
 }

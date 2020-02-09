@@ -15,8 +15,8 @@ namespace Unicorn.Toolbox.Visualization
 {
     public class VisualizerBars : AbstractVisualizer
     {
-        private const int margin = 15;
-        private const int minBarHeight = 20;
+        private const int Margin = 15;
+        private const int MinBarHeight = 20;
 
         public VisualizerBars(Canvas canvas, IPalette palette) : base(canvas, palette)
         {
@@ -35,13 +35,12 @@ namespace Unicorn.Toolbox.Visualization
                         orderby pair.Value descending
                         select pair;
 
-            var expectedHeight = (minBarHeight + margin) * items.Count() + margin;
+            var expectedHeight = (MinBarHeight + Margin) * items.Count() + Margin;
 
             if (Canvas.RenderSize.Height < expectedHeight)
             {
                 Canvas.Height = expectedHeight;
             }
-
 
             int currentIndex = 0;
 
@@ -83,14 +82,14 @@ namespace Unicorn.Toolbox.Visualization
 
         private void DrawFeature(string name, int tests, int index, int max, int featuresCount, Canvas canvas)
         {
-            var workHeight = canvas.RenderSize.Height - (2 * margin);
-            var workWidth = canvas.RenderSize.Width - (2 * margin);
+            var workHeight = canvas.RenderSize.Height - (2 * Margin);
+            var workWidth = canvas.RenderSize.Width - (2 * Margin);
 
-            double height = Math.Max(minBarHeight, (workHeight / featuresCount) - margin);
+            double height = Math.Max(MinBarHeight, (workHeight / featuresCount) - Margin);
             double width = tests == 0 ? 1 : workWidth * ((double)tests / max); 
 
-            double x = margin;
-            double y = margin + (index * (height + margin));
+            double x = Margin;
+            double y = Margin + (index * (height + Margin));
 
             double colorIndexStep = (double)Palette.DataColors.Count / featuresCount;
             int currentColorIndex = (int)(((index + 1) * colorIndexStep) - 1);

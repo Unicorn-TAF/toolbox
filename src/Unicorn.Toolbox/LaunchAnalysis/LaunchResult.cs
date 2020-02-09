@@ -10,30 +10,35 @@ namespace Unicorn.Toolbox.LaunchAnalysis
     {
         public LaunchResult()
         {
-            this.Executions = new List<Execution>();
+            Executions = new List<Execution>();
         }
 
-        public List<Execution> Executions { get; } 
+        public List<Execution> Executions { get; }
 
         public void AppendResultsFromTrx(string trxFile)
         {
-            var results = new TrxParser(trxFile).GetAllTests();
+            TrxParser trxParser = new TrxParser(trxFile);
+            var results = trxParser.AllTests;
 
             if (results.Any())
             {
-                var exeution = new Execution(Path.GetFileNameWithoutExtension(trxFile));
-                exeution.TestResults.AddRange(results);
+                var exeution = new Execution(Path.GetFileNameWithoutExtension(trxFile), results, trxParser.TrxDuration);
                 Executions.Add(exeution);
             }
         }
 
-        public override string ToString() =>
-            new StringBuilder()
-            .AppendFormat("Threads: {0}\n", Executions.Count)
-            .AppendFormat("Launch duration: {0:F1} minutes\n", LaunchDuration / 60000)
-            .AppendFormat("Total execution time: {0:F1} minutes", Executions.SelectMany(e => e.TestResults).Sum(tr => tr.Duration.TotalMinutes))
-            .ToString();
+        public override string ToString()
+        {
+            var durationMinutes = LaunchDuration / 60000;
+            var durationHours = durationMinutes / 60;
+            return new StringBuilder()
+                .AppendFormat("Threads: {0}\n", Executions.Count)
+                .AppendFormat("Launch duration: {0:F1} minutes ({1:F1} h.)\n", durationMinutes, durationHours)
+                .AppendFormat("Total execution time: {0:F1} minutes", ExecutionsSumMinutes)
+                .ToString();
+        }
 
+        private double ExecutionsSumMinutes => Executions.Sum(e => e.DurationFull.TotalMinutes);
 
         public double LaunchDuration
         {
@@ -55,6 +60,6 @@ namespace Unicorn.Toolbox.LaunchAnalysis
 
                 return latestTime - earliestTime;
             }
-        } 
+        }
     }
 }

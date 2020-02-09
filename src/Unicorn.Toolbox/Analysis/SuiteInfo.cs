@@ -11,14 +11,14 @@ namespace Unicorn.Toolbox.Analysis
 
         public SuiteInfo(string suiteName, IEnumerable<string> features, Dictionary<string, string> metadata)
         {
-            this.Name = suiteName;
-            this.TestsInfos = new List<TestInfo>();
-            this.Features = new List<string>(features);
-            this.Metadata = metadata;
+            Name = suiteName;
+            TestsInfos = new List<TestInfo>();
+            Features = new List<string>(features);
+            Metadata = metadata;
 
-            if (!this.Features.Any())
+            if (!Features.Any())
             {
-                this.Features.Add(NoFeature);
+                Features.Add(NoFeature);
             }
         }
 
@@ -31,6 +31,6 @@ namespace Unicorn.Toolbox.Analysis
         public Dictionary<string, string> Metadata { get; set; }
 
         public void SetTestInfo(List<TestInfo> newInfos) =>
-            this.TestsInfos = newInfos;
+            TestsInfos = newInfos;
     }
 }

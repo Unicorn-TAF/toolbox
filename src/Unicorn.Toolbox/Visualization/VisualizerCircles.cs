@@ -18,15 +18,15 @@ namespace Unicorn.Toolbox.Visualization
     {
         private const int Margin = 30;
 
-        private readonly Random random;
-        private readonly List<Rect> rects;
+        private readonly Random _random;
+        private readonly List<Rect> _rects;
 
         public VisualizerCircles(Canvas canvas, IPalette palette) : base(canvas, palette)
         {
-            this.rects = new List<Rect>();
+            _rects = new List<Rect>();
 
 #pragma warning disable S2245 // Using pseudorandom number generators (PRNGs) is security-sensitive
-            this.random = new Random();
+            _random = new Random();
 #pragma warning restore S2245 // Using pseudorandom number generators (PRNGs) is security-sensitive
         }
 
@@ -34,7 +34,7 @@ namespace Unicorn.Toolbox.Visualization
         {
             PrepareCanvas();
 
-            rects.Clear();
+            _rects.Clear();
 
             var stats = GetAutomationStatistics(data, filterType);
 
@@ -58,7 +58,7 @@ namespace Unicorn.Toolbox.Visualization
         {
             PrepareCanvas();
 
-            rects.Clear();
+            _rects.Clear();
 
             var featuresStats = new Dictionary<string, int>();
 
@@ -95,14 +95,14 @@ namespace Unicorn.Toolbox.Visualization
 
             do
             {
-                x = random.Next(Margin + radius, (int)canvas.RenderSize.Width - radius - Margin);
-                y = random.Next(Margin + radius, (int)canvas.RenderSize.Height - radius - Margin);
+                x = _random.Next(Margin + radius, (int)canvas.RenderSize.Width - radius - Margin);
+                y = _random.Next(Margin + radius, (int)canvas.RenderSize.Height - radius - Margin);
 
                 rect = new Rect(x - radius - Margin, y - radius - Margin, (radius + Margin) * 2, (radius + Margin) * 2);
             }
-            while (rects.Any(r => r.IntersectsWith(rect)));
+            while (_rects.Any(r => r.IntersectsWith(rect)));
 
-            rects.Add(rect);
+            _rects.Add(rect);
 
             double colorIndexStep = (double)Palette.DataColors.Count / featuresCount;
             int currentColorIndex = (int)(((index + 1) * colorIndexStep) - 1);

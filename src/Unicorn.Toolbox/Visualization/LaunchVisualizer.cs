@@ -17,91 +17,93 @@ namespace Unicorn.Toolbox.Visualization
         private const double MaxBarHeight = 100;
         private const double MinBarHeight = 30;
 
-        private readonly Random random;
-        private readonly Brush fontColor;
-        private readonly Brush backColor;
+        private readonly Random _random;
+        private readonly Brush _fontColor;
+        private readonly Brush _backColor;
         
-        private readonly Canvas canvas;
-        private readonly List<Execution> resultsList;
+        private readonly Canvas _canvas;
+        private readonly List<Execution> _resultsList;
 
-        private readonly int threadsCount;
+        private readonly int _threadsCount;
 
-        private readonly double earliestTime = double.MaxValue;
-        private readonly double latestTime = double.MinValue;
+        private readonly double _earliestTime = double.MaxValue;
+        private readonly double _latestTime = double.MinValue;
 
-        private readonly double workHeight;
-        private readonly double workWidth;
-        private readonly double ratio;
+        private readonly double _workHeight;
+        private readonly double _workWidth;
+        private readonly double _ratio;
 
-        private readonly DateTime utcStart;
+        private readonly DateTime _utcStart;
 
-        private SolidColorBrush currentBrush;
+        private SolidColorBrush _currentBrush;
 
-        private readonly Rectangle currentStampBar;
-        private readonly TextBlock currentStamp;
+        private readonly Rectangle _currentStampBar;
+        private readonly TextBlock _currentStamp;
 
-        private Rectangle currentSuite;
-        private bool newSuite = false;
+        private Rectangle _currentSuite;
+        private bool _newSuite = false;
 
         public LaunchVisualizer(Canvas canvas, List<Execution> resultsList)
         {
-            this.canvas = canvas;
-            this.canvas.Height = Math.Max(canvas.RenderSize.Height, resultsList.Count * (MinBarHeight + Margin) + Margin);
-            this.resultsList = resultsList;
+            _canvas = canvas;
+            _canvas.Height = Math.Max(canvas.RenderSize.Height, resultsList.Count * (MinBarHeight + Margin) + Margin);
+            _resultsList = resultsList;
 
-            this.random = new Random();
-            this.backColor = Brushes.White;
-            this.fontColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#111"));
+#pragma warning disable S2245 // Using pseudorandom number generators (PRNGs) is security-sensitive
+            _random = new Random();
+#pragma warning restore S2245 // Using pseudorandom number generators (PRNGs) is security-sensitive
+            _backColor = Brushes.White;
+            _fontColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#111"));
 
-            workHeight = canvas.RenderSize.Height - (2 * Margin);
-            workWidth = canvas.RenderSize.Width - (2 * Margin);
+            _workHeight = canvas.RenderSize.Height - (2 * Margin);
+            _workWidth = canvas.RenderSize.Width - (2 * Margin);
 
-            this.threadsCount = resultsList.Count;
+            _threadsCount = resultsList.Count;
 
-            utcStart = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            _utcStart = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
             foreach (var execution in resultsList)
             {
-                var min = execution.TestResults.Min(r => r.StartTime).ToUniversalTime().Subtract(utcStart).TotalMilliseconds;
-                earliestTime = Math.Min(earliestTime, min);
+                var min = execution.TestResults.Min(r => r.StartTime).ToUniversalTime().Subtract(_utcStart).TotalMilliseconds;
+                _earliestTime = Math.Min(_earliestTime, min);
 
-                var max = execution.TestResults.Max(r => r.EndTime).ToUniversalTime().Subtract(utcStart).TotalMilliseconds;
-                latestTime = Math.Max(latestTime, max);
+                var max = execution.TestResults.Max(r => r.EndTime).ToUniversalTime().Subtract(_utcStart).TotalMilliseconds;
+                _latestTime = Math.Max(_latestTime, max);
             }
 
-            var fullDuration = latestTime - earliestTime;
-            ratio = workWidth / fullDuration;
+            var fullDuration = _latestTime - _earliestTime;
+            _ratio = _workWidth / fullDuration;
 
-            currentStampBar = new Rectangle
+            _currentStampBar = new Rectangle
             {
                 Width = 2,
-                Height = this.canvas.Height,
-                Fill = fontColor,
+                Height = _canvas.Height,
+                Fill = _fontColor,
                 StrokeThickness = 1
             };
 
-            currentStamp = new TextBlock();
-            currentStamp.TextAlignment = TextAlignment.Center;
-            currentStamp.FontFamily = new FontFamily("Calibri");
-            currentStamp.FontSize = 15;
-            currentStamp.Foreground = fontColor;
+            _currentStamp = new TextBlock();
+            _currentStamp.TextAlignment = TextAlignment.Center;
+            _currentStamp.FontFamily = new FontFamily("Calibri");
+            _currentStamp.FontSize = 15;
+            _currentStamp.Foreground = _fontColor;
         }
 
         public void Visualize()
         {
-            canvas.Background = backColor;
-            canvas.Children.Clear();
+            _canvas.Background = _backColor;
+            _canvas.Children.Clear();
 
-            DrawText(utcStart.AddMilliseconds(earliestTime).ToLocalTime().ToString(), Margin, 0, false);
-            DrawText(utcStart.AddMilliseconds(latestTime).ToLocalTime().ToString(), canvas.RenderSize.Width - Margin, 0, true);
+            DrawText(_utcStart.AddMilliseconds(_earliestTime).ToLocalTime().ToString(), Margin, 0, false);
+            DrawText(_utcStart.AddMilliseconds(_latestTime).ToLocalTime().ToString(), _canvas.RenderSize.Width - Margin, 0, true);
 
             SetRandomColor();
             int currentIndex = 0;
 
-            var listId = resultsList[0].TestResults[0].TestListId;
-            newSuite = true;
+            var listId = _resultsList[0].TestResults[0].TestListId;
+            _newSuite = true;
 
-            foreach (var execution in resultsList)
+            foreach (var execution in _resultsList)
             {
                 foreach (var result in execution.TestResults)
                 {
@@ -109,47 +111,47 @@ namespace Unicorn.Toolbox.Visualization
                     {
                         SetRandomColor();
                         listId = result.TestListId;
-                        newSuite = true;
+                        _newSuite = true;
                     }
 
-                    var start = result.StartTime.ToUniversalTime().Subtract(utcStart).TotalMilliseconds;
-                    DrawResult(result, currentIndex, start, canvas);
+                    var start = result.StartTime.ToUniversalTime().Subtract(_utcStart).TotalMilliseconds;
+                    DrawResult(result, currentIndex, start, _canvas);
                 }
 
                 currentIndex++;
             }
 
-            canvas.Children.Add(currentStampBar);
-            Canvas.SetLeft(currentStampBar, 1);
-            Canvas.SetTop(currentStampBar, 0);
+            _canvas.Children.Add(_currentStampBar);
+            Canvas.SetLeft(_currentStampBar, 1);
+            Canvas.SetTop(_currentStampBar, 0);
 
-            canvas.Children.Add(currentStamp);
-            Canvas.SetLeft(currentStamp, 1);
-            Canvas.SetTop(currentStamp, canvas.RenderSize.Height);
+            _canvas.Children.Add(_currentStamp);
+            Canvas.SetLeft(_currentStamp, 1);
+            Canvas.SetTop(_currentStamp, _canvas.RenderSize.Height);
 
-            canvas.MouseMove += MoveLine;
+            _canvas.MouseMove += MoveLine;
         }
 
         private void DrawResult(TestResult result, int index, double start, Canvas canvas)
         {
-            double height = (workHeight / threadsCount) - Margin;
+            double height = (_workHeight / _threadsCount) - Margin;
             height = Math.Min(MaxBarHeight, height);
             height = Math.Max(MinBarHeight, height);
 
-            double width = result.Duration.TotalMilliseconds * ratio;
+            double width = result.Duration.TotalMilliseconds * _ratio;
 
-            double x = Margin + (start - earliestTime) * ratio;
+            double x = Margin + (start - _earliestTime) * _ratio;
             double y = Margin + (index * (height + Margin));
 
-            if (newSuite)
+            if (_newSuite)
             {
-                newSuite = false;
+                _newSuite = false;
 
                 var brush = new SolidColorBrush();
                 brush.Opacity = 0.2;
-                brush.Color = currentBrush.Color;
+                brush.Color = _currentBrush.Color;
 
-                currentSuite = new Rectangle
+                _currentSuite = new Rectangle
                 {
                     Fill = brush,
                     Width = width,
@@ -160,20 +162,20 @@ namespace Unicorn.Toolbox.Visualization
                     ToolTip = result.TestListName,
                 };
 
-                Canvas.SetLeft(currentSuite, x);
-                Canvas.SetTop(currentSuite, y);
-                canvas.Children.Add(currentSuite);
+                Canvas.SetLeft(_currentSuite, x);
+                Canvas.SetTop(_currentSuite, y);
+                canvas.Children.Add(_currentSuite);
             }
             else
             {
-                currentSuite.Width += width;
+                _currentSuite.Width += width;
             }
 
-            var tooltipText = result.Name + Environment.NewLine + utcStart.AddMilliseconds(start).ToLocalTime();
+            var tooltipText = result.Name + Environment.NewLine + _utcStart.AddMilliseconds(start).ToLocalTime();
 
             var bar = new Rectangle
             {
-                Fill = currentBrush,
+                Fill = _currentBrush,
                 Width = width,
                 Height = height * 0.75,
                 StrokeThickness = 1,
@@ -207,43 +209,43 @@ namespace Unicorn.Toolbox.Visualization
                 new NumberSubstitution(),
                 TextFormattingMode.Display);
 
-            label.Foreground = fontColor;
+            label.Foreground = _fontColor;
 
             double offset = rightAligned ? formattedText.Width : 0;
 
-            canvas.Children.Add(label);
+            _canvas.Children.Add(label);
             Canvas.SetLeft(label, x + 2 - offset);
             Canvas.SetTop(label, y + 2);
         }
 
         private void SetRandomColor() =>
-            currentBrush = new SolidColorBrush(
+            _currentBrush = new SolidColorBrush(
                     Color.FromRgb(
-                    (byte)random.Next(255),
-                    (byte)random.Next(255),
-                    (byte)random.Next(255)
+                    (byte)_random.Next(255),
+                    (byte)_random.Next(255),
+                    (byte)_random.Next(255)
                     ));
 
         private void MoveLine(object sender, MouseEventArgs e)
         {
-            var pos = Mouse.GetPosition(canvas);
-            Canvas.SetLeft(currentStampBar, pos.X + 2);
+            var pos = Mouse.GetPosition(_canvas);
+            Canvas.SetLeft(_currentStampBar, pos.X + 2);
 
-            currentStamp.Text = utcStart.AddMilliseconds(earliestTime).AddMilliseconds((pos.X + Margin) / ratio).ToLocalTime().ToString("yyyy-MM-ddTHH:mm:ss.fff");
+            _currentStamp.Text = _utcStart.AddMilliseconds(_earliestTime).AddMilliseconds((pos.X + Margin) / _ratio).ToLocalTime().ToString("yyyy-MM-ddTHH:mm:ss.fff");
 
             var formattedText = new FormattedText(
-                currentStamp.Text,
+                _currentStamp.Text,
                 CultureInfo.InvariantCulture,
                 FlowDirection.LeftToRight,
-                new Typeface(currentStamp.FontFamily, currentStamp.FontStyle, currentStamp.FontWeight, currentStamp.FontStretch),
-                currentStamp.FontSize,
-                currentStamp.Foreground,
+                new Typeface(_currentStamp.FontFamily, _currentStamp.FontStyle, _currentStamp.FontWeight, _currentStamp.FontStretch),
+                _currentStamp.FontSize,
+                _currentStamp.Foreground,
                 new NumberSubstitution(),
                 TextFormattingMode.Display);
 
             var xPosition = pos.X;
 
-            if (xPosition + formattedText.Width > this.canvas.RenderSize.Width - 20)
+            if (xPosition + formattedText.Width > this._canvas.RenderSize.Width - 20)
             {
                 xPosition -= formattedText.Width + 10;
             }
@@ -252,8 +254,8 @@ namespace Unicorn.Toolbox.Visualization
                 xPosition += 5;
             }
 
-            Canvas.SetLeft(currentStamp, xPosition);
-            Canvas.SetTop(currentStamp, canvas.RenderSize.Height - formattedText.Height);
+            Canvas.SetLeft(_currentStamp, xPosition);
+            Canvas.SetTop(_currentStamp, _canvas.RenderSize.Height - formattedText.Height);
         }
     }
 }
