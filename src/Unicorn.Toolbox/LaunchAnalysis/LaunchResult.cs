@@ -15,31 +15,6 @@ namespace Unicorn.Toolbox.LaunchAnalysis
 
         public List<Execution> Executions { get; }
 
-        public void AppendResultsFromTrx(string trxFile)
-        {
-            TrxParser trxParser = new TrxParser(trxFile);
-            var results = trxParser.AllTests;
-
-            if (results.Any())
-            {
-                var exeution = new Execution(Path.GetFileNameWithoutExtension(trxFile), results, trxParser.TrxDuration);
-                Executions.Add(exeution);
-            }
-        }
-
-        public override string ToString()
-        {
-            var durationMinutes = LaunchDuration / 60000;
-            var durationHours = durationMinutes / 60;
-            return new StringBuilder()
-                .AppendFormat("Threads: {0}\n", Executions.Count)
-                .AppendFormat("Launch duration: {0:F1} minutes ({1:F1} h.)\n", durationMinutes, durationHours)
-                .AppendFormat("Total execution time: {0:F1} minutes", ExecutionsSumMinutes)
-                .ToString();
-        }
-
-        private double ExecutionsSumMinutes => Executions.Sum(e => e.DurationFull.TotalMinutes);
-
         public double LaunchDuration
         {
             get
@@ -60,6 +35,37 @@ namespace Unicorn.Toolbox.LaunchAnalysis
 
                 return latestTime - earliestTime;
             }
+        }
+
+        private double ExecutionsSumMinutes => Executions.Sum(e => e.DurationFull.TotalMinutes);
+
+        private int ExecutedTests => Executions.Sum(e => e.TestsCount);
+
+        private int ExecutedSuites => Executions.Sum(e => e.SuitesCount);
+        
+        public void AppendResultsFromTrx(string trxFile)
+        {
+            TrxParser trxParser = new TrxParser(trxFile);
+            var results = trxParser.AllTests;
+
+            if (results.Any())
+            {
+                var exeution = new Execution(Path.GetFileNameWithoutExtension(trxFile), results, trxParser.TrxDuration);
+                Executions.Add(exeution);
+            }
+        }
+
+        public override string ToString()
+        {
+            var durationMinutes = LaunchDuration / 60000;
+            var durationHours = durationMinutes / 60;
+            return new StringBuilder()
+                .AppendFormat("Threads: {0}\n", Executions.Count)
+                .AppendFormat("Executed suites: {0}\n", ExecutedSuites)
+                .AppendFormat("Executed tests: {0}\n", ExecutedTests)
+                .AppendFormat("Launch duration: {0:F1} minutes ({1:F1} h.)\n", durationMinutes, durationHours)
+                .AppendFormat("Total execution time: {0:F1} minutes", ExecutionsSumMinutes)
+                .ToString();
         }
     }
 }
