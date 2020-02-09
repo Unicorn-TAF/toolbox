@@ -13,7 +13,7 @@ namespace Unicorn.ConsoleRunner
     {
         private const string ConstTestAssembly = "testAssembly";
         private const string ConstConfiguration = "configuration";
-        private static readonly string Delimiter = new string('-', 123);
+        private static string Delimiter;
 
         protected Program()
         {
@@ -21,6 +21,8 @@ namespace Unicorn.ConsoleRunner
 
         public static void Main(string[] args)
         {
+            Delimiter = new string('-', Console.WindowWidth);
+
             if (args.Length == 0)
             {
                 PrintHelpText();
