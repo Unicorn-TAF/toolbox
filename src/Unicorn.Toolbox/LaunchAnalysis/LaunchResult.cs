@@ -59,12 +59,13 @@ namespace Unicorn.Toolbox.LaunchAnalysis
         {
             var durationMinutes = LaunchDuration / 60000;
             var durationHours = durationMinutes / 60;
+            var executionSumHours = ExecutionsSumMinutes / 60;
             return new StringBuilder()
                 .AppendFormat("Threads: {0}\n", Executions.Count)
                 .AppendFormat("Executed suites: {0}\n", ExecutedSuites)
                 .AppendFormat("Executed tests: {0}\n", ExecutedTests)
-                .AppendFormat("Launch duration: {0:F1} minutes ({1:F1} h.)\n", durationMinutes, durationHours)
-                .AppendFormat("Total execution time: {0:F1} minutes", ExecutionsSumMinutes)
+                .AppendFormat("Launch duration: {0:F1} minutes ({1:F1} hrs.)\n", durationMinutes, durationHours)
+                .AppendFormat("Total execution time: {0:F1} minutes ({1:F1} hrs.)", ExecutionsSumMinutes, executionSumHours)
                 .ToString();
         }
     }
