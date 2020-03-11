@@ -122,9 +122,14 @@ namespace Unicorn.Toolbox
 
             gridResults.ItemsSource = _analyzer.Data.FilteredInfo;
 
-            textBoxCurrentFilter.Text = $"Filter by:\nFeatures[{string.Join(",", features)}]\n";
-            textBoxCurrentFilter.Text += $"Categories[{string.Join(",", categories)}]\n";
-            textBoxCurrentFilter.Text += $"Authors[{string.Join(",", authors)}]";
+            var foundTestsCount = _analyzer.Data.FilteredInfo.SelectMany(si => si.TestsInfos).Count();
+
+            var filterText = new StringBuilder()
+                .AppendFormat("Found {0} tests. Filters:\nFeatures[{1}]\n", foundTestsCount, string.Join(",", features))
+                .AppendFormat("Categories[{0}]\n", string.Join(", ", categories))
+                .AppendFormat("Authors[{0}]", string.Join(", ", authors));
+
+            textBoxCurrentFilter.Text = filterText.ToString();
         }
 
         private void ClickCellWithSuite(object sender, MouseButtonEventArgs e)
@@ -218,6 +223,7 @@ namespace Unicorn.Toolbox
         {
             _analyzer.Data.ClearFilters();
             gridResults.ItemsSource = _analyzer.Data.FilteredInfo;
+            textBoxCurrentFilter.Text = string.Empty;
         }
 
         private void GetCoverage()
