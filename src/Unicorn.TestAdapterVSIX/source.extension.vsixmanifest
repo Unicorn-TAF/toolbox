@@ -20,6 +20,6 @@
         <Asset Type="UnitTestExtension" d:Source="Project" d:ProjectName="Unicorn.TestAdapter" Path="|Unicorn.TestAdapter|" />
     </Assets>
     <Prerequisites>
-        <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[16.1.28811.260,17.0)" DisplayName="Visual Studio core editor" />
+        <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[14.0,17.0)" DisplayName="Visual Studio core editor" />
     </Prerequisites>
 </PackageManifest>
