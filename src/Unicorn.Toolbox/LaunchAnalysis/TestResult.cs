@@ -1,12 +1,14 @@
 ﻿using System;
+using Unicorn.Taf.Core.Testing;
 
 namespace Unicorn.Toolbox.LaunchAnalysis
 {
     public struct TestResult
     {
-        public TestResult(string name, DateTime start, DateTime end, string testListId, string testListName)
+        public TestResult(string name, Status status, DateTime start, DateTime end, string testListId, string testListName)
         {
             Name = name;
+            Status = status;
             StartTime = start;
             EndTime = end;
             Duration = EndTime - StartTime;
@@ -15,6 +17,8 @@ namespace Unicorn.Toolbox.LaunchAnalysis
         }
 
         public string Name { get; set; }
+
+        public Status Status { get; set; }
 
         public DateTime StartTime { get; set; }
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Xml.Linq;
+using Unicorn.Taf.Core.Testing;
 
 namespace Unicorn.Toolbox.LaunchAnalysis
 {
@@ -40,13 +41,17 @@ namespace Unicorn.Toolbox.LaunchAnalysis
                     var testListId = xResult.Attribute("testListId").Value;
                     var testListName = xTestLists.First(tl => tl.Attribute("id").Value.Equals(testListId)).Attribute("name").Value;
 
+                    var outcome = 
+                        xResult.Attribute("outcome").Value.Equals("Failed", StringComparison.CurrentCultureIgnoreCase) ? 
+                        Status.Failed : 
+                        Status.Passed;
 
                     if (xResult.Attribute("duration").Value.Equals("00:00:00.0000000", StringComparison.InvariantCultureIgnoreCase))
                     {
                         continue;
                     }
 
-                    var testResult = new TestResult(title, startTime, endTime, testListId, testListName);
+                    var testResult = new TestResult(title, outcome, startTime, endTime, testListId, testListName);
 
                     tests.Add(testResult);
                 }

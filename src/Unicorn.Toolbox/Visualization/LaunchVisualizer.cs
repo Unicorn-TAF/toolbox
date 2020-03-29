@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using Unicorn.Taf.Core.Testing;
 using Unicorn.Toolbox.LaunchAnalysis;
 
 namespace Unicorn.Toolbox.Visualization
@@ -15,7 +16,7 @@ namespace Unicorn.Toolbox.Visualization
     {
         private const int Margin = 20;
         private const double MaxBarHeight = 100;
-        private const double MinBarHeight = 30;
+        private const double MinBarHeight = 40;
 
         private readonly Random _random;
         private readonly Brush _fontColor;
@@ -148,7 +149,7 @@ namespace Unicorn.Toolbox.Visualization
                 _newSuite = false;
 
                 var brush = new SolidColorBrush();
-                brush.Opacity = 0.2;
+                brush.Opacity = 0.3;
                 brush.Color = _currentBrush.Color;
 
                 _currentSuite = new Rectangle
@@ -156,9 +157,6 @@ namespace Unicorn.Toolbox.Visualization
                     Fill = brush,
                     Width = width,
                     Height = height,
-                    StrokeThickness = 1,
-                    Stroke = Brushes.Gray,
-                    StrokeDashArray = new DoubleCollection() { 5, 1 },
                     ToolTip = result.TestListName,
                 };
 
@@ -178,13 +176,13 @@ namespace Unicorn.Toolbox.Visualization
                 Fill = _currentBrush,
                 Width = width,
                 Height = height * 0.75,
-                StrokeThickness = 1,
-                Stroke = Brushes.Black,
+                StrokeThickness = result.Status.Equals(Status.Failed) ? 2 : 0.5,
+                Stroke = result.Status.Equals(Status.Failed) ? Brushes.Red : Brushes.Black,
                 ToolTip = tooltipText,
             };
 
-            bar.MouseEnter += (s, e) => { bar.Stroke = Brushes.LightBlue; bar.StrokeThickness = 2; };
-            bar.MouseLeave += (s, e) => { bar.Stroke = Brushes.Black; bar.StrokeThickness = 1; };
+            bar.MouseEnter += (s, e) => { bar.Height = height; };
+            bar.MouseLeave += (s, e) => { bar.Height = height * 0.75; };
 
             Canvas.SetLeft(bar, x);
             Canvas.SetTop(bar, y);
@@ -220,11 +218,14 @@ namespace Unicorn.Toolbox.Visualization
 
         private void SetRandomColor() =>
             _currentBrush = new SolidColorBrush(
-                    Color.FromRgb(
-                    (byte)_random.Next(255),
-                    (byte)_random.Next(255),
-                    (byte)_random.Next(255)
-                    ));
+                Color.FromRgb(
+                (byte)_random.Next(255),
+                (byte)_random.Next(255),
+                (byte)_random.Next(255)
+                ))
+            {
+                Opacity = 0.8
+            };
 
         private void MoveLine(object sender, MouseEventArgs e)
         {
