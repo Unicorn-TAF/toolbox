@@ -41,6 +41,10 @@ namespace Unicorn.Toolbox.LaunchAnalysis
 
         private int ExecutedTests => Executions.Sum(e => e.TestsCount);
 
+        private int FailedTests => Executions.Sum(e => e.FailedTests);
+
+        private int SkippedTests => Executions.Sum(e => e.SkippedTests);
+
         private int ExecutedSuites => Executions.Sum(e => e.SuitesCount);
         
         public void AppendResultsFromTrx(string trxFile)
@@ -63,7 +67,7 @@ namespace Unicorn.Toolbox.LaunchAnalysis
             return new StringBuilder()
                 .AppendFormat("Threads: {0}\n", Executions.Count)
                 .AppendFormat("Executed suites: {0}\n", ExecutedSuites)
-                .AppendFormat("Executed tests: {0}\n", ExecutedTests)
+                .AppendFormat("Executed tests: {0} (Failed: {1}, Skipped: {2})\n", ExecutedTests, FailedTests, SkippedTests)
                 .AppendFormat("Launch duration: {0:F1} minutes ({1:F1} hrs.)\n", durationMinutes, durationHours)
                 .AppendFormat("Total execution time: {0:F1} minutes ({1:F1} hrs.)", ExecutionsSumMinutes, executionSumHours)
                 .ToString();

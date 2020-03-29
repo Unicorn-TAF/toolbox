@@ -116,15 +116,11 @@
             </TabItem>
             <TabItem x:Name="tabResultsAnalysis" Header="Results Analysis">
                 <Grid Background="#FFE5E5E5">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="125*"/>
-                        <ColumnDefinition Width="1043*"/>
-                    </Grid.ColumnDefinitions>
                     <Button x:Name="btnLoadTrx" Content="Load TRX files" VerticalAlignment="Top" Margin="10,24,0,0" Click="btnLoadTrx_Click" HorizontalAlignment="Left" Width="90"/>
-                    <DataGrid x:Name="gridTestResults" HorizontalScrollBarVisibility="Disabled" HeadersVisibility="All" Grid.Column="1" RowHeaderWidth="0" CanUserAddRows="False" 
-                              CanUserSortColumns="True" AutoGenerateColumns="False"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="402.315,70,10,10">
+                    <DataGrid x:Name="gridTestResults" HorizontalScrollBarVisibility="Disabled" HeadersVisibility="All" RowHeaderWidth="0" CanUserAddRows="False" CanUserResizeColumns="False"
+                              CanUserSortColumns="True" AutoGenerateColumns="False"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="415,70,10,10">
                         <DataGrid.Columns>
-                            <DataGridTemplateColumn Header="Execution" Width="*">
+                            <DataGridTemplateColumn Header="Execution" Width="*" ClipboardContentBinding="{Binding Name}">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <Grid>
@@ -133,7 +129,7 @@
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-                            <DataGridTemplateColumn Header="Duration total (min)" SortMemberPath="DurationFullMin">
+                            <DataGridTemplateColumn Header="Total duration (min)" SortMemberPath="DurationFullMin" ClipboardContentBinding="{Binding DurationFullMin}">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <Grid>
@@ -142,7 +138,7 @@
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-                            <DataGridTemplateColumn Header="Raw test duration (min)"  SortMemberPath="DurationMin">
+                            <DataGridTemplateColumn Header="Raw test duration (min)"  SortMemberPath="DurationMin" ClipboardContentBinding="{Binding DurationMin}">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <Grid>
@@ -151,7 +147,7 @@
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-                            <DataGridTemplateColumn Header="# of suites" SortMemberPath="SuitesCount">
+                            <DataGridTemplateColumn Header="Suites" SortMemberPath="SuitesCount" ClipboardContentBinding="{Binding SuitesCount}">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <Grid>
@@ -160,7 +156,7 @@
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-                            <DataGridTemplateColumn Header="# of tests" SortMemberPath="TestsCount">
+                            <DataGridTemplateColumn Header="Tests" SortMemberPath="TestsCount" ClipboardContentBinding="{Binding TestsCount}">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <Grid>
@@ -169,11 +165,29 @@
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="Fails" SortMemberPath="FailedTests" ClipboardContentBinding="{Binding FailedTests}">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <TextBlock VerticalAlignment="Center" Text="{Binding FailedTests}"/>
+                                        </Grid>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="Skips" SortMemberPath="SkippedTests" ClipboardContentBinding="{Binding SkippedTests}">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <TextBlock VerticalAlignment="Center" Text="{Binding SkippedTests}"/>
+                                        </Grid>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
                         </DataGrid.Columns>
                     </DataGrid>
-                    <TextBox x:Name="textBoxLaunchSummary" HorizontalAlignment="Left" Height="138" Margin="10,70,0,0" TextWrapping="Wrap" Text="Summary . . ." VerticalAlignment="Top" Width="512" Grid.ColumnSpan="2"/>
-                    <TextBox x:Name="SearchTextBox" Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="446,42,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120" TextChanged="SearchTextBox_TextChanged"/>
-                    <Label Content="Filter:" Grid.Column="1" HorizontalAlignment="Left" Margin="402,39,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="textBoxLaunchSummary" HorizontalAlignment="Left" Height="138" Margin="10,70,0,0" TextWrapping="Wrap" Text="Summary . . ." VerticalAlignment="Top" Width="400" Grid.ColumnSpan="2"/>
+                    <TextBox x:Name="SearchTextBox" HorizontalAlignment="Right" Height="25" Margin="0,70,505,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120" TextChanged="SearchTextBox_TextChanged"/>
+                    <Label Content="Filter:" HorizontalAlignment="Right" Margin="0,70,630,0" VerticalAlignment="Top" Height="25"/>
                 </Grid>
             </TabItem>
         </TabControl>

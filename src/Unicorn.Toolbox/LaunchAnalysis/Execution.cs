@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using Unicorn.Taf.Core.Testing;
 
 namespace Unicorn.Toolbox.LaunchAnalysis
 {
@@ -37,14 +38,24 @@ namespace Unicorn.Toolbox.LaunchAnalysis
         public TimeSpan DurationFull { get; }
 
         /// <summary>
-        /// Used for data binding
+        /// Gets execution duration in minutes (used for data binding).
         /// </summary>
         public double DurationFullMin => DurationFull.TotalMinutes;
 
         /// <summary>
-        /// Used for data binding
+        /// Gets total tests count within execution (used for data binding).
         /// </summary>
         public int TestsCount => TestResults.Count;
+
+        /// <summary>
+        /// Gets failed tests count within execution (used for data binding).
+        /// </summary>
+        public int FailedTests => TestResults.Count(tr => tr.Status.Equals(Status.Failed));
+
+        /// <summary>
+        /// Gets skipped tests count within execution (used for data binding).
+        /// </summary>
+        public int SkippedTests => TestResults.Count(tr => tr.Status.Equals(Status.Skipped));
 
         /// <summary>
         /// Used for data binding

@@ -41,14 +41,19 @@ namespace Unicorn.Toolbox.LaunchAnalysis
                     var testListId = xResult.Attribute("testListId").Value;
                     var testListName = xTestLists.First(tl => tl.Attribute("id").Value.Equals(testListId)).Attribute("name").Value;
 
-                    var outcome = 
-                        xResult.Attribute("outcome").Value.Equals("Failed", StringComparison.CurrentCultureIgnoreCase) ? 
-                        Status.Failed : 
-                        Status.Passed;
+                    Status outcome;
 
-                    if (xResult.Attribute("duration").Value.Equals("00:00:00.0000000", StringComparison.InvariantCultureIgnoreCase))
+                    switch(xResult.Attribute("outcome").Value)
                     {
-                        continue;
+                        case "Failed":
+                            outcome = Status.Failed;
+                            break;
+                        case "Inconclusive":
+                            outcome = Status.Skipped;
+                            break;
+                        default:
+                            outcome = Status.Passed;
+                            break;
                     }
 
                     var testResult = new TestResult(title, outcome, startTime, endTime, testListId, testListName);
