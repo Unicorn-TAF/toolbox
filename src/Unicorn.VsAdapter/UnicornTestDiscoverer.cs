@@ -41,7 +41,7 @@ namespace Unicorn.TestAdapter
                 testsInfos = discoverer.Instance.GetTests(source);
             }
 
-            logger?.SendMessage(TestMessageLevel.Informational, $"Source: {source} (found {testsInfos.Count} tests)");
+            logger?.SendMessage(TestMessageLevel.Informational, $"Source: {Path.GetFileName(source)} (found {testsInfos.Count} tests)");
 
             var testCoordinatesProvider = new TestCoordinatesProvider(source);
 
