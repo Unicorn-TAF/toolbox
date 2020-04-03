@@ -56,7 +56,10 @@ namespace Unicorn.Toolbox.LaunchAnalysis
                             break;
                     }
 
-                    var testResult = new TestResult(title, outcome, startTime, endTime, testListId, testListName);
+                    var errorMessage = outcome.Equals(Status.Failed) ?
+                        xResult.Element(xNamespace + "Output").Element(xNamespace + "ErrorInfo").Element(xNamespace + "Message").Value :
+                        null;
+                    var testResult = new TestResult(title, outcome, startTime, endTime, testListId, testListName, errorMessage);
 
                     tests.Add(testResult);
                 }

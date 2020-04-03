@@ -188,6 +188,14 @@
                     <TextBox x:Name="textBoxLaunchSummary" HorizontalAlignment="Left" Height="138" Margin="10,70,0,0" TextWrapping="Wrap" Text="Summary . . ." VerticalAlignment="Top" Width="400" Grid.ColumnSpan="2"/>
                     <TextBox x:Name="SearchTextBox" HorizontalAlignment="Right" Height="25" Margin="0,70,505,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120" TextChanged="SearchTextBox_TextChanged"/>
                     <Label Content="Filter:" HorizontalAlignment="Right" Margin="0,70,630,0" VerticalAlignment="Top" Height="25"/>
+                    <GroupBox Header="Find tests by fail message" HorizontalAlignment="Left" Height="100" Margin="10,526,0,0" VerticalAlignment="Top" Width="400"><!--Visibility="Hidden"-->
+                        <Grid>
+                            <TextBox x:Name="textBoxFailMessage" HorizontalAlignment="Left" Height="23" Margin="10,10,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="295"/>
+                            <CheckBox x:Name="checkboxFailMessageRegex" Content="As regex" Margin="0,13,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="68"/>
+                            <Button x:Name="buttonSearchByFailMessage" Content="Search" HorizontalAlignment="Left" Margin="10,0,0,10" Width="75" Height="22" VerticalAlignment="Bottom" Click="ButtonSearchByFailMessage_Click"/>
+                            <Label x:Name="labelFoundFailedTests" Content="Tests found: " HorizontalAlignment="Left" Margin="101,0,0,8" Height="26" VerticalAlignment="Bottom" FontWeight="Bold" Foreground="#FF3399FF" Cursor="Hand" MouseDown="LabelFoundFailedTests_MouseDown"/>
+                        </Grid>
+                    </GroupBox>
                 </Grid>
             </TabItem>
         </TabControl>

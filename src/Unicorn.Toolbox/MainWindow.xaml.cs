@@ -26,6 +26,7 @@ namespace Unicorn.Toolbox
         private Analyzer _analyzer;
         private SpecsCoverage _coverage;
         private LaunchResult _launchResult;
+        private FailedTestsFilter _failedTestsFilter;
 
         private bool groupBoxVisualizationStateTemp = false;
         private bool trxLoaded = false;
@@ -483,5 +484,18 @@ namespace Unicorn.Toolbox
             }
         }
 
+        private void ButtonSearchByFailMessage_Click(object sender, RoutedEventArgs e)
+        {
+            _failedTestsFilter = new FailedTestsFilter(textBoxFailMessage.Text, checkboxFailMessageRegex.IsChecked.Value);
+            _failedTestsFilter.FilterTests(_launchResult.Executions.SelectMany(exec => exec.TestResults));
+            labelFoundFailedTests.Content = "Tests found: " + _failedTestsFilter.MatchingTestsCount;
+        }
+
+        private void LabelFoundFailedTests_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            var window = new WindowTestsByMessage();
+            window.gridResults.ItemsSource = _failedTestsFilter.FilteredResults;
+            window.ShowDialog();
+        }
     }
 }

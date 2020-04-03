@@ -5,7 +5,7 @@ namespace Unicorn.Toolbox.LaunchAnalysis
 {
     public struct TestResult
     {
-        public TestResult(string name, Status status, DateTime start, DateTime end, string testListId, string testListName)
+        public TestResult(string name, Status status, DateTime start, DateTime end, string testListId, string testListName, string errorMessage)
         {
             Name = name;
             Status = status;
@@ -14,6 +14,7 @@ namespace Unicorn.Toolbox.LaunchAnalysis
             Duration = EndTime - StartTime;
             TestListId = testListId;
             TestListName = testListName;
+            ErrorMessage = errorMessage;
         }
 
         public string Name { get; set; }
@@ -29,5 +30,7 @@ namespace Unicorn.Toolbox.LaunchAnalysis
         public string TestListId { get; set; }
 
         public string TestListName { get; set; }
+
+        public string ErrorMessage { get; set; }
     }
 }

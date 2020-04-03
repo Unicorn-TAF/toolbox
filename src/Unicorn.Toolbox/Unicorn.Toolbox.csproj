@@ -83,9 +83,13 @@
     <Compile Include="Coverage\SpecsCoverage.cs" />
     <Compile Include="Coverage\Module.cs" />
     <Compile Include="LaunchAnalysis\Execution.cs" />
+    <Compile Include="LaunchAnalysis\FailedTestsFilter.cs" />
     <Compile Include="LaunchAnalysis\LaunchResult.cs" />
     <Compile Include="LaunchAnalysis\TestResult.cs" />
     <Compile Include="LaunchAnalysis\TrxParser.cs" />
+    <Compile Include="LaunchAnalysis\WindowTestsByMessage.xaml.cs">
+      <DependentUpon>WindowTestsByMessage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="packages.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -105,6 +109,10 @@
     <Compile Include="WindowTestPreview.xaml.cs">
       <DependentUpon>WindowTestPreview.xaml</DependentUpon>
     </Compile>
+    <Page Include="LaunchAnalysis\WindowTestsByMessage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
