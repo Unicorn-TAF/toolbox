@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Unicorn.Taf.Core.Testing;
@@ -38,5 +39,12 @@ namespace Unicorn.Toolbox.LaunchAnalysis
                 MatchingTestsCount += matchingResults.Count();
             }
         }
+
+        public static IEnumerable<IEnumerable<TestResult>> GetTopErrors(IEnumerable<TestResult> testResults) =>
+            (from test in testResults
+            where test.Status.Equals(Status.Failed)
+            group test by test.ErrorMessage into testGroup
+            orderby testGroup.Count() descending
+            select testGroup).Take(Math.Min(5, testResults.Count()));
     }
 }

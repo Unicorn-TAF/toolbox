@@ -7,10 +7,6 @@
         mc:Ignorable="d"
         Title="Unicorn toolbox" Height="750" Width="1200" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Icon="unicornIcon.ico">
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0*"/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
         <TabControl x:Name="tabControl" Margin="10,10,10,0" Grid.ColumnSpan="2" Height="671" VerticalAlignment="Top" SelectionChanged="tabControl_SelectionChanged">
             <TabItem x:Name="tabStatistics" Header="Tests statistics">
                 <Grid x:Name="gridStatistics" Background="#FFE5E5E5" Margin="0,0,0,1">
@@ -118,9 +114,17 @@
                 <Grid Background="#FFE5E5E5">
                     <Button x:Name="btnLoadTrx" Content="Load TRX files" VerticalAlignment="Top" Margin="10,24,0,0" Click="btnLoadTrx_Click" HorizontalAlignment="Left" Width="90"/>
                     <DataGrid x:Name="gridTestResults" HorizontalScrollBarVisibility="Disabled" HeadersVisibility="All" RowHeaderWidth="0" CanUserAddRows="False" CanUserResizeColumns="False"
-                              CanUserSortColumns="True" AutoGenerateColumns="False"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="415,70,10,10">
+                              CanUserSortColumns="True" AutoGenerateColumns="False"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="10,195,450,10">
                         <DataGrid.Columns>
                             <DataGridTemplateColumn Header="Execution" Width="*" ClipboardContentBinding="{Binding Name}">
+                                <DataGridTemplateColumn.HeaderTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock VerticalAlignment="Center">Execution: </TextBlock>
+                                            <TextBox Width="150" TextChanged="SearchTextBox_TextChanged"></TextBox>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.HeaderTemplate>
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <Grid>
@@ -185,17 +189,17 @@
                             </DataGridTemplateColumn>
                         </DataGrid.Columns>
                     </DataGrid>
-                    <TextBox x:Name="textBoxLaunchSummary" HorizontalAlignment="Left" Height="138" Margin="10,70,0,0" TextWrapping="Wrap" Text="Summary . . ." VerticalAlignment="Top" Width="400" Grid.ColumnSpan="2"/>
-                    <TextBox x:Name="SearchTextBox" HorizontalAlignment="Right" Height="25" Margin="0,70,505,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120" TextChanged="SearchTextBox_TextChanged"/>
-                    <Label Content="Filter:" HorizontalAlignment="Right" Margin="0,70,630,0" VerticalAlignment="Top" Height="25"/>
-                    <GroupBox Header="Find tests by fail message" HorizontalAlignment="Left" Height="100" Margin="10,526,0,0" VerticalAlignment="Top" Width="400"><!--Visibility="Hidden"-->
+                    <TextBox x:Name="textBoxLaunchSummary" HorizontalAlignment="Left" Height="120" Margin="10,70,0,0" TextWrapping="Wrap" Text="Summary . . ." VerticalAlignment="Top" Width="511"/>
+                    <GroupBox Header="Find tests by fail message" Height="100" Margin="0,526,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="400">
                         <Grid>
                             <TextBox x:Name="textBoxFailMessage" HorizontalAlignment="Left" Height="23" Margin="10,10,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="295"/>
-                            <CheckBox x:Name="checkboxFailMessageRegex" Content="As regex" Margin="0,13,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="68"/>
+                            <CheckBox x:Name="checkboxFailMessageRegex" Content="As regex" Margin="0,10,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="68" RenderTransformOrigin="0.544,1.385"/>
                             <Button x:Name="buttonSearchByFailMessage" Content="Search" HorizontalAlignment="Left" Margin="10,0,0,10" Width="75" Height="22" VerticalAlignment="Bottom" Click="ButtonSearchByFailMessage_Click"/>
-                            <Label x:Name="labelFoundFailedTests" Content="Tests found: " HorizontalAlignment="Left" Margin="101,0,0,8" Height="26" VerticalAlignment="Bottom" FontWeight="Bold" Foreground="#FF3399FF" Cursor="Hand" MouseDown="LabelFoundFailedTests_MouseDown"/>
+                            <Label x:Name="labelFoundFailedTests" Content="Tests found: " Margin="0,0,10,10" Height="26" VerticalAlignment="Bottom" FontWeight="Bold" Foreground="#FF3399FF" Cursor="Hand" MouseDown="LabelFoundFailedTests_MouseDown" HorizontalAlignment="Right" Width="82"/>
                         </Grid>
                     </GroupBox>
+                    <Label Content="Top 5 fail reasons" HorizontalAlignment="Right" Margin="0,0,161,0" VerticalAlignment="Top" FontWeight="Bold"/>
+                    <StackPanel x:Name="stackPanelFails" HorizontalAlignment="Right" Width="400" Margin="0,0,10,115" Height="500" VerticalAlignment="Bottom" />
                 </Grid>
             </TabItem>
         </TabControl>

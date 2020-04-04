@@ -84,6 +84,9 @@
     <Compile Include="Coverage\Module.cs" />
     <Compile Include="LaunchAnalysis\Execution.cs" />
     <Compile Include="LaunchAnalysis\FailedTestsFilter.cs" />
+    <Compile Include="LaunchAnalysis\FailedTestsGroup.xaml.cs">
+      <DependentUpon>FailedTestsGroup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="LaunchAnalysis\LaunchResult.cs" />
     <Compile Include="LaunchAnalysis\TestResult.cs" />
     <Compile Include="LaunchAnalysis\TrxParser.cs" />
@@ -109,6 +112,10 @@
     <Compile Include="WindowTestPreview.xaml.cs">
       <DependentUpon>WindowTestPreview.xaml</DependentUpon>
     </Compile>
+    <Page Include="LaunchAnalysis\FailedTestsGroup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="LaunchAnalysis\WindowTestsByMessage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

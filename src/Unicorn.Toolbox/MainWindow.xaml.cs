@@ -418,6 +418,15 @@ namespace Unicorn.Toolbox
             buttonVisualize.IsEnabled = true;
             checkBoxFullscreen.IsEnabled = true;
             trxLoaded = true;
+
+            stackPanelFails.Children.Clear();
+
+            var results = FailedTestsFilter.GetTopErrors(_launchResult.Executions.SelectMany(exec => exec.TestResults));
+
+            for (int i = 0; i < results.Count(); i++)
+            {
+                stackPanelFails.Children.Add(new FailedTestsGroup(results.ElementAt(i)));
+            }
         }
 
         private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
