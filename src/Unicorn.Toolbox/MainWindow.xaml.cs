@@ -140,6 +140,7 @@ namespace Unicorn.Toolbox
                 string testSuiteName = (sender as TextBlock).Text;
 
                 var preview = new WindowTestPreview();
+                preview.Title += testSuiteName;
                 preview.ShowActivated = false;
                 preview.Show();
                 preview.gridResults.ItemsSource = _analyzer.Data.FilteredInfo.First(s => s.Name.Equals(testSuiteName)).TestsInfos;
