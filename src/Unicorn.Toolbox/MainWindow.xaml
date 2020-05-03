@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="Unicorn toolbox" Height="750" Width="1200" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Icon="unicornIcon.ico">
     <Grid>
-        <TabControl x:Name="tabControl" Margin="10,10,10,0" Grid.ColumnSpan="2" Height="671" VerticalAlignment="Top" SelectionChanged="tabControl_SelectionChanged">
+        <TabControl x:Name="tabControl" Margin="10,10,10,0" Grid.ColumnSpan="2" Height="671" VerticalAlignment="Top" SelectionChanged="TabChanged">
             <TabItem x:Name="tabStatistics" Header="Tests statistics">
                 <Grid x:Name="gridStatistics" Background="#FFE5E5E5" Margin="0,0,0,1">
                     <DataGrid x:Name="gridResults" HorizontalScrollBarVisibility="Disabled" HeadersVisibility="All" Grid.Column="0" RowHeaderWidth="0" CanUserAddRows="False" AutoGenerateColumns="False"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="224,70,10,80">
@@ -72,9 +72,9 @@
                         </TabControl>
                         <Button x:Name="buttonShowAll" Content="Show all" HorizontalAlignment="Left" VerticalAlignment="Top" Width="80" Margin="24,30,0,0" Click="ShowAllClick"/>
                         <Button x:Name="buttonApplyFilter" Content="Apply Filter" HorizontalAlignment="Left" VerticalAlignment="Top" Width="80" Margin="118,30,0,0" Click="ApplyFilter"/>
-                        <CheckBox x:Name="checkBoxShowHide" Content="Show/Hide all" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="24,56,0,0" RenderTransformOrigin="0.633,1.422" Unchecked="checkBox_Unchecked" Checked="checkBox_Checked"/>
-                        <CheckBox x:Name="checkOnlyEnabledTests" Content="Only Enabled tests" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="24,96,0,0" RenderTransformOrigin="0.633,1.422" Checked="checkOnlyEnabledTests_Checked"/>
-                        <CheckBox x:Name="checkOnlyDisabledTests" Content="Only Disabled tests" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="24,76,0,0" RenderTransformOrigin="0.633,1.422" Checked="checkOnlyDisabledTests_Checked"/>
+                        <CheckBox x:Name="checkBoxShowHide" Content="Show/Hide all" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="24,56,0,0" RenderTransformOrigin="0.633,1.422" Unchecked="HideAll" Checked="ShowAll"/>
+                        <CheckBox x:Name="checkOnlyEnabledTests" Content="Only Enabled tests" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="24,96,0,0" RenderTransformOrigin="0.633,1.422" Checked="FilterOnlyEnabledTests"/>
+                        <CheckBox x:Name="checkOnlyDisabledTests" Content="Only Disabled tests" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="24,76,0,0" RenderTransformOrigin="0.633,1.422" Checked="FilterOnlyDisabledTests"/>
                     </Grid>
                     <TextBox x:Name="textBoxCurrentFilter" Text="" Margin="10,0,10,10" IsEnabled="False" FontSize="11" Height="65" VerticalAlignment="Bottom"/>
                     <Button x:Name="buttonLoadTestsAssembly" Content="Load tests dll" VerticalAlignment="Top" Click="LoadTestsAssembly" Margin="10,24,0,0" HorizontalAlignment="Left" Width="90"/>
@@ -112,7 +112,7 @@
             </TabItem>
             <TabItem x:Name="tabResultsAnalysis" Header="Results Analysis">
                 <Grid Background="#FFE5E5E5">
-                    <Button x:Name="btnLoadTrx" Content="Load TRX files" VerticalAlignment="Top" Margin="10,24,0,0" Click="btnLoadTrx_Click" HorizontalAlignment="Left" Width="90"/>
+                    <Button x:Name="btnLoadTrx" Content="Load TRX files" VerticalAlignment="Top" Margin="10,24,0,0" Click="LoadTrx" HorizontalAlignment="Left" Width="90"/>
                     <DataGrid x:Name="gridTestResults" HorizontalScrollBarVisibility="Disabled" HeadersVisibility="All" RowHeaderWidth="0" CanUserAddRows="False" CanUserResizeColumns="False"
                               CanUserSortColumns="True" AutoGenerateColumns="False"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="10,195,450,10">
                         <DataGrid.Columns>
@@ -121,7 +121,7 @@
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal">
                                             <TextBlock VerticalAlignment="Center">Execution:</TextBlock>
-                                            <TextBox Width="150" TextChanged="SearchTextBox_TextChanged"></TextBox>
+                                            <TextBox Width="150" TextChanged="FilterExecutions"></TextBox>
                                         </StackPanel>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.HeaderTemplate>
@@ -195,11 +195,11 @@
                             <TextBox x:Name="textBoxFailMessage" Height="23" Margin="10,10,10,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top"/>
                             <CheckBox x:Name="checkboxFailMessageRegex" Content="Regex" Margin="130,0,0,13" RenderTransformOrigin="0.544,1.385" HorizontalAlignment="Left" Width="59" Height="16" VerticalAlignment="Bottom"/>
                             <ComboBox x:Name="comboFilterExecutedTestsBy" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="10,0,0,8" Width="115" Height="26" VerticalAlignment="Bottom">
-                                <ComboBoxItem Content="By fail message" Selected="ComboBoxItem_Selected"/>
-                                <ComboBoxItem Content="By time" Selected="ComboBoxItem_Selected_1"/>
+                                <ComboBoxItem Content="By fail message" Selected="ActivateSearchByMessage"/>
+                                <ComboBoxItem Content="By time" Selected="ActivateSearchByTime"/>
                             </ComboBox>
-                            <Button x:Name="buttonSearchByFailMessage" Content="Search" HorizontalAlignment="Left" Margin="190,0,0,10" Width="75" Height="22" VerticalAlignment="Bottom" Click="ButtonSearchByFailMessage_Click" RenderTransformOrigin="3.24,0.5"/>
-                            <Label x:Name="labelFoundFailedTests" Content="Tests found: " Margin="0,0,10,8" Height="26" HorizontalContentAlignment="Right" VerticalAlignment="Bottom" FontWeight="Bold" Foreground="#FF3399FF" Cursor="Hand" MouseDown="LabelFoundFailedTests_MouseDown" HorizontalAlignment="Right" Width="100"/>
+                            <Button x:Name="buttonSearchByFailMessage" Content="Search" HorizontalAlignment="Left" Margin="190,0,0,10" Width="75" Height="22" VerticalAlignment="Bottom" Click="SearchInExecutedTests" RenderTransformOrigin="3.24,0.5"/>
+                            <Label x:Name="labelFoundFailedTests" Content="Tests found: " Margin="0,0,10,8" Height="26" HorizontalContentAlignment="Right" VerticalAlignment="Bottom" FontWeight="Bold" Foreground="#FF3399FF" Cursor="Hand" MouseDown="OpenFilteredTests" HorizontalAlignment="Right" Width="100"/>
                         </Grid>
                     </GroupBox>
                     <Label Content="Top 5 fail reasons" HorizontalAlignment="Right" Margin="0,0,161,0" VerticalAlignment="Top" FontWeight="Bold"/>

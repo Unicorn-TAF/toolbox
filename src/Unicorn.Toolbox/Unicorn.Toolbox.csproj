@@ -93,6 +93,9 @@
     <Compile Include="LaunchAnalysis\WindowTestsByMessage.xaml.cs">
       <DependentUpon>WindowTestsByMessage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MainWindow.Coverage.cs" />
+    <Compile Include="MainWindow.Results.cs" />
+    <Compile Include="MainWindow.Statistics.cs" />
     <Compile Include="packages.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
