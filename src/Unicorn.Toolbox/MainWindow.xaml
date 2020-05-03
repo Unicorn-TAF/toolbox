@@ -114,7 +114,7 @@
                 <Grid Background="#FFE5E5E5">
                     <Button x:Name="btnLoadTrx" Content="Load TRX files" VerticalAlignment="Top" Margin="10,24,0,0" Click="LoadTrx" HorizontalAlignment="Left" Width="90"/>
                     <DataGrid x:Name="gridTestResults" HorizontalScrollBarVisibility="Disabled" HeadersVisibility="All" RowHeaderWidth="0" CanUserAddRows="False" CanUserResizeColumns="False"
-                              CanUserSortColumns="True" AutoGenerateColumns="False"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="10,195,450,10">
+                              CanUserSortColumns="True" AutoGenerateColumns="False"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="10,195,0,10" HorizontalAlignment="Left" Width="560">
                         <DataGrid.Columns>
                             <DataGridTemplateColumn Header="Execution" Width="*" ClipboardContentBinding="{Binding Name}">
                                 <DataGridTemplateColumn.HeaderTemplate>
@@ -133,7 +133,7 @@
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-                            <DataGridTemplateColumn Header="Total duration (min)" SortMemberPath="DurationFullMin" ClipboardContentBinding="{Binding DurationFullMin}">
+                            <DataGridTemplateColumn Width="60" HeaderStyle="{StaticResource WrappedColumnHeaderStyle}" Header="Total duration (min)" SortMemberPath="DurationFullMin" ClipboardContentBinding="{Binding DurationFullMin}">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <Grid>
@@ -142,7 +142,7 @@
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-                            <DataGridTemplateColumn Header="Raw test duration (min)"  SortMemberPath="DurationMin" ClipboardContentBinding="{Binding DurationMin}">
+                            <DataGridTemplateColumn Width="60" HeaderStyle="{StaticResource WrappedColumnHeaderStyle}" Header="Raw test duration (min)"  SortMemberPath="DurationMin" ClipboardContentBinding="{Binding DurationMin}">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <Grid>
@@ -189,7 +189,7 @@
                             </DataGridTemplateColumn>
                         </DataGrid.Columns>
                     </DataGrid>
-                    <TextBox x:Name="textBoxLaunchSummary" HorizontalAlignment="Left" Height="120" Margin="10,70,0,0" TextWrapping="Wrap" Text="Summary . . ." VerticalAlignment="Top" Width="511"/>
+                    <TextBox x:Name="textBoxLaunchSummary" HorizontalAlignment="Left" Height="120" Margin="10,70,0,0" TextWrapping="Wrap" Text="Summary . . ." VerticalAlignment="Top" Width="560"/>
                     <GroupBox Header="Find tests by fail message" Height="100" Margin="0,526,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="400">
                         <Grid>
                             <TextBox x:Name="textBoxFailMessage" Height="23" Margin="10,10,10,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top"/>
@@ -208,12 +208,12 @@
             </TabItem>
         </TabControl>
         <TextBox x:Name="textBoxStatistics" Text="" Margin="0,686,0,0" IsEnabled="False" Grid.ColumnSpan="2"/>
-        <GroupBox x:Name="groupBoxVisualization" Grid.ColumnSpan="2" Header="Visualization" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="125,40,0,0" Height="55" Width="411" IsEnabled="False">
+        <GroupBox x:Name="groupBoxVisualization" Header="Visualization" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="125,40,0,0" Height="55" Width="460" IsEnabled="False">
             <Grid>
-                <CheckBox x:Name="checkBoxModern" Content="Circles" Margin="210,9,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.274,0.533" HorizontalAlignment="Left" Width="66"/>
-                <CheckBox x:Name="checkBoxFullscreen" Content="Fullscreen" Margin="281,9,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.274,0.533" HorizontalAlignment="Left" Width="78"/>
-                <Button x:Name="buttonVisualize" Content="Visualize" Width="90" Margin="9,6,0,0" VerticalAlignment="Top" Click="Visualize" HorizontalAlignment="Left" />
-                <ComboBox x:Name="comboBoxPalette" HorizontalAlignment="Left" Margin="105,6,0,0" VerticalAlignment="Top" Width="100" Height="20" FontSize="11" HorizontalContentAlignment="Center">
+                <CheckBox x:Name="checkBoxModern" Content="Circles" Margin="121,8,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.274,0.533" HorizontalAlignment="Left" Width="66"/>
+                <CheckBox x:Name="checkBoxFullscreen" Content="Fullscreen" Margin="192,8,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.274,0.533" HorizontalAlignment="Left" Width="78"/>
+                <Button x:Name="buttonVisualize" Content="Visualize" Width="90" Margin="0,5,10,0" VerticalAlignment="Top" Click="Visualize" HorizontalAlignment="Right" />
+                <ComboBox x:Name="comboBoxPalette" HorizontalAlignment="Left" Margin="10,5,0,0" VerticalAlignment="Top" Width="100" Height="22" FontSize="11" VerticalContentAlignment="Center" HorizontalContentAlignment="Center">
                     <ComboBoxItem Content="Light Green" Background="#558B2F" IsSelected="True"/>
                     <ComboBoxItem Content="Deep Purple" Background="#311B92"/>
                     <ComboBoxItem Content="Orange" Background="#EF6C00"/>
