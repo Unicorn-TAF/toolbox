@@ -83,7 +83,7 @@
     <Compile Include="Coverage\SpecsCoverage.cs" />
     <Compile Include="Coverage\Module.cs" />
     <Compile Include="LaunchAnalysis\Execution.cs" />
-    <Compile Include="LaunchAnalysis\FailedTestsFilter.cs" />
+    <Compile Include="LaunchAnalysis\ExecutedTestsFilter.cs" />
     <Compile Include="LaunchAnalysis\FailedTestsGroup.xaml.cs">
       <DependentUpon>FailedTestsGroup.xaml</DependentUpon>
     </Compile>

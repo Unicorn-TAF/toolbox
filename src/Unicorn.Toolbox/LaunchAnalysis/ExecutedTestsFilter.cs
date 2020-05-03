@@ -6,22 +6,27 @@ using Unicorn.Taf.Core.Testing;
 
 namespace Unicorn.Toolbox.LaunchAnalysis
 {
-    public class FailedTestsFilter
+    public class ExecutedTestsFilter
     {
         private readonly string _searchString;
         private readonly bool _isRegex;
 
-        public FailedTestsFilter(string searchString, bool isRegex)
+        public ExecutedTestsFilter(string searchString, bool isRegex)
         {
             _searchString = searchString;
             _isRegex = isRegex;
+        }
+
+        public ExecutedTestsFilter(string dateTimeString)
+        {
+            _searchString = dateTimeString;
         }
 
         public Dictionary<string, IEnumerable<TestResult>> FilteredResults { get; protected set; }
 
         public int MatchingTestsCount { get; protected set; }
 
-        public void FilterTests(IEnumerable<TestResult> testResults)
+        public void FilterTestsByFailMessage(IEnumerable<TestResult> testResults)
         {
             var results = _isRegex ?
                 testResults.Where(r => r.Status.Equals(Status.Failed) && Regex.IsMatch(r.ErrorMessage, _searchString)) :
@@ -37,6 +42,20 @@ namespace Unicorn.Toolbox.LaunchAnalysis
                 var matchingResults = results.Where(r => r.TestListName.Equals(suite));
                 FilteredResults.Add(suite, matchingResults);
                 MatchingTestsCount += matchingResults.Count();
+            }
+        }
+
+        public void FilterTestsByTime(IEnumerable<TestResult> testResults)
+        {
+            var time = Convert.ToDateTime(_searchString);
+            var results = testResults.Where(r => r.StartTime < time && r.EndTime > time);
+
+            MatchingTestsCount = results.Count();
+            FilteredResults = new Dictionary<string, IEnumerable<TestResult>>();
+
+            foreach (var test in results)
+            {
+                FilteredResults.Add(test.TestListName, new[] { test });
             }
         }
 

@@ -26,7 +26,7 @@ namespace Unicorn.Toolbox
         private Analyzer _analyzer;
         private SpecsCoverage _coverage;
         private LaunchResult _launchResult;
-        private FailedTestsFilter _failedTestsFilter;
+        private ExecutedTestsFilter _failedTestsFilter;
 
         private bool groupBoxVisualizationStateTemp = false;
         private bool trxLoaded = false;
@@ -422,7 +422,7 @@ namespace Unicorn.Toolbox
 
             stackPanelFails.Children.Clear();
 
-            var results = FailedTestsFilter.GetTopErrors(_launchResult.Executions.SelectMany(exec => exec.TestResults));
+            var results = ExecutedTestsFilter.GetTopErrors(_launchResult.Executions.SelectMany(exec => exec.TestResults));
 
             for (int i = 0; i < results.Count(); i++)
             {
@@ -483,6 +483,11 @@ namespace Unicorn.Toolbox
                 checkBoxFullscreen.IsEnabled = trxLoaded;
                 checkBoxModern.IsEnabled = false;
                 comboBoxPalette.IsEnabled = false;
+
+                if (comboFilterExecutedTestsBy.SelectedIndex.Equals(-1))
+                {
+                    comboFilterExecutedTestsBy.SelectedIndex = 0;
+                }
             }
             else
             {
@@ -496,8 +501,17 @@ namespace Unicorn.Toolbox
 
         private void ButtonSearchByFailMessage_Click(object sender, RoutedEventArgs e)
         {
-            _failedTestsFilter = new FailedTestsFilter(textBoxFailMessage.Text, checkboxFailMessageRegex.IsChecked.Value);
-            _failedTestsFilter.FilterTests(_launchResult.Executions.SelectMany(exec => exec.TestResults));
+            if (comboFilterExecutedTestsBy.Text.Equals("By fail message"))
+            {
+                _failedTestsFilter = new ExecutedTestsFilter(textBoxFailMessage.Text, checkboxFailMessageRegex.IsChecked.Value);
+                _failedTestsFilter.FilterTestsByFailMessage(_launchResult.Executions.SelectMany(exec => exec.TestResults));
+            }
+            else
+            {
+                _failedTestsFilter = new ExecutedTestsFilter(textBoxFailMessage.Text);
+                _failedTestsFilter.FilterTestsByTime(_launchResult.Executions.SelectMany(exec => exec.TestResults));
+            }
+
             labelFoundFailedTests.Content = "Tests found: " + _failedTestsFilter.MatchingTestsCount;
         }
 
@@ -507,5 +521,11 @@ namespace Unicorn.Toolbox
             window.gridResults.ItemsSource = _failedTestsFilter.FilteredResults;
             window.ShowDialog();
         }
+
+        private void ComboBoxItem_Selected(object sender, RoutedEventArgs e) =>
+            checkboxFailMessageRegex.Visibility = Visibility.Visible;
+
+        private void ComboBoxItem_Selected_1(object sender, RoutedEventArgs e) =>
+            checkboxFailMessageRegex.Visibility = Visibility.Hidden;
     }
 }
