@@ -120,8 +120,8 @@
                                 <DataGridTemplateColumn.HeaderTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal">
-                                            <TextBlock VerticalAlignment="Center">Execution:</TextBlock>
-                                            <TextBox Width="150" TextChanged="FilterExecutions"></TextBox>
+                                            <TextBlock VerticalAlignment="Center" Text="Execution:  "/>
+                                            <TextBox Width="150" TextChanged="FilterExecutions"/>
                                         </StackPanel>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.HeaderTemplate>
@@ -133,7 +133,7 @@
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-                            <DataGridTemplateColumn Width="60" HeaderStyle="{StaticResource WrappedColumnHeaderStyle}" Header="Total duration (min)" SortMemberPath="DurationFullMin" ClipboardContentBinding="{Binding DurationFullMin}">
+                            <DataGridTemplateColumn Width="90" HeaderStyle="{StaticResource WrappedColumnHeaderStyle}" Header="Total duration (min)" SortMemberPath="DurationFullMin" ClipboardContentBinding="{Binding DurationFullMin}">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <Grid>
@@ -142,7 +142,7 @@
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-                            <DataGridTemplateColumn Width="60" HeaderStyle="{StaticResource WrappedColumnHeaderStyle}" Header="Raw test duration (min)"  SortMemberPath="DurationMin" ClipboardContentBinding="{Binding DurationMin}">
+                            <DataGridTemplateColumn Width="90" HeaderStyle="{StaticResource WrappedColumnHeaderStyle}" Header="Raw test duration (min)"  SortMemberPath="DurationMin" ClipboardContentBinding="{Binding DurationMin}">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <Grid>
@@ -190,15 +190,15 @@
                         </DataGrid.Columns>
                     </DataGrid>
                     <TextBox x:Name="textBoxLaunchSummary" HorizontalAlignment="Left" Height="120" Margin="10,70,0,0" TextWrapping="Wrap" Text="Summary . . ." VerticalAlignment="Top" Width="560"/>
-                    <GroupBox Header="Find tests by fail message" Height="100" Margin="0,526,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="400">
+                    <GroupBox Header="Find tests" Height="100" Margin="0,526,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="400">
                         <Grid>
-                            <TextBox x:Name="textBoxFailMessage" Height="23" Margin="10,10,10,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top"/>
-                            <CheckBox x:Name="checkboxFailMessageRegex" Content="Regex" Margin="130,0,0,13" RenderTransformOrigin="0.544,1.385" HorizontalAlignment="Left" Width="59" Height="16" VerticalAlignment="Bottom"/>
-                            <ComboBox x:Name="comboFilterExecutedTestsBy" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="10,0,0,8" Width="115" Height="26" VerticalAlignment="Bottom">
+                            <TextBox x:Name="textBoxFailMessage" Height="23" Margin="10,10,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" HorizontalAlignment="Left" Width="304"/>
+                            <CheckBox x:Name="checkboxFailMessageRegex" Content="Regex" Margin="319,14,10,0" RenderTransformOrigin="0.544,1.385" Height="16" VerticalAlignment="Top"/>
+                            <ComboBox x:Name="comboFilterExecutedTestsBy" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="10,0,0,8" Width="120" Height="26" VerticalAlignment="Bottom">
                                 <ComboBoxItem Content="By fail message" Selected="ActivateSearchByMessage"/>
                                 <ComboBoxItem Content="By time" Selected="ActivateSearchByTime"/>
                             </ComboBox>
-                            <Button x:Name="buttonSearchByFailMessage" Content="Search" HorizontalAlignment="Left" Margin="190,0,0,10" Width="75" Height="22" VerticalAlignment="Bottom" Click="SearchInExecutedTests" RenderTransformOrigin="3.24,0.5"/>
+                            <Button x:Name="buttonSearchByFailMessage" Content="Search" HorizontalAlignment="Left" Margin="170,0,0,10" Width="75" Height="22" VerticalAlignment="Bottom" Click="SearchInExecutedTests" RenderTransformOrigin="3.24,0.5"/>
                             <Label x:Name="labelFoundFailedTests" Content="Tests found: " Margin="0,0,10,8" Height="26" HorizontalContentAlignment="Right" VerticalAlignment="Bottom" FontWeight="Bold" Foreground="#FF3399FF" Cursor="Hand" MouseDown="OpenFilteredTests" HorizontalAlignment="Right" Width="100"/>
                         </Grid>
                     </GroupBox>
