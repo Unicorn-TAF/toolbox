@@ -107,7 +107,7 @@ namespace Unicorn.Toolbox
                 failedTestsFilter.FilterTestsByTime(launchResult.Executions.SelectMany(exec => exec.TestResults));
             }
 
-            labelFoundFailedTests.Content = "Tests found: " + failedTestsFilter.MatchingTestsCount;
+            labelFoundFailedTests.Content = "Found: " + failedTestsFilter.MatchingTestsCount;
         }
 
         private void OpenFilteredTests(object sender, MouseButtonEventArgs e)

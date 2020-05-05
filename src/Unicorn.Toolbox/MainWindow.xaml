@@ -114,7 +114,7 @@
                 <Grid Background="#FFE5E5E5">
                     <Button x:Name="btnLoadTrx" Content="Load TRX files" VerticalAlignment="Top" Margin="10,24,0,0" Click="LoadTrx" HorizontalAlignment="Left" Width="90"/>
                     <DataGrid x:Name="gridTestResults" HorizontalScrollBarVisibility="Disabled" HeadersVisibility="All" RowHeaderWidth="0" CanUserAddRows="False" CanUserResizeColumns="False"
-                              CanUserSortColumns="True" AutoGenerateColumns="False"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="10,195,0,10" HorizontalAlignment="Left" Width="560">
+                              CanUserSortColumns="True" AutoGenerateColumns="False"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="10,195,0,10" HorizontalAlignment="Left" Width="600">
                         <DataGrid.Columns>
                             <DataGridTemplateColumn Header="Execution" Width="*" ClipboardContentBinding="{Binding Name}">
                                 <DataGridTemplateColumn.HeaderTemplate>
@@ -189,17 +189,17 @@
                             </DataGridTemplateColumn>
                         </DataGrid.Columns>
                     </DataGrid>
-                    <TextBox x:Name="textBoxLaunchSummary" HorizontalAlignment="Left" Height="120" Margin="10,70,0,0" TextWrapping="Wrap" Text="Summary . . ." VerticalAlignment="Top" Width="560"/>
+                    <TextBox x:Name="textBoxLaunchSummary" HorizontalAlignment="Left" Height="120" Margin="10,70,0,0" TextWrapping="Wrap" Text="Summary . . ." VerticalAlignment="Top" Width="600"/>
                     <GroupBox Header="Find tests" Height="100" Margin="0,526,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="400">
                         <Grid>
-                            <TextBox x:Name="textBoxFailMessage" Height="23" Margin="10,10,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" HorizontalAlignment="Left" Width="304"/>
+                            <TextBox x:Name="textBoxFailMessage" Height="23" Margin="10,10,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" HorizontalAlignment="Left" Width="280"/>
                             <CheckBox x:Name="checkboxFailMessageRegex" Content="Regex" Margin="319,14,10,0" RenderTransformOrigin="0.544,1.385" Height="16" VerticalAlignment="Top"/>
                             <ComboBox x:Name="comboFilterExecutedTestsBy" HorizontalAlignment="Left" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="10,0,0,8" Width="120" Height="26" VerticalAlignment="Bottom">
                                 <ComboBoxItem Content="By fail message" Selected="ActivateSearchByMessage"/>
-                                <ComboBoxItem Content="By time" Selected="ActivateSearchByTime"/>
+                                <ComboBoxItem Content="By time (local)" Selected="ActivateSearchByTime"/>
                             </ComboBox>
-                            <Button x:Name="buttonSearchByFailMessage" Content="Search" HorizontalAlignment="Left" Margin="170,0,0,10" Width="75" Height="22" VerticalAlignment="Bottom" Click="SearchInExecutedTests" RenderTransformOrigin="3.24,0.5"/>
-                            <Label x:Name="labelFoundFailedTests" Content="Tests found: " Margin="0,0,10,8" Height="26" HorizontalContentAlignment="Right" VerticalAlignment="Bottom" FontWeight="Bold" Foreground="#FF3399FF" Cursor="Hand" MouseDown="OpenFilteredTests" HorizontalAlignment="Right" Width="100"/>
+                            <Button x:Name="buttonSearchByFailMessage" Content="Search" HorizontalAlignment="Left" Margin="215,0,0,10" Width="75" Height="22" VerticalAlignment="Bottom" Click="SearchInExecutedTests" RenderTransformOrigin="3.24,0.5"/>
+                            <Label x:Name="labelFoundFailedTests" Content="" Margin="0,0,10,8" Height="26" HorizontalContentAlignment="Right" VerticalAlignment="Bottom" FontWeight="Bold" Foreground="#FF3399FF" Cursor="Hand" MouseDown="OpenFilteredTests" HorizontalAlignment="Right"/>
                         </Grid>
                     </GroupBox>
                     <Label Content="Top 5 fail reasons" HorizontalAlignment="Right" Margin="0,0,161,0" VerticalAlignment="Top" FontWeight="Bold"/>
@@ -208,7 +208,7 @@
             </TabItem>
         </TabControl>
         <TextBox x:Name="textBoxStatistics" Text="" Margin="0,686,0,0" IsEnabled="False" Grid.ColumnSpan="2"/>
-        <GroupBox x:Name="groupBoxVisualization" Header="Visualization" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="125,40,0,0" Height="55" Width="460" IsEnabled="False">
+        <GroupBox x:Name="groupBoxVisualization" Header="Visualization" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="125,40,0,0" Height="55" Width="498" IsEnabled="False">
             <Grid>
                 <CheckBox x:Name="checkBoxModern" Content="Circles" Margin="121,8,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.274,0.533" HorizontalAlignment="Left" Width="66"/>
                 <CheckBox x:Name="checkBoxFullscreen" Content="Fullscreen" Margin="192,8,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.274,0.533" HorizontalAlignment="Left" Width="78"/>
