@@ -64,7 +64,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Unicorn.VsAdapter\Unicorn.TestAdapter.csproj">
+    <ProjectReference Include="..\Unicorn.TestAdapter\Unicorn.TestAdapter.csproj">
       <Project>{BC4B3BED-9241-4DD6-8070-A9B66DFC08C1}</Project>
       <Name>Unicorn.TestAdapter</Name>
       <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>

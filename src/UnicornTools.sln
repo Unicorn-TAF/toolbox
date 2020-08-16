@@ -12,7 +12,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		CodeRules.ruleset = CodeRules.ruleset
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unicorn.TestAdapter", "Unicorn.VsAdapter\Unicorn.TestAdapter.csproj", "{BC4B3BED-9241-4DD6-8070-A9B66DFC08C1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unicorn.TestAdapter", "Unicorn.TestAdapter\Unicorn.TestAdapter.csproj", "{BC4B3BED-9241-4DD6-8070-A9B66DFC08C1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unicorn.TestAdapterVSIX", "Unicorn.TestAdapterVSIX\Unicorn.TestAdapterVSIX.csproj", "{65016FCD-FF77-4576-B90A-F5FF1E02C20B}"
 EndProject

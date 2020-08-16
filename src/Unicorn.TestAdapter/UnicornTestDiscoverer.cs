@@ -10,6 +10,7 @@ namespace Unicorn.TestAdapter
 {
     [DefaultExecutorUri(UnicrornTestExecutor.ExecutorUriString)]
     [FileExtension(".dll")]
+    [FileExtension(".exe")]
     public class UnicornTestDiscoverer : ITestDiscoverer
     {
         public void DiscoverTests(IEnumerable<string> sources, IDiscoveryContext discoveryContext,
