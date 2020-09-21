@@ -23,14 +23,17 @@
     <tags>automation tests testadapter visualstudio dotnet</tags>
     <dependencies>
       <group targetFramework="net45">
-        <dependency id="Microsoft.TestPlatform.ObjectModel" version="11.0.0"/>
-        <dependency id="Mono.Cecil" version="0.9.6.4"/>
-        <dependency id="Newtonsoft.Json" version="10.0.1"/>
-        <dependency id="Unicorn.Taf.Core" version="2.2.0"/>
       </group>
     </dependencies>
   </metadata>
   <files>
     <file src="..\..\LICENSE.txt" />
+    <file src="bin\Release\Newtonsoft.Json.dll" target="lib\net452"/>
+    <file src="bin\Release\Microsoft.VisualStudio.TestPlatform.ObjectModel.dll" target="lib\net452"/>
+    <file src="bin\Release\Mono.Cecil.dll" target="lib\net452"/>
+    <file src="bin\Release\Mono.Cecil.Mdb.dll" target="lib\net452"/>
+    <file src="bin\Release\Mono.Cecil.Pdb.dll" target="lib\net452"/>
+    <file src="bin\Release\Mono.Cecil.Rocks.dll" target="lib\net452"/>
+    <file src="bin\Release\Unicorn.Taf.Core.dll" target="lib\net452"/>
   </files>
 </package>
