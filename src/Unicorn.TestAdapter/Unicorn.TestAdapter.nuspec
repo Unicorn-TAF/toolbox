@@ -21,10 +21,6 @@
     <releaseNotes>First nuget adapter release</releaseNotes>
     <copyright>$copyright$</copyright>
     <tags>automation tests testadapter visualstudio dotnet</tags>
-    <dependencies>
-      <group targetFramework="net45">
-      </group>
-    </dependencies>
   </metadata>
   <files>
     <file src="..\..\LICENSE.txt" />
