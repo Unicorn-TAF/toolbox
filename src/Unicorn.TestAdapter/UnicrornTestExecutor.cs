@@ -23,6 +23,12 @@ namespace Unicorn.TestAdapter
 
         public void RunTests(IEnumerable<string> sources, IRunContext runContext, IFrameworkHandle frameworkHandle)
         {
+            if (string.IsNullOrEmpty(runContext.SolutionDirectory))
+            {
+                frameworkHandle.SendMessage(TestMessageLevel.Informational, "Unicorn Adapter: test run outside of Visual studio is not supported yet. Exiting...");
+                return;
+            }
+
             frameworkHandle.SendMessage(TestMessageLevel.Informational, RunStarting);
             m_cancelled = false;
 
@@ -55,6 +61,12 @@ namespace Unicorn.TestAdapter
 
         public void RunTests(IEnumerable<TestCase> tests, IRunContext runContext, IFrameworkHandle frameworkHandle)
         {
+            if (string.IsNullOrEmpty(runContext.SolutionDirectory))
+            {
+                frameworkHandle.SendMessage(TestMessageLevel.Informational, "Unicorn Adapter: test run outside of Visual studio is not supported yet. Exiting...");
+                return;
+            }
+
             var sources = tests.Select(t => t.Source).Distinct();
 
             frameworkHandle.SendMessage(TestMessageLevel.Informational, RunStarting);
