@@ -7,40 +7,36 @@
         mc:Ignorable="d"
         Title="Suite preview: " Height="626" Width="814" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" Icon="unicornIcon.ico">
     <Grid>
-        <DataGrid x:Name="gridResults" HorizontalScrollBarVisibility="Disabled" HeadersVisibility="All" Grid.Column="0" RowHeaderWidth="0" CanUserAddRows="False" AutoGenerateColumns="False"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="10">
+        <DataGrid x:Name="gridResults" ClipboardCopyMode="IncludeHeader" HorizontalScrollBarVisibility="Disabled" HeadersVisibility="All" Grid.Column="0" RowHeaderWidth="0" CanUserAddRows="False" AutoGenerateColumns="False"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="10">
+            <DataGrid.Resources>
+                <Style TargetType="{x:Type DataGridCell}">
+                    <Style.Triggers>
+                        <Trigger Property="DataGridCell.IsSelected" Value="True">
+                            <Setter Property="BorderBrush" Value="DarkSlateGray" />
+                            <Setter Property="Background" Value="Gray" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.Resources>
             <DataGrid.Columns>
-                <DataGridTemplateColumn Header="Test"  Width="*">
+                <DataGridTemplateColumn Header="Test" Width="*" ClipboardContentBinding="{Binding Name}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Grid>
-                                <TextBlock VerticalAlignment="Center" Text="{Binding Name}"/>
-                            </Grid>
+                                <DataGridCell Content="{Binding Name}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Author"  Width="150">
+                <DataGridTemplateColumn Header="Author" Width="150" ClipboardContentBinding="{Binding Author}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Grid>
-                                <TextBlock VerticalAlignment="Center" Text="{Binding Author}"/>
-                            </Grid>
+                            <DataGridCell Content="{Binding Author}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Categories"  Width="250">
+                <DataGridTemplateColumn Header="Categories" Width="250" ClipboardContentBinding="{Binding CategoriesString}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <DataGrid DataContext="{Binding Categories}" ItemsSource="{Binding}" IsReadOnly="True" AutoGenerateColumns="False" HeadersVisibility="None">
-                                <DataGrid.Columns>
-                                    <DataGridTemplateColumn Width="*">
-                                        <DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <TextBlock Text="{Binding}"/>
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellTemplate>
-                                    </DataGridTemplateColumn>
-                                </DataGrid.Columns>
-                            </DataGrid>
+                            <DataGridCell Content="{Binding CategoriesString}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>

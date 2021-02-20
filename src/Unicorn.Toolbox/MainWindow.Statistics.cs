@@ -115,18 +115,15 @@ namespace Unicorn.Toolbox
             textBoxCurrentFilter.Text = filterText.ToString();
         }
 
-        private void ClickCellWithSuite(object sender, MouseButtonEventArgs e)
+        private void DataGridCell_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            if (e.ClickCount == 2)
-            {
-                string testSuiteName = (sender as TextBlock).Text;
+            string testSuiteName = (sender as DataGridCell).Content.ToString();
 
-                var preview = new WindowTestPreview();
-                preview.Title += testSuiteName;
-                preview.ShowActivated = false;
-                preview.Show();
-                preview.gridResults.ItemsSource = analyzer.Data.FilteredInfo.First(s => s.Name.Equals(testSuiteName)).TestsInfos;
-            }
+            var preview = new WindowTestPreview();
+            preview.Title += testSuiteName;
+            preview.ShowActivated = false;
+            preview.Show();
+            preview.gridResults.ItemsSource = analyzer.Data.FilteredInfo.First(s => s.Name.Equals(testSuiteName)).TestsInfos;
         }
 
         private void ShowAllClick(object sender, RoutedEventArgs e) => ShowAll();

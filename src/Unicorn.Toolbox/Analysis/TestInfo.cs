@@ -29,5 +29,8 @@ namespace Unicorn.Toolbox.Analysis
         public bool Disabled { get; set; }
 
         public List<string> Categories { get; set; }
+
+        public string CategoriesString => string.Join("\n", Categories).ToLowerInvariant();
+
     }
 }

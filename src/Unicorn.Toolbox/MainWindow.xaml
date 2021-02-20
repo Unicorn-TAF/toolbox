@@ -5,48 +5,41 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Unicorn.Toolbox"
         mc:Ignorable="d"
-        Title="Unicorn toolbox" Height="750" Width="1200" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Icon="unicornIcon.ico">
+        Title="Unicorn toolbox" Height="750" Width="1200" MinHeight="750" MinWidth="1200" WindowStartupLocation="CenterScreen" Icon="unicornIcon.ico">
     <Grid>
-        <TabControl x:Name="tabControl" Margin="10,10,10,0" Grid.ColumnSpan="2" Height="671" VerticalAlignment="Top" SelectionChanged="TabChanged">
+        <TabControl x:Name="tabControl" Margin="10,10,10,30" SelectionChanged="TabChanged">
             <TabItem x:Name="tabStatistics" Header="Tests statistics">
                 <Grid x:Name="gridStatistics" Background="#FFE5E5E5" Margin="0,0,0,1">
-                    <DataGrid x:Name="gridResults" HorizontalScrollBarVisibility="Disabled" HeadersVisibility="All" Grid.Column="0" RowHeaderWidth="0" CanUserAddRows="False" AutoGenerateColumns="False"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="224,70,10,80">
+                    <DataGrid x:Name="gridResults" ClipboardCopyMode="IncludeHeader" HorizontalScrollBarVisibility="Disabled" HeadersVisibility="All" Grid.Column="0" RowHeaderWidth="0" CanUserAddRows="False" AutoGenerateColumns="False" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="224,70,10,80">
+                        <DataGrid.Resources>
+                            <Style TargetType="{x:Type DataGridCell}">
+                                <Style.Triggers>
+                                    <Trigger Property="DataGridCell.IsSelected" Value="True">
+                                        <Setter Property="BorderBrush" Value="DarkSlateGray" />
+                                        <Setter Property="Background" Value="Gray" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.Resources>
                         <DataGrid.Columns>
-                            <DataGridTemplateColumn Header="Test Suite" Width="350">
+                            <DataGridTemplateColumn Header="Test Suite" Width="350" ClipboardContentBinding="{Binding Name}">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Grid>
-                                            <TextBlock VerticalAlignment="Center" Text="{Binding Name}" MouseLeftButtonDown="ClickCellWithSuite"/>
-                                        </Grid>
+                                        <DataGridCell Content="{Binding Name}" MouseDoubleClick="DataGridCell_MouseDoubleClick"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-                            <DataGridTemplateColumn Header="Tags" Width="150">
+                            <DataGridTemplateColumn Header="Tags" Width="150" ClipboardContentBinding="{Binding FeaturesString}">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <DataGrid DataContext="{Binding Features}" ItemsSource="{Binding}" IsReadOnly="True" AutoGenerateColumns="False" HeadersVisibility="None">
-                                            <DataGrid.Columns>
-                                                <DataGridTemplateColumn Width="*">
-                                                    <DataGridTemplateColumn.CellTemplate>
-                                                        <DataTemplate>
-                                                            <TextBlock Text="{Binding}"/>
-                                                        </DataTemplate>
-                                                    </DataGridTemplateColumn.CellTemplate>
-                                                </DataGridTemplateColumn>
-                                            </DataGrid.Columns>
-                                        </DataGrid>
+                                        <TextBlock Text="{Binding FeaturesString}" TextWrapping="Wrap"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
                             <DataGridTemplateColumn Header="Metadata" Width="*">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <DataGrid DataContext="{Binding Metadata}" ItemsSource="{Binding}" IsReadOnly="True" AutoGenerateColumns="False" HeadersVisibility="None">
-                                            <DataGrid.Columns>
-                                                <DataGridTextColumn Header="Key" Binding="{Binding Key}" />
-                                                <DataGridTextColumn Header="Value" Binding="{Binding Value}"/>
-                                            </DataGrid.Columns>
-                                        </DataGrid>
+                                        <DataGridCell Content="{Binding MetadataString}" />
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
@@ -114,7 +107,7 @@
                 <Grid Background="#FFE5E5E5">
                     <Button x:Name="btnLoadTrx" Content="Load TRX files" VerticalAlignment="Top" Margin="10,24,0,0" Click="LoadTrx" HorizontalAlignment="Left" Width="90"/>
                     <DataGrid x:Name="gridTestResults" HorizontalScrollBarVisibility="Disabled" HeadersVisibility="All" RowHeaderWidth="0" CanUserAddRows="False" CanUserResizeColumns="False"
-                              CanUserSortColumns="True" AutoGenerateColumns="False"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="10,195,0,10" HorizontalAlignment="Left" Width="600">
+                              CanUserSortColumns="True" AutoGenerateColumns="False" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="10,195,0,10" HorizontalAlignment="Left" Width="600">
                         <DataGrid.Columns>
                             <DataGridTemplateColumn Header="Execution" Width="*" ClipboardContentBinding="{Binding Name}">
                                 <DataGridTemplateColumn.HeaderTemplate>
@@ -190,7 +183,7 @@
                         </DataGrid.Columns>
                     </DataGrid>
                     <TextBox x:Name="textBoxLaunchSummary" HorizontalAlignment="Left" Height="120" Margin="10,70,0,0" TextWrapping="Wrap" Text="Summary . . ." VerticalAlignment="Top" Width="600"/>
-                    <GroupBox Header="Find tests" Height="100" Margin="0,526,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="400">
+                    <GroupBox Header="Find tests" Margin="0,0,10,12" HorizontalAlignment="Right" Width="400" Height="100" VerticalAlignment="Bottom">
                         <Grid>
                             <TextBox x:Name="textBoxFailMessage" Height="23" Margin="10,10,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" HorizontalAlignment="Left" Width="280"/>
                             <CheckBox x:Name="checkboxFailMessageRegex" Content="Regex" Margin="319,14,10,0" RenderTransformOrigin="0.544,1.385" Height="16" VerticalAlignment="Top"/>
@@ -207,7 +200,7 @@
                 </Grid>
             </TabItem>
         </TabControl>
-        <TextBox x:Name="textBoxStatistics" Text="" Margin="0,686,0,0" IsEnabled="False" Grid.ColumnSpan="2"/>
+        <TextBox x:Name="textBoxStatistics" Text="" IsEnabled="False" Height="25" VerticalAlignment="Bottom"/>
         <GroupBox x:Name="groupBoxVisualization" Header="Visualization" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="125,40,0,0" Height="55" Width="498" IsEnabled="False">
             <Grid>
                 <CheckBox x:Name="checkBoxModern" Content="Circles" Margin="121,8,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.274,0.533" HorizontalAlignment="Left" Width="66"/>
