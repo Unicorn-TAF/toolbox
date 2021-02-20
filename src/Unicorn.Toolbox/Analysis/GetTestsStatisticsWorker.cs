@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Unicorn.Taf.Core.Engine;
@@ -65,7 +66,14 @@ namespace Unicorn.Toolbox.Analysis
 
             foreach (var test in tests)
             {
-                suiteInfo.TestsInfos.Add(GetTestInfo(test));
+                if (test.GetCustomAttribute<TestDataAttribute>() != null)
+                {
+                    suiteInfo.TestsInfos.AddRange(GetTestsInfo(test, suiteInstance));
+                }
+                else
+                {
+                    suiteInfo.TestsInfos.Add(GetTestInfo(test));
+                }
             }
 
             return suiteInfo;
@@ -84,6 +92,31 @@ namespace Unicorn.Toolbox.Analysis
             var categories = testMethod.GetCustomAttributes<CategoryAttribute>().Select(c => c.Category.ToUpper().Trim()).Where(c => !string.IsNullOrEmpty(c));
 
             return new TestInfo(title, author, disabled, categories);
+        }
+
+        private List<TestInfo> GetTestsInfo(MethodInfo testMethod, object suiteInstance)
+        {
+            var infos = new List<TestInfo>();
+
+            var disabled = testMethod.GetCustomAttribute<DisabledAttribute>() != null;
+
+            var authorAttribute = testMethod.GetCustomAttribute<AuthorAttribute>();
+            var author = authorAttribute != null ? authorAttribute.Author : "No Author";
+
+            var titleAttribute = testMethod.GetCustomAttribute<TestAttribute>();
+            var title = string.IsNullOrEmpty(titleAttribute.Title) ? testMethod.Name : titleAttribute.Title;
+
+            var categories = testMethod.GetCustomAttributes<CategoryAttribute>().Select(c => c.Category.ToUpper().Trim()).Where(c => !string.IsNullOrEmpty(c));
+
+            var datasetsAttribute = testMethod.GetCustomAttribute<TestDataAttribute>();
+            var dataSets = (suiteInstance.GetType().GetMethod(datasetsAttribute.Method).Invoke(suiteInstance, null) as List<DataSet>).Count;
+
+            for (int i = 0; i < dataSets; i++)
+            {
+                infos.Add(new TestInfo($"{title} [{i}]", author, disabled, categories));
+            }
+
+            return infos;
         }
     }
 }

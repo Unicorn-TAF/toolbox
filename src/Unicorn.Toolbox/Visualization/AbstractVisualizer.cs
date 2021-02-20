@@ -52,7 +52,7 @@ namespace Unicorn.Toolbox.Visualization
                     {
                         foreach (var feature in data.UniqueFeatures)
                         {
-                            var suites = data.SuitesInfos.Where(s => s.Features.Contains(feature));
+                            var suites = data.FilteredInfo.Where(s => s.Features.Contains(feature));
                             var tests = from SuiteInfo s
                                         in suites
                                         select s.TestsInfos;
@@ -68,7 +68,7 @@ namespace Unicorn.Toolbox.Visualization
                         foreach (var category in data.UniqueCategories)
                         {
                             var tests = from SuiteInfo s
-                                        in data.SuitesInfos
+                                        in data.FilteredInfo
                                         select s.TestsInfos.Where(ti => ti.Categories.Contains(category));
 
                             stats.Add(category, tests.Sum(t => t.Count()));
@@ -82,7 +82,7 @@ namespace Unicorn.Toolbox.Visualization
                         foreach (var author in data.UniqueAuthors)
                         {
                             var tests = from SuiteInfo s
-                                        in data.SuitesInfos
+                                        in data.FilteredInfo
                                         select s.TestsInfos.Where(ti => ti.Author.Equals(author));
 
                             stats.Add(author, tests.Sum(t => t.Count()));
