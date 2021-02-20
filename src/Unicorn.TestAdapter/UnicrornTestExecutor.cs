@@ -14,8 +14,10 @@ namespace Unicorn.TestAdapter
     {
         public const string ExecutorUriString = "executor://UnicornTestExecutor/v1";
 
-        private const string RunStarting = "Unicorn Adapter: Test run starting";
-        private const string RunComplete = "Unicorn Adapter: Test run complete";
+        private const string Prefix = "Unicorn Adapter: ";
+
+        private const string RunStarting = Prefix + "Test run starting";
+        private const string RunComplete = Prefix + "Test run complete";
 
         public static readonly Uri ExecutorUri = new Uri(ExecutorUriString);
 
@@ -25,7 +27,7 @@ namespace Unicorn.TestAdapter
         {
             if (string.IsNullOrEmpty(runContext.SolutionDirectory))
             {
-                frameworkHandle.SendMessage(TestMessageLevel.Informational, "Unicorn Adapter: test run outside of Visual studio is not supported yet. Exiting...");
+                frameworkHandle.SendMessage(TestMessageLevel.Informational, Prefix + "test run outside of Visual studio is not supported yet. Exiting...");
                 return;
             }
 
@@ -52,7 +54,7 @@ namespace Unicorn.TestAdapter
                 }
                 catch (Exception ex)
                 {
-                    frameworkHandle.SendMessage(TestMessageLevel.Error, $"Unicorn Adapter: error running tests ({ex.ToString()})");
+                    frameworkHandle.SendMessage(TestMessageLevel.Error, Prefix + $"error running tests ({ex.ToString()})");
                 }
             }
 
@@ -63,7 +65,7 @@ namespace Unicorn.TestAdapter
         {
             if (string.IsNullOrEmpty(runContext.SolutionDirectory))
             {
-                frameworkHandle.SendMessage(TestMessageLevel.Informational, "Unicorn Adapter: test run outside of Visual studio is not supported yet. Exiting...");
+                frameworkHandle.SendMessage(TestMessageLevel.Informational, Prefix + "test run outside of Visual studio is not supported yet. Exiting...");
                 return;
             }
 
@@ -127,6 +129,9 @@ namespace Unicorn.TestAdapter
             frameworkHandle.SendMessage(TestMessageLevel.Informational, RunComplete);
         }
 
+        public void Cancel() =>
+            m_cancelled = true;
+
         private void FailTest(TestCase test, Exception ex, IFrameworkHandle frameworkHandle)
         {
             var testResult = new TestResult(test)
@@ -167,8 +172,5 @@ namespace Unicorn.TestAdapter
 
             return testResult;
         }
-
-        public void Cancel() =>
-            m_cancelled = true;
     }
 }

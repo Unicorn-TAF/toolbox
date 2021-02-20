@@ -13,10 +13,12 @@ namespace Unicorn.TestAdapter
     [FileExtension(".exe")]
     public class UnicornTestDiscoverer : ITestDiscoverer
     {
+        private const string Prefix = "Unicorn Adapter: ";
+
         public void DiscoverTests(IEnumerable<string> sources, IDiscoveryContext discoveryContext,
             IMessageLogger logger, ITestCaseDiscoverySink discoverySink)
         {
-            logger?.SendMessage(TestMessageLevel.Informational, "Unicorn Adapter: Test discovery starting");
+            logger?.SendMessage(TestMessageLevel.Informational, Prefix + "Test discovery starting");
 
             foreach (string source in sources)
             {
@@ -26,11 +28,11 @@ namespace Unicorn.TestAdapter
                 }
                 catch (Exception ex)
                 {
-                    logger?.SendMessage(TestMessageLevel.Error, $"Unicorn Adapter: Error discovering {source} source: {ex.Message}");
+                    logger?.SendMessage(TestMessageLevel.Error, Prefix + $"Error discovering {source} source: {ex.Message}");
                 }
             }
 
-            logger?.SendMessage(TestMessageLevel.Informational, "Unicorn Adapter: Test discovery complete");
+            logger?.SendMessage(TestMessageLevel.Informational, Prefix + "Test discovery complete");
         }
 
         private void DiscoverAssembly(string source, IMessageLogger logger, ITestCaseDiscoverySink discoverySink)
@@ -39,6 +41,7 @@ namespace Unicorn.TestAdapter
 
             using (var discoverer = new UnicornAppDomainIsolation<IsolatedTestsInfoObserver>(Path.GetDirectoryName(source)))
             {
+                Environment.CurrentDirectory = Path.GetDirectoryName(source);
                 testsInfos = discoverer.Instance.GetTests(source);
             }
 
