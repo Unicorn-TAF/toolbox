@@ -18,7 +18,7 @@
       Supported platforms:
       - .NET Framework 4.5.2+
     </description>
-    <releaseNotes>First nuget adapter release</releaseNotes>
+    <releaseNotes>Support of unicorn taf 2.3.0, independence on taf version usage by tests assembly</releaseNotes>
     <copyright>$copyright$</copyright>
     <tags>automation tests testadapter visualstudio dotnet</tags>
   </metadata>

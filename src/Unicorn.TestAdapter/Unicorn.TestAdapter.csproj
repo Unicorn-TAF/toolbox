@@ -70,9 +70,9 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="Unicorn.Taf.Core, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Unicorn.Taf.Core, Version=2.3.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Unicorn.Taf.Core.2.2.1\lib\net452\Unicorn.Taf.Core.dll</HintPath>
+      <HintPath>..\packages\Unicorn.Taf.Core.2.3.0\lib\net452\Unicorn.Taf.Core.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
