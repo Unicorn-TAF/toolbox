@@ -21,14 +21,17 @@
     <releaseNotes>Support of unicorn taf 2.3.0, independence on taf version usage by tests assembly</releaseNotes>
     <copyright>$copyright$</copyright>
     <tags>automation tests testadapter visualstudio dotnet</tags>
+    <references>
+      <reference file="Unicorn.TestAdapter.dll" />
+    </references>
   </metadata>
   <files>
     <file src="..\..\LICENSE.txt" />
-    <file src="bin\Release\Microsoft.VisualStudio.TestPlatform.ObjectModel.dll" target="lib\net452"/>
     <file src="bin\Release\Mono.Cecil.dll" target="lib\net452"/>
     <file src="bin\Release\Mono.Cecil.Mdb.dll" target="lib\net452"/>
     <file src="bin\Release\Mono.Cecil.Pdb.dll" target="lib\net452"/>
     <file src="bin\Release\Mono.Cecil.Rocks.dll" target="lib\net452"/>
     <file src="bin\Release\Unicorn.Taf.Core.dll" target="lib\net452"/>
+    <file src="bin\Release\Microsoft.VisualStudio.TestPlatform.ObjectModel.dll" target="lib\net452"/>
   </files>
 </package>
