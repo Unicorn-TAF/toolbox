@@ -13,12 +13,12 @@ namespace Unicorn.Toolbox.Analysis
         {
             Name = suiteName;
             TestsInfos = new List<TestInfo>();
-            Features = new List<string>(features);
+            Tags = new List<string>(features);
             Metadata = metadata;
 
-            if (!Features.Any())
+            if (!Tags.Any())
             {
-                Features.Add(NoFeature);
+                Tags.Add(NoFeature);
             }
         }
 
@@ -26,11 +26,11 @@ namespace Unicorn.Toolbox.Analysis
 
         public List<TestInfo> TestsInfos { get; set; }
 
-        public List<string> Features { get; set; }
+        public List<string> Tags { get; set; }
 
         public Dictionary<string, string> Metadata { get; set; }
 
-        public string FeaturesString => string.Join("\n", Features).ToLowerInvariant();
+        public string FeaturesString => string.Join("\n", Tags).ToLowerInvariant();
 
         public string MetadataString => string.Join("\n", Metadata.Select(m => m.Key + ": " + m.Value));
 

@@ -50,7 +50,7 @@ namespace Unicorn.Toolbox.Analysis
         public void AddSuiteData(SuiteInfo suiteData)
         {
             SuitesInfos.Add(suiteData);
-            UniqueFeatures.UnionWith(suiteData.Features);
+            UniqueFeatures.UnionWith(suiteData.Tags);
 
             var authors = from TestInfo ti 
                           in suiteData.TestsInfos

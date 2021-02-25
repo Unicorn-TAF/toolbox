@@ -1,11 +1,11 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using Unicorn.Toolbox.Analysis;
 using Unicorn.Toolbox.Analysis.Filtering;
 using Unicorn.Toolbox.Visualization;
@@ -24,8 +24,6 @@ namespace Unicorn.Toolbox
             };
             openFileDialog.ShowDialog();
 
-            groupBoxVisualization.IsEnabled = true;
-            groupBoxVisualizationStateTemp = true;
             var assemblyFile = openFileDialog.FileName;
 
             if (string.IsNullOrEmpty(assemblyFile))
@@ -33,7 +31,11 @@ namespace Unicorn.Toolbox
                 return;
             }
 
+            groupBoxVisualization.IsEnabled = true;
+            groupBoxVisualizationStateTemp = true;
+
             gridFilters.IsEnabled = true;
+            buttonExportStats.IsEnabled = true;
 
             analyzer = new Analyzer(assemblyFile);
             analyzer.GetTestsStatistics();
@@ -227,6 +229,42 @@ namespace Unicorn.Toolbox
             else
             {
                 return gridAuthors;
+            }
+        }
+
+        private void buttonExportStats_Click(object sender, RoutedEventArgs e)
+        {
+            const string delimiter = ",";
+
+            char[] chars = { '\t', '\r', '\n', '\"', ',' };
+
+            var saveDialog = new SaveFileDialog
+            {
+                Filter = "Csv files|*.csv"
+            };
+
+            if (saveDialog.ShowDialog().Value)
+            {
+                var csv = new StringBuilder();
+
+                csv.AppendLine(string.Join(delimiter, "Suite", "Test", "Author", "Tags", "Categories", "Disabled"));
+
+                foreach (var suite in analyzer.Data.FilteredInfo)
+                {
+                    var tags = string.Join("#", suite.Tags).ToLowerInvariant();
+                    var suiteName = suite.Name.IndexOfAny(chars) >= 0 ? '\"' + suite.Name.Replace("\"", "\"\"") + '\"' : suite.Name;
+
+                    foreach (var test in suite.TestsInfos)
+                    {
+                        var disabled = test.Disabled ? "Y" : "N";
+                        var categories = string.Join("#", test.Categories).ToLowerInvariant();
+                        var testName = test.Name.IndexOfAny(chars) >= 0 ? '\"' + test.Name.Replace("\"", "\"\"") + '\"' : test.Name;
+
+                        csv.AppendLine(string.Join(delimiter, suiteName, testName, test.Author, tags, categories, disabled));
+                    }
+                }
+
+                File.WriteAllText(saveDialog.FileName, csv.ToString());
             }
         }
     }

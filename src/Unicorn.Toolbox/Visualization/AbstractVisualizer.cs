@@ -52,7 +52,7 @@ namespace Unicorn.Toolbox.Visualization
                     {
                         foreach (var feature in data.UniqueFeatures)
                         {
-                            var suites = data.FilteredInfo.Where(s => s.Features.Contains(feature));
+                            var suites = data.FilteredInfo.Where(s => s.Tags.Contains(feature));
                             var tests = from SuiteInfo s
                                         in suites
                                         select s.TestsInfos;

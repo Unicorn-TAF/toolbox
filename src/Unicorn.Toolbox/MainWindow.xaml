@@ -71,6 +71,7 @@
                     </Grid>
                     <TextBox x:Name="textBoxCurrentFilter" Text="" Margin="10,0,10,10" IsEnabled="False" FontSize="11" Height="65" VerticalAlignment="Bottom"/>
                     <Button x:Name="buttonLoadTestsAssembly" Content="Load tests dll" VerticalAlignment="Top" Click="LoadTestsAssembly" Margin="10,24,0,0" HorizontalAlignment="Left" Width="90"/>
+                    <Button x:Name="buttonExportStats" Content="Export" Margin="0,24,10,0" VerticalAlignment="Top" Click="buttonExportStats_Click" HorizontalAlignment="Right" Width="75" IsEnabled="False"/>
                 </Grid>
             </TabItem>
             <TabItem x:Name="tabCoverage" Header="Coverage" Height="23" VerticalAlignment="Bottom">

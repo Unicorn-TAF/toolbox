@@ -19,7 +19,7 @@ namespace Unicorn.Toolbox.Coverage
         {
             foreach (var module in Specs.Modules)
             {
-                module.Suites = suites.Where(s => s.Features.Intersect(module.Features).Any()).ToList();
+                module.Suites = suites.Where(s => s.Tags.Intersect(module.Features).Any()).ToList();
             }
         }
     }

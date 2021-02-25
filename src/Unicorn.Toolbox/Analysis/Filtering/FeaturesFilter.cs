@@ -14,7 +14,7 @@ namespace Unicorn.Toolbox.Analysis.Filtering
 
         public List<SuiteInfo> FilterSuites(List<SuiteInfo> suitesInfos) =>
             suitesInfos
-            .Where(s => s.Features.Intersect(_features).Any())
+            .Where(s => s.Tags.Intersect(_features).Any())
             .ToList();
     }
 }
