@@ -101,9 +101,19 @@ namespace Unicorn.TestAdapter
                             }
                             else
                             {
-                                var unicornOutcome = outcome.SuitesOutcomes.SelectMany(so => so.TestsOutcomes).First(to => to.FullMethodName.Equals(test.FullyQualifiedName));
-                                var testResult = GetTestResultFromOutcome(unicornOutcome, test);
-                                frameworkHandle.RecordResult(testResult);
+                                var outcomes = outcome.SuitesOutcomes.SelectMany(so => so.TestsOutcomes).Where(to => to.FullMethodName.Equals(test.FullyQualifiedName));
+
+                                if (outcomes.Any())
+                                {
+                                    var unicornOutcome = outcomes.First();
+                                    var testResult = GetTestResultFromOutcome(unicornOutcome, test);
+                                    frameworkHandle.RecordResult(testResult);
+                                }
+                                else
+                                {
+                                    SkipTest(test, frameworkHandle);
+                                }
+                                
                             }
                         }
 
@@ -140,6 +150,17 @@ namespace Unicorn.TestAdapter
                 Outcome = TestOutcome.Failed,
                 ErrorMessage = ex.Message,
                 ErrorStackTrace = ex.StackTrace
+            };
+
+            frameworkHandle.RecordResult(testResult);
+        }
+
+        private void SkipTest(TestCase test, IFrameworkHandle frameworkHandle)
+        {
+            var testResult = new TestResult(test)
+            {
+                ComputerName = Environment.MachineName,
+                Outcome = TestOutcome.Skipped
             };
 
             frameworkHandle.RecordResult(testResult);
