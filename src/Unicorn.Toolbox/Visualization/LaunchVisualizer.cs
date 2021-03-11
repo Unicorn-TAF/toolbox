@@ -14,7 +14,7 @@ namespace Unicorn.Toolbox.Visualization
 {
     public class LaunchVisualizer
     {
-        private const string TimeFormat = "yyyy-MM-ddTHH:mm:ss.f";
+        private const string TimeFormat = "yyyy.MM.dd - HH:mm:ss.f";
         private const int Margin = 20;
         private const double MaxBarHeight = 100;
         private const double MinBarHeight = 40;
