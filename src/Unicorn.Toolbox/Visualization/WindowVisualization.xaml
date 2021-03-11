@@ -8,7 +8,11 @@
         Title="Visualizer" Height="750" Width="1100" ResizeMode="NoResize" Icon="/Unicorn.Toolbox;component/unicornIcon.ico">
     <Grid x:Name="visualizationGrid">
         <ScrollViewer VerticalScrollBarVisibility="Auto">
-            <Canvas x:Name="canvasVisualization" Background="#FF1E1E1E"/>
+            <Canvas x:Name="canvasVisualization" Background="#FF1E1E1E">
+                <Canvas.CacheMode>
+                    <BitmapCache EnableClearType="False" RenderAtScale="1" SnapsToDevicePixels="True" />
+                </Canvas.CacheMode>
+            </Canvas>
         </ScrollViewer>
     </Grid>
 </Window>

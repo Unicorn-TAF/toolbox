@@ -8,7 +8,7 @@
         Title="Unicorn toolbox" Height="750" Width="1200" MinHeight="750" MinWidth="1200" WindowStartupLocation="CenterScreen" Icon="unicornIcon.ico">
     <Grid>
         <TabControl x:Name="tabControl" Margin="10,10,10,30" SelectionChanged="TabChanged">
-            <TabItem x:Name="tabStatistics" Header="Tests statistics">
+            <TabItem x:Name="tabStatistics" Header="Tests statistics" Width="100">
                 <Grid x:Name="gridStatistics" Background="#FFE5E5E5" Margin="0,0,0,1">
                     <DataGrid x:Name="gridResults" ClipboardCopyMode="IncludeHeader" HorizontalScrollBarVisibility="Disabled" HeadersVisibility="All" Grid.Column="0" RowHeaderWidth="0" CanUserAddRows="False" AutoGenerateColumns="False" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="224,70,10,80">
                         <DataGrid.Resources>
@@ -69,12 +69,12 @@
                         <CheckBox x:Name="checkOnlyEnabledTests" Content="Only Enabled tests" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="24,96,0,0" RenderTransformOrigin="0.633,1.422" Checked="FilterOnlyEnabledTests"/>
                         <CheckBox x:Name="checkOnlyDisabledTests" Content="Only Disabled tests" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="24,76,0,0" RenderTransformOrigin="0.633,1.422" Checked="FilterOnlyDisabledTests"/>
                     </Grid>
-                    <TextBox x:Name="textBoxCurrentFilter" Text="" Margin="10,0,10,10" IsEnabled="False" FontSize="11" Height="65" VerticalAlignment="Bottom"/>
+                    <TextBox x:Name="textBoxCurrentFilter" Text="" Margin="10,0,10,10" FontSize="11" Height="65" VerticalAlignment="Bottom" IsEnabled="True" IsReadOnly="True"/>
                     <Button x:Name="buttonLoadTestsAssembly" Content="Load tests dll" VerticalAlignment="Top" Click="LoadTestsAssembly" Margin="10,24,0,0" HorizontalAlignment="Left" Width="90"/>
                     <Button x:Name="buttonExportStats" Content="Export" Margin="0,24,10,0" VerticalAlignment="Top" Click="buttonExportStats_Click" HorizontalAlignment="Right" Width="75" IsEnabled="False"/>
                 </Grid>
             </TabItem>
-            <TabItem x:Name="tabCoverage" Header="Coverage" Height="23" VerticalAlignment="Bottom">
+            <TabItem x:Name="tabCoverage" Header="Coverage" Height="23" VerticalAlignment="Bottom" Width="100">
                 <Grid Background="#FFE5E5E5">
                     <Button x:Name="buttonLoadSpecs" Content="Load Specs" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="90" Click="LoadSpecs"/>
                     <Button x:Name="buttonGetCoverage" Content="Get coverage" HorizontalAlignment="Left" Margin="10,35,0,0" VerticalAlignment="Top" Width="90" Click="GetAutomationCoverage" IsEnabled="False"/>
@@ -89,7 +89,7 @@
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-                            <DataGridTemplateColumn Width="100" IsReadOnly="True" Header="Covered by tests">
+                            <DataGridTemplateColumn Width="*" IsReadOnly="True" Header="Covered by tests">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <CheckBox IsChecked="{Binding Path=Covered, Mode=OneWay}" IsEnabled="False" Margin="2,0,2,0" HorizontalAlignment="Center" VerticalAlignment="Stretch" />
@@ -104,7 +104,7 @@
                     <TextBox x:Name="textBoxRunTags" Text="" Margin="10,0,10,10" FontSize="10" TextWrapping="Wrap" Height="65" VerticalAlignment="Bottom"/>
                 </Grid>
             </TabItem>
-            <TabItem x:Name="tabResultsAnalysis" Header="Results Analysis">
+            <TabItem x:Name="tabResultsAnalysis" Header="Results Analysis" Width="100">
                 <Grid Background="#FFE5E5E5">
                     <Button x:Name="btnLoadTrx" Content="Load TRX files" VerticalAlignment="Top" Margin="10,24,0,0" Click="LoadTrx" HorizontalAlignment="Left" Width="90"/>
                     <DataGrid x:Name="gridTestResults" HorizontalScrollBarVisibility="Disabled" HeadersVisibility="All" RowHeaderWidth="0" CanUserAddRows="False" CanUserResizeColumns="False"

@@ -14,6 +14,7 @@ namespace Unicorn.Toolbox.Visualization
 {
     public class LaunchVisualizer
     {
+        private const string TimeFormat = "yyyy-MM-ddTHH:mm:ss.f";
         private const int Margin = 20;
         private const double MaxBarHeight = 100;
         private const double MinBarHeight = 40;
@@ -40,6 +41,7 @@ namespace Unicorn.Toolbox.Visualization
 
         private readonly Rectangle _currentStampBar;
         private readonly TextBlock _currentStamp;
+        private readonly double _currentStampWidth;
 
         private Rectangle _currentSuite;
         private bool _newSuite = false;
@@ -77,17 +79,32 @@ namespace Unicorn.Toolbox.Visualization
 
             _currentStampBar = new Rectangle
             {
-                Width = 2,
+                Width = 1,
                 Height = _canvas.Height,
-                Fill = _fontColor,
-                StrokeThickness = 1
+                Stroke = _fontColor,
+                StrokeThickness = 1,
+                StrokeDashArray = new DoubleCollection() { 2, 4 }
             };
 
-            _currentStamp = new TextBlock();
-            _currentStamp.TextAlignment = TextAlignment.Center;
-            _currentStamp.FontFamily = new FontFamily("Calibri");
-            _currentStamp.FontSize = 15;
-            _currentStamp.Foreground = _fontColor;
+            _currentStamp = new TextBlock
+            {
+                TextAlignment = TextAlignment.Center,
+                FontFamily = new FontFamily("Calibri"),
+                FontSize = 15,
+                Foreground = _fontColor,
+                Text = _utcStart.ToLocalTime().ToString(TimeFormat)
+            };
+
+            _currentStampWidth = new FormattedText(
+                _currentStamp.Text,
+                CultureInfo.InvariantCulture,
+                FlowDirection.LeftToRight,
+                new Typeface(_currentStamp.FontFamily, _currentStamp.FontStyle, _currentStamp.FontWeight, _currentStamp.FontStretch),
+                _currentStamp.FontSize,
+                _currentStamp.Foreground,
+                new NumberSubstitution(),
+                TextFormattingMode.Display)
+                .Width;
         }
 
         public void Visualize()
@@ -95,8 +112,8 @@ namespace Unicorn.Toolbox.Visualization
             _canvas.Background = _backColor;
             _canvas.Children.Clear();
 
-            DrawText(_utcStart.AddMilliseconds(_earliestTime).ToLocalTime().ToString(), Margin, 0, false);
-            DrawText(_utcStart.AddMilliseconds(_latestTime).ToLocalTime().ToString(), _canvas.RenderSize.Width - Margin, 0, true);
+            DrawText(_utcStart.AddMilliseconds(_earliestTime).ToLocalTime().ToString(TimeFormat), Margin, 0, false);
+            DrawText(_utcStart.AddMilliseconds(_latestTime).ToLocalTime().ToString(TimeFormat), _workWidth - Margin, 0, true);
 
             SetRandomColor();
             int currentIndex = 0;
@@ -230,25 +247,16 @@ namespace Unicorn.Toolbox.Visualization
         private void MoveLine(object sender, MouseEventArgs e)
         {
             var pos = Mouse.GetPosition(_canvas);
-            Canvas.SetLeft(_currentStampBar, pos.X + 2);
+            Canvas.SetLeft(_currentStampBar, pos.X);
 
-            _currentStamp.Text = _utcStart.AddMilliseconds(_earliestTime).AddMilliseconds((pos.X + Margin) / _ratio).ToLocalTime().ToString("yyyy-MM-ddTHH:mm:ss.fff");
-
-            var formattedText = new FormattedText(
-                _currentStamp.Text,
-                CultureInfo.InvariantCulture,
-                FlowDirection.LeftToRight,
-                new Typeface(_currentStamp.FontFamily, _currentStamp.FontStyle, _currentStamp.FontWeight, _currentStamp.FontStretch),
-                _currentStamp.FontSize,
-                _currentStamp.Foreground,
-                new NumberSubstitution(),
-                TextFormattingMode.Display);
+            _currentStamp.Text = _utcStart.AddMilliseconds(_earliestTime).AddMilliseconds((pos.X + Margin) / _ratio).ToLocalTime().ToString(TimeFormat);
 
             var xPosition = pos.X;
+            var yPosition = pos.Y + SystemParameters.CursorHeight;
 
-            if (xPosition + formattedText.Width > this._canvas.RenderSize.Width - 20)
+            if (xPosition + _currentStampWidth > _workWidth)
             {
-                xPosition -= formattedText.Width + 10;
+                xPosition -= _currentStampWidth + Margin;
             }
             else
             {
@@ -256,7 +264,7 @@ namespace Unicorn.Toolbox.Visualization
             }
 
             Canvas.SetLeft(_currentStamp, xPosition);
-            Canvas.SetTop(_currentStamp, _canvas.RenderSize.Height - formattedText.Height);
+            Canvas.SetTop(_currentStamp, yPosition);
         }
     }
 }
