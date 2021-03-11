@@ -30,7 +30,7 @@ namespace Unicorn.Toolbox.Analysis
 
         public Dictionary<string, string> Metadata { get; set; }
 
-        public string FeaturesString => string.Join("\n", Tags).ToLowerInvariant();
+        public string FeaturesString => "#" + string.Join(" #", Tags).ToLowerInvariant();
 
         public string MetadataString => string.Join("\n", Metadata.Select(m => m.Key + ": " + m.Value));
 

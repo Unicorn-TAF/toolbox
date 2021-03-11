@@ -30,7 +30,7 @@ namespace Unicorn.Toolbox.Analysis
 
         public List<string> Categories { get; set; }
 
-        public string CategoriesString => string.Join("\n", Categories).ToLowerInvariant();
+        public string CategoriesString => string.Join(", ", Categories).ToLowerInvariant();
 
     }
 }
