@@ -4,6 +4,9 @@ using Unicorn.Taf.Core.Testing;
 
 namespace Unicorn.AllureAgent
 {
+    /// <summary>
+    /// Allure reporter instance. Contains subscriptions to corresponding Unicorn events.
+    /// </summary>
     public sealed class AllureReporterInstance : IDisposable
     {
         private readonly AllureListener _listener;
@@ -30,6 +33,9 @@ namespace Unicorn.AllureAgent
             StepsEvents.OnStepFinish += _listener.FinishStep;
         }
 
+        /// <summary>
+        /// Unsubscribes from events.
+        /// </summary>
         public void Dispose()
         {
             Test.OnTestStart -= _listener.StartSuiteMethod;

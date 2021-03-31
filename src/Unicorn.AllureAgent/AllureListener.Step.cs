@@ -5,6 +5,9 @@ using Unicorn.Taf.Core.Steps;
 
 namespace Unicorn.AllureAgent
 {
+    /// <summary>
+    /// Allure listener, which handles reporting stuff for all test items.
+    /// </summary>
     public partial class AllureListener
     {
         private string stepGuid = null;

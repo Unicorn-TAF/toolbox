@@ -6,6 +6,9 @@ using Unicorn.Taf.Core.Testing;
 
 namespace Unicorn.AllureAgent
 {
+    /// <summary>
+    /// Allure listener, which handles reporting stuff for all test items.
+    /// </summary>
     public partial class AllureListener
     {
         private string testGuid = null;
