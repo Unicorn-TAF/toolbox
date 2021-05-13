@@ -73,6 +73,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ExecutorUtilities.cs" />
+    <Compile Include="IsolatedTestsInfoObserver.cs" />
     <Compile Include="TestCoordinates.cs" />
     <Compile Include="TestCoordinatesProvider.cs" />
     <Compile Include="UnicrornTestExecutor.cs" />
