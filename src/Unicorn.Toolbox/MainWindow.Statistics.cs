@@ -15,7 +15,8 @@ namespace Unicorn.Toolbox
     public partial class MainWindow
     {
         private Analyzer analyzer;
-
+        private string StatusLineStatistics = string.Empty;
+        
         private void LoadTestsAssembly(object sender, RoutedEventArgs e)
         {
             var openFileDialog = new OpenFileDialog
@@ -40,8 +41,8 @@ namespace Unicorn.Toolbox
             analyzer = new Analyzer(assemblyFile);
             analyzer.GetTestsStatistics();
 
-            var statusLine = $"Assembly: {analyzer.AssemblyFileName} ({analyzer.TestsAssemblyName})    |    " + analyzer.Data.ToString();
-            textBoxStatistics.Text = statusLine;
+            StatusLineStatistics = $"Assembly: {analyzer.AssemblyFileName} ({analyzer.TestsAssemblyName})    |    " + analyzer.Data.ToString();
+            statusBarText.Text = StatusLineStatistics;
 
             FillFiltersFrom(analyzer.Data);
             ShowAll();

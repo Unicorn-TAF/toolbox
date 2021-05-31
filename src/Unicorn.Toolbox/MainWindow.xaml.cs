@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using System;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -62,9 +63,9 @@ namespace Unicorn.Toolbox
 
                     foreach (var children in visualization.canvasVisualization.Children)
                     {
-                        if (children is TextBlock)
+                        if (children is TextBlock block)
                         {
-                            var pair = ((TextBlock)children).Text.Split(':').Select(p => p.Trim());
+                            var pair = block.Text.Split(':').Select(p => p.Trim());
                             csv.AppendLine(string.Join(delimiter, pair));
                         }
                     }
@@ -121,14 +122,26 @@ namespace Unicorn.Toolbox
                 {
                     comboFilterExecutedTestsBy.SelectedIndex = 0;
                 }
+
+                statusBarText.Text = StatusLineResults;
             }
-            else
+            else if (tabCoverage.IsSelected)
             {
                 buttonVisualize.IsEnabled = true;
                 checkBoxFullscreen.IsEnabled = true;
                 checkBoxModern.IsEnabled = true;
                 comboBoxPalette.IsEnabled = true;
                 groupBoxVisualization.IsEnabled = groupBoxVisualizationStateTemp;
+
+                statusBarText.Text = StatusLineCoverage;
+            }
+            else if (tabStatistics.IsSelected)
+            {
+                statusBarText.Text = StatusLineStatistics;
+            }
+            else
+            {
+                throw new NotImplementedException($"Please update {nameof(statusBarText)} on tab change");
             }
         }
     }

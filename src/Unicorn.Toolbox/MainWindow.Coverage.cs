@@ -11,6 +11,7 @@ namespace Unicorn.Toolbox
     public partial class MainWindow
     {
         private SpecsCoverage _coverage;
+        private string StatusLineCoverage = string.Empty;
 
         private void LoadSpecs(object sender, RoutedEventArgs e)
         {
