@@ -2,6 +2,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -18,6 +19,8 @@ namespace Unicorn.Toolbox
         private ListCollectionView listCollectionView;
         private bool groupBoxVisualizationStateTemp = false;
         private bool trxLoaded = false;
+        private string StatusLineResults = string.Empty;
+
 
         private void LoadTrx(object sender, RoutedEventArgs e)
         {
@@ -30,50 +33,58 @@ namespace Unicorn.Toolbox
                 Multiselect = true
             };
 
-            openFileDialog.ShowDialog();
-
-            var trxFiles = openFileDialog.FileNames;
-
-            if (!trxFiles.Any())
+            if (!(bool)openFileDialog.ShowDialog() || !openFileDialog.FileNames.Any())
             {
                 return;
             }
 
-            launchResult = new LaunchResult();
-
-            foreach (var trxFile in trxFiles)
+            var trxFiles = openFileDialog.FileNames;
+            StatusLineResults = "Loading .trx";
+            statusBarText.Text = StatusLineResults;
+            var taskLoading = Task.Factory.StartNew(() =>
             {
-                try
+                launchResult = new LaunchResult();
+
+                foreach (var trxFile in trxFiles)
                 {
-                    launchResult.AppendResultsFromTrx(trxFile);
+                    try
+                    {
+                        launchResult.AppendResultsFromTrx(trxFile);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error parsing {trxFile} file:" + ex.ToString());
+                    }
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Error parsing {trxFile} file:" + ex.ToString());
-                }
-            }
+            });
 
-            var obColl = new ObservableCollection<Execution>(launchResult.Executions);
-
-            gridTestResults.ItemsSource = null;
-            listCollectionView = new ListCollectionView(obColl);
-
-            gridTestResults.ItemsSource = listCollectionView;
-
-            textBoxLaunchSummary.Text = launchResult.ToString();
-
-            buttonVisualize.IsEnabled = true;
-            checkBoxFullscreen.IsEnabled = true;
-            trxLoaded = true;
-
-            stackPanelFails.Children.Clear();
-
-            var results = ExecutedTestsFilter.GetTopErrors(launchResult.Executions.SelectMany(exec => exec.TestResults));
-
-            for (int i = 0; i < results.Count(); i++)
+            taskLoading.ContinueWith((t1) =>
             {
-                stackPanelFails.Children.Add(new FailedTestsGroup(results.ElementAt(i)));
-            }
+                var obColl = new ObservableCollection<Execution>(launchResult.Executions);
+                this.Dispatcher.Invoke(() =>
+                {
+                    listCollectionView = new ListCollectionView(obColl);
+                    gridTestResults.ItemsSource = null;
+                    gridTestResults.ItemsSource = listCollectionView;
+
+                    textBoxLaunchSummary.Text = launchResult.ToString();
+
+                    buttonVisualize.IsEnabled = true;
+                    checkBoxFullscreen.IsEnabled = true;
+                    trxLoaded = true;
+
+                    stackPanelFails.Children.Clear();
+
+                    var results = ExecutedTestsFilter.GetTopErrors(launchResult.Executions.SelectMany(exec => exec.TestResults));
+
+                    for (int i = 0; i < results.Count(); i++)
+                    {
+                        stackPanelFails.Children.Add(new FailedTestsGroup(results.ElementAt(i)));
+                    }
+                });
+            }, TaskContinuationOptions.OnlyOnRanToCompletion);
+
+            StatusLineResults = $"{trxFiles.Count()} .trx files were loaded";
         }
 
         private void FilterExecutions(object sender, TextChangedEventArgs e)

@@ -201,7 +201,13 @@
                 </Grid>
             </TabItem>
         </TabControl>
-        <TextBox x:Name="textBoxStatistics" Text="" IsEnabled="False" Height="25" VerticalAlignment="Bottom"/>
+        <DockPanel Height="25" VerticalAlignment="Bottom">
+            <StatusBar DockPanel.Dock="Bottom">
+                <StatusBarItem Height="21">
+                    <TextBlock Name="statusBarText" />
+                </StatusBarItem>
+            </StatusBar>
+        </DockPanel>
         <GroupBox x:Name="groupBoxVisualization" Header="Visualization" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="125,40,0,0" Height="55" Width="498" IsEnabled="False">
             <Grid>
                 <CheckBox x:Name="checkBoxModern" Content="Circles" Margin="121,8,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.274,0.533" HorizontalAlignment="Left" Width="66"/>
