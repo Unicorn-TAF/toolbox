@@ -59,7 +59,7 @@ namespace Unicorn.TestAdapter
 
                 var testcase = new TestCase(testInfo.FullName, UnicrornTestExecutor.ExecutorUri, source)
                 {
-                    DisplayName = testInfo.DisplayName,
+                    DisplayName = testInfo.MethodName,
                     CodeFilePath = coordinates.FilePath,
                     LineNumber = coordinates.LineNumber,
                 };

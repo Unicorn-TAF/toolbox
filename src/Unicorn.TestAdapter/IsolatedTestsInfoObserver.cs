@@ -23,11 +23,10 @@ namespace Unicorn.TestAdapter
         /// <param name="className">test class name</param>
         /// <param name="author">test author</param>
         /// <param name="categories">test categories</param>
-        internal TestInfo(string fullName, string displayName, string methodName, 
+        internal TestInfo(string fullName, string methodName, 
             string className, string author, string categories)
         {
             FullName = fullName;
-            DisplayName = displayName;
             MethodName = methodName;
             ClassName = className;
             Author = author;
@@ -38,11 +37,6 @@ namespace Unicorn.TestAdapter
         /// Gets test full name (reflected type full name and test method name).
         /// </summary>
         internal string FullName { get; }
-
-        /// <summary>
-        /// Gets test display name.
-        /// </summary>
-        internal string DisplayName { get; }
 
         /// <summary>
         /// Gets test class name.
@@ -103,8 +97,6 @@ namespace Unicorn.TestAdapter
             var className = methodInfo.DeclaringType.FullName;
             var fullName = AdapterUtilities.GetFullTestMethodName(methodInfo);
 
-            var name = string.IsNullOrEmpty(title) ? methodInfo.Name : title;
-
             var authorAttribute = methodInfo
                 .GetCustomAttribute(typeof(AuthorAttribute), true) as AuthorAttribute;
 
@@ -117,7 +109,7 @@ namespace Unicorn.TestAdapter
                 string.Join(",", categoryAttributes.Select(a => a.Category)) : 
                 null;
 
-            return new TestInfo(fullName, name, methodName, className, author, categories);
+            return new TestInfo(fullName, methodName, className, author, categories);
         }
     }
 }

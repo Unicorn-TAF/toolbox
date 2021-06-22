@@ -32,6 +32,5 @@
     <file src="bin\Release\Mono.Cecil.Pdb.dll" target="lib\net452"/>
     <file src="bin\Release\Mono.Cecil.Rocks.dll" target="lib\net452"/>
     <file src="bin\Release\Unicorn.Taf.Core.dll" target="lib\net452"/>
-    <file src="bin\Release\Microsoft.VisualStudio.TestPlatform.ObjectModel.dll" target="lib\net452"/>
   </files>
 </package>
