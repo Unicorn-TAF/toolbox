@@ -18,7 +18,7 @@ namespace Unicorn.TestAdapter
         public void DiscoverTests(IEnumerable<string> sources, IDiscoveryContext discoveryContext,
             IMessageLogger logger, ITestCaseDiscoverySink discoverySink)
         {
-            logger?.SendMessage(TestMessageLevel.Informational, Prefix + "Test discovery starting");
+            logger?.SendMessage(TestMessageLevel.Informational, Prefix + "test discovery starting");
 
             foreach (string source in sources)
             {
@@ -28,11 +28,13 @@ namespace Unicorn.TestAdapter
                 }
                 catch (Exception ex)
                 {
-                    logger?.SendMessage(TestMessageLevel.Error, Prefix + $"Error discovering {source} source: {ex.Message}");
+                    // TODO: does not report error if assembly does not reference TestAdapter.
+
+                    logger?.SendMessage(TestMessageLevel.Error, Prefix + $"error discovering {source} source: {ex.Message}");
                 }
             }
 
-            logger?.SendMessage(TestMessageLevel.Informational, Prefix + "Test discovery complete");
+            logger?.SendMessage(TestMessageLevel.Informational, Prefix + "test discovery complete");
         }
 
         private void DiscoverAssembly(string source, IMessageLogger logger, ITestCaseDiscoverySink discoverySink)
@@ -57,10 +59,20 @@ namespace Unicorn.TestAdapter
 
                 var testcase = new TestCase(testInfo.FullName, UnicrornTestExecutor.ExecutorUri, source)
                 {
-                    DisplayName = testInfo.DisplayName,
+                    DisplayName = testInfo.MethodName,
                     CodeFilePath = coordinates.FilePath,
                     LineNumber = coordinates.LineNumber,
                 };
+
+                if (!string.IsNullOrEmpty(testInfo.Author))
+                {
+                    testcase.Traits.Add(new Trait("Author", testInfo.Author));
+                }
+
+                if (!string.IsNullOrEmpty(testInfo.Categories))
+                {
+                    testcase.Traits.Add(new Trait("Categories", testInfo.Categories));
+                }
 
                 discoverySink.SendTestCase(testcase);
             }
