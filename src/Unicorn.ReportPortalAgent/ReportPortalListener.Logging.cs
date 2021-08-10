@@ -1,6 +1,7 @@
 ﻿using System;
-using ReportPortal.Client.Models;
-using ReportPortal.Client.Requests;
+using ReportPortal.Client.Abstractions.Models;
+using ReportPortal.Client.Abstractions.Requests;
+using ULogging = Unicorn.Taf.Core.Logging;
 
 namespace Unicorn.ReportPortalAgent
 {
@@ -13,17 +14,25 @@ namespace Unicorn.ReportPortalAgent
         {
             try
             {
-                _testFlowIds[id].Log(new AddLogItemRequest
+                var request = new CreateLogItemRequest
                 {
                     Level = level,
                     Time = DateTime.UtcNow,
                     Text = text,
-                    Attach = new Attach(attachmentName, mime, content)
-                });
+
+                    Attach = new LogItemAttach(mime, content)
+                    {
+                        Name = attachmentName
+                    }
+                };
+
+                _testFlowIds[id].Log(request);
             }
             catch (Exception exception)
             {
-                Console.WriteLine("ReportPortal exception was thrown." + Environment.NewLine + exception);
+                ULogging.Logger.Instance.Log(
+                    ULogging.LogLevel.Warning,
+                    Prefix + BaseMessage + Environment.NewLine + exception);
             }
         }
 
@@ -31,16 +40,20 @@ namespace Unicorn.ReportPortalAgent
         {
             try
             {
-                _testFlowIds[id].Log(new AddLogItemRequest
+                var request = new CreateLogItemRequest
                 {
                     Level = level,
                     Time = DateTime.UtcNow,
                     Text = text,
-                });
+                };
+
+                _testFlowIds[id].Log(request);
             }
             catch (Exception exception)
             {
-                Console.WriteLine("ReportPortal exception was thrown." + Environment.NewLine + exception);
+                ULogging.Logger.Instance.Log(
+                    ULogging.LogLevel.Warning,
+                    Prefix + BaseMessage + Environment.NewLine + exception);
             }
         }
     }

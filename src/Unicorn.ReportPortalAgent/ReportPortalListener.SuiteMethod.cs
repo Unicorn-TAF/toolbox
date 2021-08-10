@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ReportPortal.Client.Models;
-using ReportPortal.Client.Requests;
+using ReportPortal.Client.Abstractions.Models;
+using ReportPortal.Client.Abstractions.Requests;
+using ReportPortal.Client.Abstractions.Responses;
 using Unicorn.Taf.Core.Testing;
+using ULogging = Unicorn.Taf.Core.Logging;
+using UTesting = Unicorn.Taf.Core.Testing;
 
 namespace Unicorn.ReportPortalAgent
 {
@@ -13,6 +16,10 @@ namespace Unicorn.ReportPortalAgent
     /// </summary>
     public partial class ReportPortalListener
     {
+        private const string AuthorAttribute = "author";
+        private const string MachineAttribute = "machine";
+        private const string CategoryAttribute = "category";
+
         private readonly Dictionary<SuiteMethodType, TestItemType> _itemTypes =
             new Dictionary<SuiteMethodType, TestItemType>
         {
@@ -39,13 +46,14 @@ namespace Unicorn.ReportPortalAgent
                 {
                     StartTime = DateTime.UtcNow,
                     Name = name,
-                    Type = _itemTypes[suiteMethod.MethodType]
+                    Type = _itemTypes[suiteMethod.MethodType],
+                    TestCaseId = suiteMethod.Outcome.Id.ToString(),
+                    CodeReference = suiteMethod.Outcome.FullMethodName
                 };
 
-                startTestRequest.Tags = new List<string>
+                startTestRequest.Attributes = new List<ItemAttribute>
                 {
-                    suiteMethod.Outcome.Author,
-                    Environment.MachineName
+                    GetAttribute(MachineAttribute, Environment.MachineName)
                 };
 
                 var testVal = _suitesFlow[parentId].StartChildTestReporter(startTestRequest);
@@ -53,7 +61,9 @@ namespace Unicorn.ReportPortalAgent
             }
             catch (Exception exception)
             {
-                Console.WriteLine("ReportPortal exception was thrown." + Environment.NewLine + exception);
+                ULogging.Logger.Instance.Log(
+                    ULogging.LogLevel.Warning,
+                    Prefix + BaseMessage + Environment.NewLine + exception);
             }
         }
 
@@ -72,27 +82,31 @@ namespace Unicorn.ReportPortalAgent
                 }
 
                 // adding categories to test
-                var tags = new List<string>
+                var tags = new List<ItemAttribute>
                 {
-                    suiteMethod.Outcome.Author,
-                    Environment.MachineName
+                    GetAttribute(AuthorAttribute, suiteMethod.Outcome.Author),
+                    GetAttribute(MachineAttribute, Environment.MachineName)
                 };
 
                 if (suiteMethod.MethodType.Equals(SuiteMethodType.Test))
                 {
-                    tags.AddRange((suiteMethod as Test).Categories);
+                    foreach (var category in (suiteMethod as Test).Categories)
+                    {
+                        tags.Add(GetAttribute(CategoryAttribute, category));
+                    }
                 }
 
                 // adding description to test
                 var description =
-                    suiteMethod.Outcome.Result == Taf.Core.Testing.Status.Failed ?
+                    suiteMethod.Outcome.Result == UTesting.Status.Failed ?
                     suiteMethod.Outcome.Exception.Message :
                     string.Empty;
 
                 // adding failure items
-                if (suiteMethod.Outcome.Result == Taf.Core.Testing.Status.Failed)
+                if (suiteMethod.Outcome.Result == UTesting.Status.Failed)
                 {
-                    var text = suiteMethod.Outcome.Exception.Message + Environment.NewLine + suiteMethod.Outcome.Exception.StackTrace;
+                    var text = suiteMethod.Outcome.Exception.Message + Environment.NewLine + 
+                        suiteMethod.Outcome.Exception.StackTrace;
 
                     AddLog(id, LogLevel.Error, text);
 
@@ -105,7 +119,7 @@ namespace Unicorn.ReportPortalAgent
                     if (suiteMethod.Outcome.Attachments.Any())
                     {
                         suiteMethod.Outcome.Attachments
-                            .ForEach(a => 
+                            .ForEach(a =>
                             AddAttachment(id, LogLevel.Error, string.Empty, a.Name, a.MimeType, a.GetBytes()));
                     }
                 }
@@ -114,12 +128,12 @@ namespace Unicorn.ReportPortalAgent
                 {
                     EndTime = DateTime.UtcNow,
                     Description = description,
-                    Tags = tags,
+                    Attributes = tags,
                     Status = _statusMap[result]
                 };
 
                 // adding issue to finish test if failed test has a defect
-                if (suiteMethod.Outcome.Result == Taf.Core.Testing.Status.Failed && suiteMethod.Outcome.Defect != null)
+                if (suiteMethod.Outcome.Result == UTesting.Status.Failed && suiteMethod.Outcome.Defect != null)
                 {
                     finishTestRequest.Issue = new Issue
                     {
@@ -130,10 +144,13 @@ namespace Unicorn.ReportPortalAgent
 
                 // finishing test
                 _testFlowIds[id].Finish(finishTestRequest);
+                _testFlowIds.Remove(id);
             }
             catch (Exception exception)
             {
-                Console.WriteLine("ReportPortal exception was thrown." + Environment.NewLine + exception);
+                ULogging.Logger.Instance.Log(
+                    ULogging.LogLevel.Warning,
+                    Prefix + BaseMessage + Environment.NewLine + exception);
             }
         }
 
@@ -153,15 +170,18 @@ namespace Unicorn.ReportPortalAgent
                     Type = _itemTypes[suiteMethod.MethodType]
                 };
 
-                startTestRequest.Tags = new List<string>
+                startTestRequest.Attributes = new List<ItemAttribute>
                 {
-                    suiteMethod.Outcome.Author,
-                    Environment.MachineName
+                    GetAttribute(AuthorAttribute, suiteMethod.Outcome.Author),
+                    GetAttribute(MachineAttribute, Environment.MachineName)
                 };
 
                 if (suiteMethod.MethodType.Equals(SuiteMethodType.Test))
                 {
-                    startTestRequest.Tags.AddRange((suiteMethod as Test).Categories);
+                    foreach (var category in (suiteMethod as Test).Categories)
+                    {
+                        startTestRequest.Attributes.Add(GetAttribute(CategoryAttribute, category));
+                    }
                 }
 
                 var testVal = _suitesFlow[parentId].StartChildTestReporter(startTestRequest);
@@ -174,7 +194,7 @@ namespace Unicorn.ReportPortalAgent
                     Issue = new Issue
                     {
                         Type = SkippedTestDefectType,
-                        Comment = "The test is skipped, check if dependent test or before suite failed"
+                        Comment = "The test is skipped, check if dependent test or BeforeSuite failed"
                     }
                 };
 
@@ -183,8 +203,23 @@ namespace Unicorn.ReportPortalAgent
             }
             catch (Exception exception)
             {
-                Console.WriteLine("ReportPortal exception was thrown." + Environment.NewLine + exception);
+                ULogging.Logger.Instance.Log(
+                    ULogging.LogLevel.Warning,
+                    Prefix + BaseMessage + Environment.NewLine + exception);
             }
         }
+
+        private ItemAttribute GetAttribute(string value) =>
+            new ItemAttribute
+            {
+                Value = value
+            };
+
+        private ItemAttribute GetAttribute(string key, string value) =>
+            new ItemAttribute
+            {
+                Key = key,
+                Value = value
+            };
     }
 }
