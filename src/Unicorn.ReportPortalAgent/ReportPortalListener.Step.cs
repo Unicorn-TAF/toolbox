@@ -1,9 +1,11 @@
-﻿using System;
+﻿using ReportPortal.Client.Abstractions.Models;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Unicorn.Taf.Core.Testing;
+using ULogging = Unicorn.Taf.Core.Logging;
 
 namespace Unicorn.ReportPortalAgent
 {
@@ -12,22 +14,24 @@ namespace Unicorn.ReportPortalAgent
     /// </summary>
     public partial class ReportPortalListener
     {
-        private readonly Dictionary<Taf.Core.Logging.LogLevel, ReportPortal.Client.Models.LogLevel> _logLevels =
-            new Dictionary<Taf.Core.Logging.LogLevel, ReportPortal.Client.Models.LogLevel>
+        private readonly Dictionary<ULogging.LogLevel, LogLevel> _logLevels =
+            new Dictionary<ULogging.LogLevel, LogLevel>
         {
-            { Taf.Core.Logging.LogLevel.Error, ReportPortal.Client.Models.LogLevel.Error },
-            { Taf.Core.Logging.LogLevel.Warning, ReportPortal.Client.Models.LogLevel.Warning },
-            { Taf.Core.Logging.LogLevel.Info, ReportPortal.Client.Models.LogLevel.Info },
-            { Taf.Core.Logging.LogLevel.Debug, ReportPortal.Client.Models.LogLevel.Debug },
-            { Taf.Core.Logging.LogLevel.Trace, ReportPortal.Client.Models.LogLevel.Trace },
+            { ULogging.LogLevel.Error, LogLevel.Error },
+            { ULogging.LogLevel.Warning, LogLevel.Warning },
+            { ULogging.LogLevel.Info, LogLevel.Info },
+            { ULogging.LogLevel.Debug, LogLevel.Debug },
+            { ULogging.LogLevel.Trace, LogLevel.Trace },
         };
 
-        private readonly ConcurrentDictionary<Guid, SuiteMethod> _currentTests = new ConcurrentDictionary<Guid, SuiteMethod>();
+        private readonly ConcurrentDictionary<Guid, SuiteMethod> _currentTests = 
+            new ConcurrentDictionary<Guid, SuiteMethod>();
 
-        internal void ReportTestMessage(Taf.Core.Logging.LogLevel level, string info)
+        internal void ReportTestMessage(ULogging.LogLevel level, string info)
         {
             var stackTrace = new StackTrace();
-            var currentTest = _currentTests.Values.First(t => stackTrace.GetFrames().Any(sf => sf.GetMethod().Name.Contains(t.TestMethod.Name)));
+            var currentTest = _currentTests.Values.First(t => stackTrace.GetFrames()
+                .Any(sf => sf.GetMethod().Name.Contains(t.TestMethod.Name)));
 
             if (currentTest != null)
             {

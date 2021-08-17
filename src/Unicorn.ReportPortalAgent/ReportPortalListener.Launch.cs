@@ -1,8 +1,11 @@
 ﻿using System;
-using ReportPortal.Client.Models;
-using ReportPortal.Client.Requests;
-using ReportPortal.Shared;
+using System.Collections.Generic;
+using System.Linq;
+using ReportPortal.Client.Abstractions.Models;
+using ReportPortal.Client.Abstractions.Requests;
+using ReportPortal.Shared.Configuration;
 using ReportPortal.Shared.Reporter;
+using ULogging = Unicorn.Taf.Core.Logging;
 
 namespace Unicorn.ReportPortalAgent
 {
@@ -11,32 +14,37 @@ namespace Unicorn.ReportPortalAgent
     /// </summary>
     public partial class ReportPortalListener
     {
+        private ILaunchReporter launchReporter;
+        
         internal void StartRun()
         {
             try
             {
-                LaunchMode launchMode = 
-                    Config.Launch.IsDebugMode ? LaunchMode.Debug : LaunchMode.Default;
+                LaunchMode launchMode = Config.GetValue(ConfigurationPath.LaunchDebugMode, false) ?
+                    LaunchMode.Debug :
+                    LaunchMode.Default;
+
+                var attributes = Config
+                    .GetKeyValues("Launch:Attributes", new List<KeyValuePair<string, string>>())
+                    .Select(a => new ItemAttribute { Key = a.Key, Value = a.Value });
 
                 var startLaunchRequest = new StartLaunchRequest
                 {
-                    Name = Config.Launch.Name,
-                    Description = Config.Launch.Description,
+                    Name = Config.GetValue(ConfigurationPath.LaunchName, "Unicorn tests launch"),
+                    Description = Config.GetValue(ConfigurationPath.LaunchDescription, string.Empty),
                     StartTime = DateTime.UtcNow,
                     Mode = launchMode,
-                    Tags = Config.Launch.Tags
+                    Attributes = attributes.ToList()
                 };
 
-                Bridge.Context.LaunchReporter =
-                    string.IsNullOrEmpty(ExistingLaunchId) ?
-                    new LaunchReporter(Bridge.Service) :
-                    new LaunchReporter(Bridge.Service, ExistingLaunchId);
-
-                Bridge.Context.LaunchReporter.Start(startLaunchRequest);
+                launchReporter = new LaunchReporter(_rpService, Config, null, _extensionManager);
+                launchReporter.Start(startLaunchRequest);
             }
             catch (Exception exception)
             {
-                Console.WriteLine("ReportPortal exception was thrown." + Environment.NewLine + exception);
+                ULogging.Logger.Instance.Log(
+                    ULogging.LogLevel.Warning,
+                    Prefix + BaseMessage + Environment.NewLine + exception);
             }
         }
 
@@ -49,12 +57,14 @@ namespace Unicorn.ReportPortalAgent
                     EndTime = DateTime.UtcNow,
                 };
 
-                Bridge.Context.LaunchReporter.Finish(finishLaunchRequest);
-                Bridge.Context.LaunchReporter.FinishTask.Wait();
+                launchReporter.Finish(finishLaunchRequest);
+                launchReporter.Sync();
             }
             catch (Exception exception)
             {
-                Console.WriteLine("ReportPortal exception was thrown." + Environment.NewLine + exception);
+                ULogging.Logger.Instance.Log(
+                    ULogging.LogLevel.Warning,
+                    Prefix + BaseMessage + Environment.NewLine + exception);
             }
         }
     }

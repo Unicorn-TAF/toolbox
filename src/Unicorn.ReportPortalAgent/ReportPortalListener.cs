@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
-using Newtonsoft.Json;
-using ReportPortal.Client;
-using ReportPortal.Shared;
+using ReportPortal.Client.Abstractions;
+using ReportPortal.Client.Abstractions.Models;
+using ReportPortal.Shared.Configuration;
+using ReportPortal.Shared.Extensibility;
 using ReportPortal.Shared.Reporter;
-using Unicorn.ReportPortalAgent.Configuration;
-using Unicorn.Taf.Core.Testing;
+using UTesting = Unicorn.Taf.Core.Testing;
 
 namespace Unicorn.ReportPortalAgent
 {
@@ -16,75 +15,61 @@ namespace Unicorn.ReportPortalAgent
     /// </summary>
     public partial class ReportPortalListener
     {
-        private static readonly Dictionary<Status, ReportPortal.Client.Models.Status> _statusMap = new Dictionary<Status, ReportPortal.Client.Models.Status>();
+        private const string Prefix = nameof(ReportPortalListener) + ": ";
+        private const string BaseMessage = "ReportPortal exception was thrown.";
 
+        private readonly IExtensionManager _extensionManager = new ExtensionManager();
+        private readonly IClientService _rpService;
+
+        private readonly Dictionary<UTesting.Status, Status> _statusMap;
         private readonly Dictionary<Guid, ITestReporter> _suitesFlow = new Dictionary<Guid, ITestReporter>();
         private readonly Dictionary<Guid, ITestReporter> _testFlowIds = new Dictionary<Guid, ITestReporter>();
-        private string[] _commonSuitesTags = null;
 
-        static ReportPortalListener()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ReportPortalListener"/> class.<br/>
+        /// Initialization of RP service based on config.
+        /// </summary>
+        public ReportPortalListener()
         {
-            var configPath = Path.Combine(
-                Path.GetDirectoryName(new Uri(typeof(RpConfig).Assembly.CodeBase).LocalPath),
-                "ReportPortal.conf");
-            Config = JsonConvert.DeserializeObject<RpConfig>(File.ReadAllText(configPath));
+            var baseDir = Path.GetDirectoryName(new Uri(typeof(ReportPortalListener).Assembly.CodeBase).LocalPath);
 
-            Service reportPortalService;
-            if (Config.Server.Proxy != null)
+            Config = new ConfigurationBuilder().AddDefaults(baseDir).Build();
+
+            _rpService = new ReportPortal.Shared.Reporter.Http.ClientServiceBuilder(Config).Build();
+            _extensionManager.Explore(baseDir);
+
+            _statusMap = new Dictionary<UTesting.Status, Status>
             {
-                reportPortalService = new Service(Config.Server.Url, Config.Server.Project, Config.Server.Authentication.Uuid, new WebProxy(Config.Server.Proxy));
-            }
-            else
-            {
-                reportPortalService = new Service(Config.Server.Url, Config.Server.Project, Config.Server.Authentication.Uuid);
-            }
-
-            Bridge.Service = reportPortalService;
-
-            _statusMap[Status.Passed] = ReportPortal.Client.Models.Status.Passed;
-            _statusMap[Status.Failed] = ReportPortal.Client.Models.Status.Failed;
-            _statusMap[Status.Skipped] = ReportPortal.Client.Models.Status.Skipped;
+                { UTesting.Status.Passed, Status.Passed },
+                { UTesting.Status.Failed, Status.Failed },
+                { UTesting.Status.Skipped, Status.Skipped },
+            };
         }
 
         /// <summary>
-        /// Gets Report Portal configuration
+        /// Gets or sets report portal configuration.
         /// </summary>
-        public static RpConfig Config
-        {
-            get;
-        }
+        public IConfiguration Config { get; }
 
         /// <summary>
-        /// Gets or sets id of existing Report Portal launch
+        /// Gets or sets id of existing Report Portal launch.
         /// </summary>
-        public string ExistingLaunchId
-        {
-            get;
-
-            set;
-        }
+        public string ExistingLaunchId { get; set; }
 
         /// <summary>
-        /// Add attachment to test
+        /// Adds attachment to test (as bytes).
         /// </summary>
-        /// <param name="test"><see cref="Test"/> instance</param>
+        /// <param name="test"><see cref="UTesting.Test"/> instance</param>
         /// <param name="text">attachment text</param>
         /// <param name="attachmentName">attachment name</param>
         /// <param name="mime">mime type</param>
         /// <param name="content">content in bytes</param>
-        public void ReportAddAttachment(Test test, string text, string attachmentName, string mime, byte[] content)
+        public void ReportAddAttachment(UTesting.Test test, string text, string attachmentName, string mime, byte[] content)
         {
-            if (Config.IsEnabled && _testFlowIds.ContainsKey(test.Outcome.Id))
+            if (_testFlowIds.ContainsKey(test.Outcome.Id))
             {
-                AddAttachment(test.Outcome.Id, ReportPortal.Client.Models.LogLevel.Info, text, attachmentName, mime, content);
+                AddAttachment(test.Outcome.Id, LogLevel.Info, text, attachmentName, mime, content);
             }
         }
-
-        /// <summary>
-        /// Sets list of tags which are common for all suites and specific for the run
-        /// </summary>
-        /// <param name="tags">list of tags</param>
-        public void SetCommonSuitesTags(params string[] tags) =>
-            _commonSuitesTags = tags;
     }
 }

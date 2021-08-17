@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using ReportPortal.Client.Models;
-using ReportPortal.Client.Requests;
-using ReportPortal.Shared;
-using Unicorn.Taf.Core.Testing;
+using ReportPortal.Client.Abstractions.Models;
+using ReportPortal.Client.Abstractions.Requests;
+using UTesting = Unicorn.Taf.Core.Testing;
+using ULogging = Unicorn.Taf.Core.Logging;
 
 namespace Unicorn.ReportPortalAgent
 {
     public partial class ReportPortalListener
     {
-        internal void StartSuite(TestSuite suite)
+        internal void StartSuite(UTesting.TestSuite suite)
         {
             try
             {
@@ -30,30 +30,31 @@ namespace Unicorn.ReportPortalAgent
                     Type = TestItemType.Suite
                 };
 
-                startSuiteRequest.Tags = new List<string>
+                if (!string.IsNullOrEmpty(ExistingLaunchId))
                 {
-                    Environment.MachineName
-                };
-
-                if (_commonSuitesTags != null)
-                {
-                    startSuiteRequest.Tags.AddRange(_commonSuitesTags);
+                    startSuiteRequest.LaunchUuid = ExistingLaunchId;
                 }
 
-                var test = 
-                    parentId.Equals(Guid.Empty) || !_suitesFlow.ContainsKey(parentId) ?
-                    Bridge.Context.LaunchReporter.StartChildTestReporter(startSuiteRequest) :
+                startSuiteRequest.Attributes = new List<ItemAttribute>
+                {
+                    GetAttribute(MachineAttribute, Environment.MachineName)
+                };
+
+                var test = parentId.Equals(Guid.Empty) || !_suitesFlow.ContainsKey(parentId) ?
+                    launchReporter.StartChildTestReporter(startSuiteRequest) :
                     _suitesFlow[parentId].StartChildTestReporter(startSuiteRequest);
 
                 _suitesFlow[id] = test;
             }
             catch (Exception exception)
             {
-                Console.WriteLine("ReportPortal exception was thrown." + Environment.NewLine + exception);
+                ULogging.Logger.Instance.Log(
+                    ULogging.LogLevel.Warning,
+                    Prefix + BaseMessage + Environment.NewLine + exception);
             }
         }
 
-        internal void FinishSuite(TestSuite suite)
+        internal void FinishSuite(UTesting.TestSuite suite)
         {
             try
             {
@@ -63,20 +64,23 @@ namespace Unicorn.ReportPortalAgent
 
                 if (parentId.Equals(Guid.Empty) && _suitesFlow.ContainsKey(id))
                 {
-                    var tags = new List<string>
+                    var attributes = new List<ItemAttribute>
                     {
-                        Environment.MachineName
+                        GetAttribute(MachineAttribute, Environment.MachineName)
                     };
+
+                    if (!string.IsNullOrEmpty(suite.Outcome.DataSetName))
+                    {
+                        attributes.Add(GetAttribute("parameterized"));
+                    }
 
                     // adding tags to suite
                     if (suite.Tags != null)
                     {
-                        tags.AddRange(suite.Tags);
-                    }
-
-                    if (_commonSuitesTags != null)
-                    {
-                        tags.AddRange(_commonSuitesTags);
+                        foreach (var tag in suite.Tags)
+                        {
+                            attributes.Add(GetAttribute(tag));
+                        }
                     }
 
                     // adding description to suite
@@ -98,16 +102,19 @@ namespace Unicorn.ReportPortalAgent
                     {
                         EndTime = DateTime.UtcNow,
                         Description = description.ToString(),
-                        Tags = tags,
-                        Status = result.Equals(Taf.Core.Testing.Status.Skipped) ? ReportPortal.Client.Models.Status.Failed : _statusMap[result]
+                        Attributes = attributes,
+                        Status = result.Equals(UTesting.Status.Skipped) ? Status.Failed : _statusMap[result]
                     };
                         
                     _suitesFlow[id].Finish(finishSuiteRequest);
+                    _suitesFlow.Remove(id);
                 }
             }
             catch (Exception exception)
             {
-                Console.WriteLine("ReportPortal exception was thrown." + Environment.NewLine + exception);
+                ULogging.Logger.Instance.Log(
+                    ULogging.LogLevel.Warning,
+                    Prefix + BaseMessage + Environment.NewLine + exception);
             }
         }
     }
