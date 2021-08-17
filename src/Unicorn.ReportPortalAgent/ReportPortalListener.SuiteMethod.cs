@@ -82,7 +82,7 @@ namespace Unicorn.ReportPortalAgent
                 }
 
                 // adding categories to test
-                var tags = new List<ItemAttribute>
+                var attributes = new List<ItemAttribute>
                 {
                     GetAttribute(AuthorAttribute, suiteMethod.Outcome.Author),
                     GetAttribute(MachineAttribute, Environment.MachineName)
@@ -92,7 +92,7 @@ namespace Unicorn.ReportPortalAgent
                 {
                     foreach (var category in (suiteMethod as Test).Categories)
                     {
-                        tags.Add(GetAttribute(CategoryAttribute, category));
+                        attributes.Add(GetAttribute(CategoryAttribute, category));
                     }
                 }
 
@@ -128,7 +128,7 @@ namespace Unicorn.ReportPortalAgent
                 {
                     EndTime = DateTime.UtcNow,
                     Description = description,
-                    Attributes = tags,
+                    Attributes = attributes,
                     Status = _statusMap[result]
                 };
 
@@ -209,17 +209,32 @@ namespace Unicorn.ReportPortalAgent
             }
         }
 
-        private ItemAttribute GetAttribute(string value) =>
-            new ItemAttribute
+        private ItemAttribute GetAttribute(string value)
+        {
+            if (value.Contains(":"))
             {
-                Value = value
-            };
+                var pair = value.Split(':');
+                return GetAttribute(pair[0], pair[1]);
+            }
+            else
+            {
+                return new ItemAttribute
+                {
+                    Value = CheckForEmptyAttribute(value)
+                };
+            }
+        }
 
         private ItemAttribute GetAttribute(string key, string value) =>
             new ItemAttribute
             {
                 Key = key,
-                Value = value
+                Value = CheckForEmptyAttribute(value)
             };
+
+        private string CheckForEmptyAttribute(string value) =>
+            string.IsNullOrEmpty(value.Trim()) ?
+            "#err" :
+            value;
     }
 }

@@ -25,8 +25,6 @@ namespace Unicorn.ReportPortalAgent
         private readonly Dictionary<Guid, ITestReporter> _suitesFlow = new Dictionary<Guid, ITestReporter>();
         private readonly Dictionary<Guid, ITestReporter> _testFlowIds = new Dictionary<Guid, ITestReporter>();
 
-        private string[] commonSuitesTags = null;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="ReportPortalListener"/> class.<br/>
         /// Initialization of RP service based on config.
@@ -73,12 +71,5 @@ namespace Unicorn.ReportPortalAgent
                 AddAttachment(test.Outcome.Id, LogLevel.Info, text, attachmentName, mime, content);
             }
         }
-
-        /// <summary>
-        /// Sets list of tags which are common for all suites and specific for the run.
-        /// </summary>
-        /// <param name="tags">list of tags</param>
-        public void SetCommonSuitesTags(params string[] tags) =>
-            commonSuitesTags = tags;
     }
 }

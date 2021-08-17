@@ -40,14 +40,6 @@ namespace Unicorn.ReportPortalAgent
                     GetAttribute(MachineAttribute, Environment.MachineName)
                 };
 
-                if (commonSuitesTags != null)
-                {
-                    foreach (var tag in commonSuitesTags)
-                    {
-                        startSuiteRequest.Attributes.Add(GetAttribute(tag));
-                    }
-                }
-
                 var test = parentId.Equals(Guid.Empty) || !_suitesFlow.ContainsKey(parentId) ?
                     launchReporter.StartChildTestReporter(startSuiteRequest) :
                     _suitesFlow[parentId].StartChildTestReporter(startSuiteRequest);
@@ -86,14 +78,6 @@ namespace Unicorn.ReportPortalAgent
                     if (suite.Tags != null)
                     {
                         foreach (var tag in suite.Tags)
-                        {
-                            attributes.Add(GetAttribute(tag));
-                        }
-                    }
-
-                    if (commonSuitesTags != null)
-                    {
-                        foreach (var tag in commonSuitesTags)
                         {
                             attributes.Add(GetAttribute(tag));
                         }

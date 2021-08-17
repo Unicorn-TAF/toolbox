@@ -60,13 +60,6 @@ namespace Unicorn.ReportPortalAgent
                 StepsUtilities.GetStepInfo(method, arguments));
 
         /// <summary>
-        /// Sets list of tags which are common for all suites and specific for the run
-        /// </summary>
-        /// <param name="tags">list of tags</param>
-        public void SetCommonSuitesTags(params string[] tags) =>
-            _listener.SetCommonSuitesTags(tags);
-
-        /// <summary>
         /// Sets defect type to set for skipped tests in report portal.
         /// </summary>
         /// <param name="defectType">report portal defect type ID</param>
