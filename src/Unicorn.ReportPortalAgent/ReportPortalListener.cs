@@ -5,7 +5,6 @@ using ReportPortal.Client.Abstractions;
 using ReportPortal.Client.Abstractions.Models;
 using ReportPortal.Shared.Configuration;
 using ReportPortal.Shared.Extensibility;
-using ReportPortal.Shared.Reporter;
 using UTesting = Unicorn.Taf.Core.Testing;
 
 namespace Unicorn.ReportPortalAgent
@@ -22,8 +21,6 @@ namespace Unicorn.ReportPortalAgent
         private readonly IClientService _rpService;
 
         private readonly Dictionary<UTesting.Status, Status> _statusMap;
-        private readonly Dictionary<Guid, ITestReporter> _suitesFlow = new Dictionary<Guid, ITestReporter>();
-        private readonly Dictionary<Guid, ITestReporter> _testFlowIds = new Dictionary<Guid, ITestReporter>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ReportPortalListener"/> class.<br/>

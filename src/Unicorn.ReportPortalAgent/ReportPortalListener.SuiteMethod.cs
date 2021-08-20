@@ -5,6 +5,7 @@ using System.Text;
 using ReportPortal.Client.Abstractions.Models;
 using ReportPortal.Client.Abstractions.Requests;
 using ReportPortal.Client.Abstractions.Responses;
+using ReportPortal.Shared.Reporter;
 using Unicorn.Taf.Core.Testing;
 using ULogging = Unicorn.Taf.Core.Logging;
 using UTesting = Unicorn.Taf.Core.Testing;
@@ -20,6 +21,8 @@ namespace Unicorn.ReportPortalAgent
         private const string MachineAttribute = "machine";
         private const string CategoryAttribute = "category";
 
+        private readonly Dictionary<Guid, ITestReporter> _testFlowIds = new Dictionary<Guid, ITestReporter>();
+
         private readonly Dictionary<SuiteMethodType, TestItemType> _itemTypes =
             new Dictionary<SuiteMethodType, TestItemType>
         {
@@ -30,7 +33,7 @@ namespace Unicorn.ReportPortalAgent
             { SuiteMethodType.Test, TestItemType.Step },
         };
 
-        internal string SkippedTestDefectType { get; set; } = "ND001";
+        internal string SkippedTestDefectType { get; set; } = "NOT_ISSUE";
 
         internal void StartSuiteMethod(SuiteMethod suiteMethod)
         {
@@ -40,24 +43,33 @@ namespace Unicorn.ReportPortalAgent
                 var parentId = suiteMethod.Outcome.ParentId;
                 var name = suiteMethod.Outcome.Title;
 
-                _currentTests.TryAdd(id, suiteMethod);
+                /* 
+                 * There is an issue in Unicorn.Taf.Core where Guid is random each time for same suite.
+                 * To make re-run functioning properly for parameterized suites it's necessaty to consider
+                 * parent suite data set name as unique prefix for test id as test has same id between sets
+                 */
+                var idPrefix = _suitesSetNames.ContainsKey(parentId) ?
+                    "_" + _suitesSetNames[parentId] :
+                    string.Empty;
 
                 var startTestRequest = new StartTestItemRequest
                 {
                     StartTime = DateTime.UtcNow,
                     Name = name,
                     Type = _itemTypes[suiteMethod.MethodType],
-                    TestCaseId = suiteMethod.Outcome.Id.ToString(),
+                    TestCaseId = idPrefix + id.ToString(),
                     CodeReference = suiteMethod.Outcome.FullMethodName
                 };
 
                 startTestRequest.Attributes = new List<ItemAttribute>
                 {
-                    GetAttribute(MachineAttribute, Environment.MachineName)
+                    GetAttribute(MachineAttribute, Environment.MachineName),
+                    GetAttribute(AuthorAttribute, suiteMethod.Outcome.Author)
                 };
 
                 var testVal = _suitesFlow[parentId].StartChildTestReporter(startTestRequest);
                 _testFlowIds[id] = testVal;
+                _currentTests.TryAdd(id, suiteMethod);
             }
             catch (Exception exception)
             {
@@ -138,7 +150,8 @@ namespace Unicorn.ReportPortalAgent
                     finishTestRequest.Issue = new Issue
                     {
                         Type = suiteMethod.Outcome.Defect.DefectType,
-                        Comment = suiteMethod.Outcome.Defect.Comment
+                        Comment = suiteMethod.Outcome.Defect.Comment,
+                        AutoAnalyzed = true
                     };
                 }
 
@@ -163,14 +176,7 @@ namespace Unicorn.ReportPortalAgent
                 var name = suiteMethod.Outcome.Title;
                 var result = suiteMethod.Outcome.Result;
 
-                var startTestRequest = new StartTestItemRequest
-                {
-                    StartTime = DateTime.UtcNow,
-                    Name = name,
-                    Type = _itemTypes[suiteMethod.MethodType]
-                };
-
-                startTestRequest.Attributes = new List<ItemAttribute>
+                var attributes = new List<ItemAttribute>
                 {
                     GetAttribute(AuthorAttribute, suiteMethod.Outcome.Author),
                     GetAttribute(MachineAttribute, Environment.MachineName)
@@ -180,26 +186,43 @@ namespace Unicorn.ReportPortalAgent
                 {
                     foreach (var category in (suiteMethod as Test).Categories)
                     {
-                        startTestRequest.Attributes.Add(GetAttribute(CategoryAttribute, category));
+                        attributes.Add(GetAttribute(CategoryAttribute, category));
                     }
                 }
 
-                var testVal = _suitesFlow[parentId].StartChildTestReporter(startTestRequest);
-                _testFlowIds[id] = testVal;
+                var idPrefix = _suitesSetNames.ContainsKey(parentId) ?
+                    "_" + _suitesSetNames[parentId] :
+                    string.Empty;
+
+                var startTestRequest = new StartTestItemRequest
+                {
+                    StartTime = DateTime.UtcNow,
+                    Name = name,
+                    Type = _itemTypes[suiteMethod.MethodType],
+                    Attributes = attributes,
+                    TestCaseId = idPrefix + id.ToString(),
+                    CodeReference = suiteMethod.Outcome.FullMethodName
+                };
+
+                var testReporter = _suitesFlow[parentId].StartChildTestReporter(startTestRequest);
+
+                var skipMsg =
+                    "The test is skipped, please check if BeforeSuite or test which current test depends on failed.";
 
                 var finishTestRequest = new FinishTestItemRequest
                 {
                     EndTime = DateTime.UtcNow,
                     Status = _statusMap[result],
+                    Attributes = attributes,
+                    Description = $"<span style=\"color: #c7254e; background-color: #f9f2f4; \">{skipMsg}</span>",
                     Issue = new Issue
                     {
                         Type = SkippedTestDefectType,
-                        Comment = "The test is skipped, check if dependent test or BeforeSuite failed"
                     }
                 };
 
                 // finishing test
-                _testFlowIds[id].Finish(finishTestRequest);
+                testReporter.Finish(finishTestRequest);
             }
             catch (Exception exception)
             {
@@ -234,7 +257,7 @@ namespace Unicorn.ReportPortalAgent
 
         private string CheckForEmptyAttribute(string value) =>
             string.IsNullOrEmpty(value.Trim()) ?
-            "#err" :
+            "#error" :
             value;
     }
 }

@@ -5,11 +5,15 @@ using ReportPortal.Client.Abstractions.Models;
 using ReportPortal.Client.Abstractions.Requests;
 using UTesting = Unicorn.Taf.Core.Testing;
 using ULogging = Unicorn.Taf.Core.Logging;
+using ReportPortal.Shared.Reporter;
 
 namespace Unicorn.ReportPortalAgent
 {
     public partial class ReportPortalListener
     {
+        private readonly Dictionary<Guid, ITestReporter> _suitesFlow = new Dictionary<Guid, ITestReporter>();
+        private readonly Dictionary<Guid, string> _suitesSetNames = new Dictionary<Guid, string>();
+
         internal void StartSuite(UTesting.TestSuite suite)
         {
             try
@@ -21,6 +25,7 @@ namespace Unicorn.ReportPortalAgent
                 if (!string.IsNullOrEmpty(suite.Outcome.DataSetName))
                 {
                     name += "[" + suite.Outcome.DataSetName + "]";
+                    _suitesSetNames[id] = name;
                 }
 
                 var startSuiteRequest = new StartTestItemRequest
@@ -108,6 +113,7 @@ namespace Unicorn.ReportPortalAgent
                         
                     _suitesFlow[id].Finish(finishSuiteRequest);
                     _suitesFlow.Remove(id);
+                    _suitesSetNames.Remove(id);
                 }
             }
             catch (Exception exception)
