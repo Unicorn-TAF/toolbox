@@ -84,7 +84,7 @@ namespace Unicorn.ReportPortalAgent
                     {
                         foreach (var tag in suite.Tags)
                         {
-                            attributes.Add(GetAttribute(tag));
+                            attributes.Add(GetAttribute(tag.ToLowerInvariant()));
                         }
                     }
 

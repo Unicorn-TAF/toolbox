@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using ReportPortal.Client.Abstractions.Models;
 using ReportPortal.Client.Abstractions.Requests;
@@ -41,12 +40,12 @@ namespace Unicorn.ReportPortalAgent
             {
                 var id = suiteMethod.Outcome.Id;
                 var parentId = suiteMethod.Outcome.ParentId;
-                var name = suiteMethod.Outcome.Title;
 
                 /* 
-                 * There is an issue in Unicorn.Taf.Core where Guid is random each time for same suite.
-                 * To make re-run functioning properly for parameterized suites it's necessaty to consider
-                 * parent suite data set name as unique prefix for test id as test has same id between sets
+                 * There is an issue in Unicorn.Taf.Core where Guid is random each time 
+                 * for same suite. To make re-run functioning properly for parameterized suites 
+                 * it's necessaty to consider parent suite data set name as unique prefix 
+                 * for test id as test has same id between sets.
                  */
                 var idPrefix = _suitesSetNames.ContainsKey(parentId) ?
                     "_" + _suitesSetNames[parentId] :
@@ -55,20 +54,15 @@ namespace Unicorn.ReportPortalAgent
                 var startTestRequest = new StartTestItemRequest
                 {
                     StartTime = DateTime.UtcNow,
-                    Name = name,
+                    Name = suiteMethod.Outcome.Title,
                     Type = _itemTypes[suiteMethod.MethodType],
+                    Attributes = GetGenericTestAttributes(suiteMethod),
                     TestCaseId = idPrefix + id.ToString(),
                     CodeReference = suiteMethod.Outcome.FullMethodName
                 };
 
-                startTestRequest.Attributes = new List<ItemAttribute>
-                {
-                    GetAttribute(MachineAttribute, Environment.MachineName),
-                    GetAttribute(AuthorAttribute, suiteMethod.Outcome.Author)
-                };
-
-                var testVal = _suitesFlow[parentId].StartChildTestReporter(startTestRequest);
-                _testFlowIds[id] = testVal;
+                var testReporter = _suitesFlow[parentId].StartChildTestReporter(startTestRequest);
+                _testFlowIds[id] = testReporter;
                 _currentTests.TryAdd(id, suiteMethod);
             }
             catch (Exception exception)
@@ -86,37 +80,35 @@ namespace Unicorn.ReportPortalAgent
                 var id = suiteMethod.Outcome.Id;
                 var result = suiteMethod.Outcome.Result;
 
-                _currentTests.TryRemove(id, out var res);
-
                 if (!_testFlowIds.ContainsKey(id))
                 {
-                    return;
+                    StartSuiteMethod(suiteMethod);
                 }
+                
+                var attributes = GetGenericTestAttributes(suiteMethod);
 
-                // adding categories to test
-                var attributes = new List<ItemAttribute>
-                {
-                    GetAttribute(AuthorAttribute, suiteMethod.Outcome.Author),
-                    GetAttribute(MachineAttribute, Environment.MachineName)
-                };
-
+                // adding test categories as attributes.
                 if (suiteMethod.MethodType.Equals(SuiteMethodType.Test))
                 {
-                    foreach (var category in (suiteMethod as Test).Categories)
+                    foreach (var c in (suiteMethod as Test).Categories)
                     {
-                        attributes.Add(GetAttribute(CategoryAttribute, category));
+                        attributes.Add(GetAttribute(CategoryAttribute, c.ToLowerInvariant()));
                     }
                 }
 
-                // adding description to test
-                var description =
-                    suiteMethod.Outcome.Result == UTesting.Status.Failed ?
-                    suiteMethod.Outcome.Exception.Message :
-                    string.Empty;
+                var finishTestRequest = new FinishTestItemRequest
+                {
+                    EndTime = DateTime.UtcNow,
+                    Description = string.Empty,
+                    Attributes = attributes,
+                    Status = _statusMap[result]
+                };
 
                 // adding failure items
                 if (suiteMethod.Outcome.Result == UTesting.Status.Failed)
                 {
+                    finishTestRequest.Description = suiteMethod.Outcome.Exception.Message;
+
                     var text = suiteMethod.Outcome.Exception.Message + Environment.NewLine + 
                         suiteMethod.Outcome.Exception.StackTrace;
 
@@ -128,101 +120,41 @@ namespace Unicorn.ReportPortalAgent
                         AddAttachment(id, LogLevel.Error, string.Empty, "Execution log", "text/plain", outputBytes);
                     }
 
-                    if (suiteMethod.Outcome.Attachments.Any())
+                    foreach (var a in suiteMethod.Outcome.Attachments)
                     {
-                        suiteMethod.Outcome.Attachments
-                            .ForEach(a =>
-                            AddAttachment(id, LogLevel.Error, string.Empty, a.Name, a.MimeType, a.GetBytes()));
+                        AddAttachment(id, LogLevel.Error, string.Empty, a.Name, a.MimeType, a.GetBytes());
+                    }
+
+                    // adding issue to finish test if failed test has a defect
+                    if (suiteMethod.Outcome.Defect != null)
+                    {
+                        finishTestRequest.Issue = new Issue
+                        {
+                            Type = suiteMethod.Outcome.Defect.DefectType,
+                            Comment = suiteMethod.Outcome.Defect.Comment,
+                            AutoAnalyzed = true
+                        };
                     }
                 }
 
-                var finishTestRequest = new FinishTestItemRequest
+                if (suiteMethod.Outcome.Result == UTesting.Status.Skipped)
                 {
-                    EndTime = DateTime.UtcNow,
-                    Description = description,
-                    Attributes = attributes,
-                    Status = _statusMap[result]
-                };
+                    var skipMsg =
+                        "The test is skipped, please check if BeforeSuite or test which current test depends on failed.";
 
-                // adding issue to finish test if failed test has a defect
-                if (suiteMethod.Outcome.Result == UTesting.Status.Failed && suiteMethod.Outcome.Defect != null)
-                {
+                    finishTestRequest.Description =
+                        $"<span style=\"color: #c7254e; background-color: #f9f2f4; \">{skipMsg}</span>";
+
                     finishTestRequest.Issue = new Issue
                     {
-                        Type = suiteMethod.Outcome.Defect.DefectType,
-                        Comment = suiteMethod.Outcome.Defect.Comment,
-                        AutoAnalyzed = true
+                        Type = SkippedTestDefectType,
                     };
                 }
 
                 // finishing test
                 _testFlowIds[id].Finish(finishTestRequest);
                 _testFlowIds.Remove(id);
-            }
-            catch (Exception exception)
-            {
-                ULogging.Logger.Instance.Log(
-                    ULogging.LogLevel.Warning,
-                    Prefix + BaseMessage + Environment.NewLine + exception);
-            }
-        }
-
-        internal void SkipSuiteMethod(SuiteMethod suiteMethod)
-        {
-            try
-            {
-                var id = suiteMethod.Outcome.Id;
-                var parentId = suiteMethod.Outcome.ParentId;
-                var name = suiteMethod.Outcome.Title;
-                var result = suiteMethod.Outcome.Result;
-
-                var attributes = new List<ItemAttribute>
-                {
-                    GetAttribute(AuthorAttribute, suiteMethod.Outcome.Author),
-                    GetAttribute(MachineAttribute, Environment.MachineName)
-                };
-
-                if (suiteMethod.MethodType.Equals(SuiteMethodType.Test))
-                {
-                    foreach (var category in (suiteMethod as Test).Categories)
-                    {
-                        attributes.Add(GetAttribute(CategoryAttribute, category));
-                    }
-                }
-
-                var idPrefix = _suitesSetNames.ContainsKey(parentId) ?
-                    "_" + _suitesSetNames[parentId] :
-                    string.Empty;
-
-                var startTestRequest = new StartTestItemRequest
-                {
-                    StartTime = DateTime.UtcNow,
-                    Name = name,
-                    Type = _itemTypes[suiteMethod.MethodType],
-                    Attributes = attributes,
-                    TestCaseId = idPrefix + id.ToString(),
-                    CodeReference = suiteMethod.Outcome.FullMethodName
-                };
-
-                var testReporter = _suitesFlow[parentId].StartChildTestReporter(startTestRequest);
-
-                var skipMsg =
-                    "The test is skipped, please check if BeforeSuite or test which current test depends on failed.";
-
-                var finishTestRequest = new FinishTestItemRequest
-                {
-                    EndTime = DateTime.UtcNow,
-                    Status = _statusMap[result],
-                    Attributes = attributes,
-                    Description = $"<span style=\"color: #c7254e; background-color: #f9f2f4; \">{skipMsg}</span>",
-                    Issue = new Issue
-                    {
-                        Type = SkippedTestDefectType,
-                    }
-                };
-
-                // finishing test
-                testReporter.Finish(finishTestRequest);
+                _currentTests.TryRemove(id, out var res);
             }
             catch (Exception exception)
             {
@@ -259,5 +191,13 @@ namespace Unicorn.ReportPortalAgent
             string.IsNullOrEmpty(value.Trim()) ?
             "#error" :
             value;
+
+        private List<ItemAttribute> GetGenericTestAttributes(SuiteMethod suiteMethod) =>
+            new List<ItemAttribute>
+                {
+                    GetAttribute(AuthorAttribute, suiteMethod.Outcome.Author),
+                    GetAttribute(MachineAttribute, Environment.MachineName)
+                };
+
     }
 }
