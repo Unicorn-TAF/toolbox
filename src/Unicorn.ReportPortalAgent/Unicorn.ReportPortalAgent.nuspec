@@ -18,7 +18,7 @@
       Supported platforms:
       - .NET Framework 4.5.2+
     </description>
-    <releaseNotes>Support of Report Portal v5 (+ newest client libs), key-value test item attributes, automatic attributes for parameterized suites, config moved to ReportPortal.config.json</releaseNotes>
+    <releaseNotes>fixes related to re-run functionality, autoanalysis mark for fails on known defects, lowercase attributes</releaseNotes>
     <copyright>$copyright$</copyright>
     <tags>automation report-portal reporting</tags>
     <dependencies>

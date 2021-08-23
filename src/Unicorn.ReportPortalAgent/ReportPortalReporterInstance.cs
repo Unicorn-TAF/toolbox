@@ -69,14 +69,14 @@ namespace Unicorn.ReportPortalAgent
         /// Starts RP record for given <see cref="SuiteMethod"/>.
         /// Parent suite record should be started before.
         /// </summary>
-        /// <param name="suiteMethod">suite instance</param>
+        /// <param name="suiteMethod">suite method instance</param>
         public void StartSuiteMethod(SuiteMethod suiteMethod) =>
             _listener.StartSuiteMethod(suiteMethod);
 
         /// <summary>
         /// Finishes RP record for given <see cref="SuiteMethod"/>.
         /// </summary>
-        /// <param name="suiteMethod">suite instance</param>
+        /// <param name="suiteMethod">suite method instance</param>
         public void FinishSuiteMethod(SuiteMethod suiteMethod) =>
             _listener.FinishSuiteMethod(suiteMethod);
 
