@@ -7,10 +7,12 @@ namespace Unicorn.Toolbox.Analysis
     public class Analyzer
     {
         private readonly string _assemblyFile;
+        private readonly bool _considerParameterization;
 
-        public Analyzer(string fileName)
+        public Analyzer(string fileName, bool considerParameterization)
         {
             _assemblyFile = fileName;
+            _considerParameterization = considerParameterization;
             AssemblyFileName = Path.GetFileName(fileName);
             TestsAssemblyName = AssemblyName.GetAssemblyName(fileName).FullName;
             Data = new AutomationData();
@@ -28,7 +30,7 @@ namespace Unicorn.Toolbox.Analysis
 
             using (var loader = new UnicornAppDomainIsolation<GetTestsStatisticsWorker>(location))
             {
-                Data = loader.Instance.GetTestsStatistics(_assemblyFile);
+                Data = loader.Instance.GetTestsStatistics(_assemblyFile, _considerParameterization);
             }
         }
     }
