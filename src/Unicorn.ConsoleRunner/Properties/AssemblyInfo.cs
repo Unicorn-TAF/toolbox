@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Vitaliy Dobriyan")]
 [assembly: AssemblyProduct("Unicorn.ConsoleRunner")]
-[assembly: AssemblyCopyright("Copyright © 2019 Vitaliy Dobriyan")]
+[assembly: AssemblyCopyright("Copyright © 2021 Vitaliy Dobriyan")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

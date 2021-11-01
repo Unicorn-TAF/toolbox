@@ -44,11 +44,8 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="Unicorn.Taf.Core, Version=2.4.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Unicorn.Taf.Core.2.4.0\lib\net452\Unicorn.Taf.Core.dll</HintPath>
+    <Reference Include="Unicorn.Taf.Core, Version=2.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Unicorn.Taf.Core.2.5.0\lib\net452\Unicorn.Taf.Core.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
