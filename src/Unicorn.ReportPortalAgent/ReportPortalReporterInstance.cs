@@ -14,14 +14,16 @@ namespace Unicorn.ReportPortalAgent
         private readonly ReportPortalListener _listener;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ReportPortalReporterInstance"/> class.
+        /// Initializes a new instance of the <see cref="ReportPortalReporterInstance"/> class.<br/>
+        /// New RP launch is started automatically with automatic subscription to all test events.
         /// </summary>
         public ReportPortalReporterInstance() : this(null)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ReportPortalReporterInstance"/> class based on existing launch ID.
+        /// Initializes a new instance of the <see cref="ReportPortalReporterInstance"/> class 
+        /// based on existing launch ID and with automatic subscription to all test events.<br/>
         /// If ID is null, then starts new launch on RP.
         /// </summary>
         /// <param name="existingLaunchId">existing launch ID</param>
@@ -38,7 +40,7 @@ namespace Unicorn.ReportPortalAgent
 
             Test.OnTestStart += _listener.StartSuiteMethod;
             Test.OnTestFinish += _listener.FinishSuiteMethod;
-            Test.OnTestSkip += _listener.SkipSuiteMethod;
+            Test.OnTestSkip += SkipSuiteMethod;
 
             SuiteMethod.OnSuiteMethodStart += _listener.StartSuiteMethod;
             SuiteMethod.OnSuiteMethodFinish += _listener.FinishSuiteMethod;
@@ -50,7 +52,36 @@ namespace Unicorn.ReportPortalAgent
         }
 
         /// <summary>
-        /// Reports logs to current executing suite method
+        /// Starts RP Suite record for given <see cref="TestSuite"/>.
+        /// </summary>
+        /// <param name="suite">suite instance</param>
+        public void StartSuite(TestSuite suite) =>
+            _listener.StartSuite(suite);
+
+        /// <summary>
+        /// Finishes RP Suite record for given <see cref="TestSuite"/>.
+        /// </summary>
+        /// <param name="suite">suite instance</param>
+        public void FinishSuite(TestSuite suite) =>
+            _listener.FinishSuite(suite);
+
+        /// <summary>
+        /// Starts RP record for given <see cref="SuiteMethod"/>.
+        /// Parent suite record should be started before.
+        /// </summary>
+        /// <param name="suiteMethod">suite method instance</param>
+        public void StartSuiteMethod(SuiteMethod suiteMethod) =>
+            _listener.StartSuiteMethod(suiteMethod);
+
+        /// <summary>
+        /// Finishes RP record for given <see cref="SuiteMethod"/>.
+        /// </summary>
+        /// <param name="suiteMethod">suite method instance</param>
+        public void FinishSuiteMethod(SuiteMethod suiteMethod) =>
+            _listener.FinishSuiteMethod(suiteMethod);
+
+        /// <summary>
+        /// Reports logs to current executing suite method.
         /// </summary>
         /// <param name="method">method itself</param>
         /// <param name="arguments">method arguments</param>
@@ -67,7 +98,7 @@ namespace Unicorn.ReportPortalAgent
             _listener.SkippedTestDefectType = defectType;
 
         /// <summary>
-        /// Unsubscribe from events and finish launch if it is not external
+        /// Unsubscribes from events and finishes launch if it is not external.
         /// </summary>
         public void Dispose()
         {
@@ -78,7 +109,7 @@ namespace Unicorn.ReportPortalAgent
 
                 Test.OnTestStart -= _listener.StartSuiteMethod;
                 Test.OnTestFinish -= _listener.FinishSuiteMethod;
-                Test.OnTestSkip -= _listener.SkipSuiteMethod;
+                Test.OnTestSkip -= SkipSuiteMethod;
 
                 SuiteMethod.OnSuiteMethodStart -= _listener.StartSuiteMethod;
                 SuiteMethod.OnSuiteMethodFinish -= _listener.FinishSuiteMethod;
@@ -88,6 +119,12 @@ namespace Unicorn.ReportPortalAgent
 
                 StepsEvents.OnStepStart -= ReportInfo;
             }
+        }
+
+        private void SkipSuiteMethod(SuiteMethod suiteMethod)
+        {
+            StartSuiteMethod(suiteMethod);
+            FinishSuiteMethod(suiteMethod);
         }
     }
 }
