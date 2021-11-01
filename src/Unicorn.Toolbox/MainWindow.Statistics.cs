@@ -38,7 +38,7 @@ namespace Unicorn.Toolbox
             gridFilters.IsEnabled = true;
             buttonExportStats.IsEnabled = true;
 
-            analyzer = new Analyzer(assemblyFile);
+            analyzer = new Analyzer(assemblyFile, checkboxTestData.IsChecked.Value);
             analyzer.GetTestsStatistics();
 
             StatusLineStatistics = $"Assembly: {analyzer.AssemblyFileName} ({analyzer.TestsAssemblyName})    |    " + analyzer.Data.ToString();

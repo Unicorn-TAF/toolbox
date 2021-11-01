@@ -8,16 +8,16 @@ using Unicorn.Taf.Core.Testing.Attributes;
 
 namespace Unicorn.Toolbox.Analysis
 {
+#pragma warning disable S3885 // "Assembly.Load" should be used
     public class GetTestsStatisticsWorker : MarshalByRefObject
     {
         private readonly Type _baseSuiteType = typeof(TestSuite);
 
-        public AutomationData GetTestsStatistics(string assemblyPath)
+        public AutomationData GetTestsStatistics(string assemblyPath, bool considerParameterization)
         {
             var data = new AutomationData();
-#pragma warning disable S3885 // "Assembly.Load" should be used
+
             var testsAssembly = Assembly.LoadFrom(assemblyPath);
-#pragma warning restore S3885 // "Assembly.Load" should be used
             var allSuites = TestsObserver.ObserveTestSuites(testsAssembly);
 
             foreach (var suiteType in allSuites)
@@ -26,22 +26,36 @@ namespace Unicorn.Toolbox.Analysis
                 {
                     foreach (var parametersSet in AdapterUtilities.GetSuiteData(suiteType))
                     {
-                        var parameterizedSuite = testsAssembly.CreateInstance(suiteType.FullName, true, BindingFlags.Default, null, parametersSet.Parameters.ToArray(), null, null);
+                        var parameterizedSuite = testsAssembly
+                            .CreateInstance(
+                            suiteType.FullName, 
+                            true, 
+                            BindingFlags.Default, 
+                            null, 
+                            parametersSet.Parameters.ToArray(), 
+                            null, 
+                            null);
+
                         ((TestSuite)parameterizedSuite).Outcome.DataSetName = parametersSet.Name;
-                        data.AddSuiteData(GetSuiteInfo(parameterizedSuite));
+                        data.AddSuiteData(GetSuiteInfo(parameterizedSuite, considerParameterization));
+
+                        if (!considerParameterization)
+                        {
+                            break;
+                        }
                     }
                 }
                 else
                 {
                     var nonParameterizedSuite = testsAssembly.CreateInstance(suiteType.FullName);
-                    data.AddSuiteData(GetSuiteInfo(nonParameterizedSuite));
+                    data.AddSuiteData(GetSuiteInfo(nonParameterizedSuite, considerParameterization));
                 }
             }
 
             return data;
         }
 
-        private SuiteInfo GetSuiteInfo(object suiteInstance)
+        private SuiteInfo GetSuiteInfo(object suiteInstance, bool considerParameterization)
         {
             int inheritanceCounter = 0;
             var currentType = suiteInstance.GetType();
@@ -55,20 +69,23 @@ namespace Unicorn.Toolbox.Analysis
 
             var suiteName = testSuite.Outcome.Name;
 
-            if (!string.IsNullOrEmpty(testSuite.Outcome.DataSetName))
+            if (!string.IsNullOrEmpty(testSuite.Outcome.DataSetName) && considerParameterization)
             {
                 suiteName += "[" + testSuite.Outcome.DataSetName + "]";
             }
 
             var suiteInfo = new SuiteInfo(suiteName, testSuite.Tags, testSuite.Metadata);
 
-            var tests = suiteInstance.GetType().GetRuntimeMethods().Where(m => m.GetCustomAttribute<TestAttribute>() != null);
+            var tests = suiteInstance.GetType()
+                .GetRuntimeMethods()
+                .Where(m => m.IsDefined(typeof(TestAttribute), true));
 
             foreach (var test in tests)
             {
-                if (test.GetCustomAttribute<TestDataAttribute>() != null)
+                if (test.IsDefined(typeof(TestDataAttribute), true))
                 {
-                    suiteInfo.TestsInfos.AddRange(GetTestsInfo(test, suiteInstance));
+                    var infos = GetTestsInfo(test, suiteInstance, considerParameterization);
+                    suiteInfo.TestsInfos.AddRange(infos);
                 }
                 else
                 {
@@ -94,11 +111,11 @@ namespace Unicorn.Toolbox.Analysis
             return new TestInfo(title, author, disabled, categories);
         }
 
-        private List<TestInfo> GetTestsInfo(MethodInfo testMethod, object suiteInstance)
+        private List<TestInfo> GetTestsInfo(MethodInfo testMethod, object suiteInstance, bool considerParameterization)
         {
             var infos = new List<TestInfo>();
 
-            var disabled = testMethod.GetCustomAttribute<DisabledAttribute>() != null;
+            var disabled = testMethod.IsDefined(typeof(DisabledAttribute), true);
 
             var authorAttribute = testMethod.GetCustomAttribute<AuthorAttribute>();
             var author = authorAttribute != null ? authorAttribute.Author : "No Author";
@@ -106,17 +123,32 @@ namespace Unicorn.Toolbox.Analysis
             var titleAttribute = testMethod.GetCustomAttribute<TestAttribute>();
             var title = string.IsNullOrEmpty(titleAttribute.Title) ? testMethod.Name : titleAttribute.Title;
 
-            var categories = testMethod.GetCustomAttributes<CategoryAttribute>().Select(c => c.Category.ToUpper().Trim()).Where(c => !string.IsNullOrEmpty(c));
+            var categories = testMethod
+                .GetCustomAttributes<CategoryAttribute>()
+                .Select(c => c.Category.ToUpper().Trim())
+                .Where(c => !string.IsNullOrEmpty(c));
 
             var datasetsAttribute = testMethod.GetCustomAttribute<TestDataAttribute>();
-            var dataSets = (suiteInstance.GetType().GetMethod(datasetsAttribute.Method).Invoke(suiteInstance, null) as List<DataSet>).Count;
+            var dataSets = suiteInstance
+                .GetType()
+                .GetMethod(datasetsAttribute.Method)
+                .Invoke(suiteInstance, null) 
+                as List<DataSet>;
 
-            for (int i = 0; i < dataSets; i++)
+            if (considerParameterization)
             {
-                infos.Add(new TestInfo($"{title} [{i}]", author, disabled, categories));
+                for (int i = 0; i < dataSets.Count; i++)
+                {
+                    infos.Add(new TestInfo($"{title} [{i}]", author, disabled, categories));
+                }
+            }
+            else
+            {
+                infos.Add(new TestInfo(title, author, disabled, categories));
             }
 
             return infos;
         }
     }
+#pragma warning restore S3885 // "Assembly.Load" should be used
 }

@@ -6,31 +6,41 @@ using System.Text;
 using Unicorn.Taf.Core.Engine;
 using Unicorn.Taf.Core.Engine.Configuration;
 using Unicorn.Taf.Core.Testing;
+using Unicorn.Taf.Core.Utility;
 
 namespace Unicorn.ConsoleRunner
 {
     public class Program
     {
-        private const string ConstTestAssembly = "testAssembly";
-        private const string ConstConfiguration = "configuration";
-        private static string Delimiter;
+        private const string ConstTestAssembly = "--test-assembly";
+        private const string ConstConfiguration = "--config";
+        private const string ConstTrx = "--trx";
+        private const string ConstHelp = "--help";
+        private readonly string _delimiter = new string('-', Console.WindowWidth);
 
-        protected Program()
+        private Program()
         {
         }
 
         public static void Main(string[] args)
         {
-            Delimiter = new string('-', Console.WindowWidth);
+            var app = new Program();
 
             if (args.Length == 0)
             {
-                PrintHelpText();
-                throw new ArgumentException("Required parameters were not specified");
+                app.PrintHelpText();
+                throw new ArgumentException("Required arguments were not specified");
             }
 
-            string assemblyPath = null;
-            string propertiesPath = null;
+            if (args[0].Equals(ConstHelp))
+            {
+                app.PrintHelpText();
+                return;
+            }
+
+            string assemblyPath;
+            string propertiesPath;
+            string trxFileName = null;
 
             var assemblyArgs = args.Where(a => a.Trim().StartsWith(ConstTestAssembly));
 
@@ -40,8 +50,8 @@ namespace Unicorn.ConsoleRunner
             }
             else
             {
-                PrintHelpText();
-                throw new ArgumentException($"'{ConstTestAssembly}' parameter was not specified");
+                app.PrintHelpText();
+                throw new ArgumentException($"'{ConstTestAssembly}' argument was not specified");
             }
 
             var configArgs = args.Where(a => a.Trim().StartsWith(ConstConfiguration));
@@ -52,19 +62,31 @@ namespace Unicorn.ConsoleRunner
             }
             else
             {
-                PrintHelpText();
-                throw new ArgumentException($"'{ConstConfiguration}' parameter was not specified");
+                app.PrintHelpText();
+                throw new ArgumentException($"'{ConstConfiguration}' argument was not specified");
             }
 
-            var assemblyUri = Path.IsPathRooted(assemblyPath) ? 
-                new Uri(assemblyPath, UriKind.Absolute) : 
+            var trxArgs = args.Where(a => a.Trim().StartsWith(ConstTrx));
+
+            if (trxArgs.Any())
+            {
+                trxFileName = trxArgs.First().Trim().Split('=')[1].Trim();
+            }
+
+            app.Run(assemblyPath, propertiesPath, trxFileName);
+        }
+
+        private void Run(string assemblyPath, string propertiesPath, string trxFileName)
+        {
+            var assemblyUri = Path.IsPathRooted(assemblyPath) ?
+                new Uri(assemblyPath, UriKind.Absolute) :
                 new Uri(assemblyPath, UriKind.Relative);
 
             var configUri = Path.IsPathRooted(propertiesPath) ?
                 new Uri(propertiesPath, UriKind.Absolute) :
                 new Uri(propertiesPath, UriKind.Relative);
 
-            Config.FillFromFile(configUri.AbsolutePath);
+            Config.FillFromFile(configUri.IsAbsoluteUri ? configUri.AbsolutePath : configUri.ToString());
             ReportHeader(assemblyPath);
 
             LaunchOutcome outcome = null;
@@ -76,8 +98,13 @@ namespace Unicorn.ConsoleRunner
                 using (var executor = new UnicornAppDomainIsolation<IsolatedTestsRunner>(location))
                 {
                     outcome = executor.Instance.RunTests(
-                        assemblyUri.AbsolutePath, 
-                        configUri.AbsolutePath);
+                        assemblyUri.IsAbsoluteUri ? assemblyUri.AbsolutePath : assemblyUri.ToString(),
+                        configUri.IsAbsoluteUri ? configUri.AbsolutePath : configUri.ToString());
+                }
+
+                if (!string.IsNullOrEmpty(trxFileName))
+                {
+                    new TrxCreator().GenerateTrxFile(outcome, trxFileName);
                 }
             }
             catch (Exception ex)
@@ -88,12 +115,11 @@ namespace Unicorn.ConsoleRunner
             ReportResults(outcome);
         }
 
-        private static void ReportResults(LaunchOutcome outcome)
+        private void ReportResults(LaunchOutcome outcome)
         {
             var header = new StringBuilder()
-                .AppendLine("\n\n\n")
-                .AppendLine(Delimiter)
-                .AppendLine()
+                .AppendLine("\n\n")
+                .AppendLine(_delimiter)
                 .AppendLine($"Tests run {outcome.RunStatus}")
                 .AppendLine();
 
@@ -114,34 +140,47 @@ namespace Unicorn.ConsoleRunner
                 passedTests += suiteOutcome.PassedTests;
             }
 
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+            Console.Write($"Passed tests: {passedTests}    ");
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.Write($"Failed tests: {failedTests}    ");
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.WriteLine($"Skipped tests: {skippedTests}");
+
             Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine($"Passed tests: {passedTests}    Skipped tests: {skippedTests}    Failed tests: {failedTests}");
+            Console.WriteLine($" Total tests: {passedTests + failedTests + skippedTests}");
         }
 
-        private static void ReportHeader(string assemblyPath)
+        private void ReportHeader(string assemblyPath)
         {
-            Console.ForegroundColor = ConsoleColor.DarkGreen;
+            Console.ForegroundColor = ConsoleColor.DarkGray;
 
             Console.WriteLine(ResourceAsciiLogo.Logo);
             Console.WriteLine();
 
-            Console.WriteLine(Delimiter);
-            Console.WriteLine();
-            Console.WriteLine("Configuration");
+            Console.WriteLine(_delimiter);
             Console.WriteLine();
             Console.WriteLine("Tests assembly: " + assemblyPath);
+            Console.WriteLine();
             Console.WriteLine(Config.GetInfo());
-            Console.WriteLine(Delimiter);
+            Console.WriteLine(_delimiter);
             Console.WriteLine();
 
             Console.ForegroundColor = ConsoleColor.White;
         }
 
-        private static void PrintHelpText()
+        private void PrintHelpText()
         {
-            Console.WriteLine("Please specify necessary parameters to run:");
-            Console.WriteLine($"{ConstTestAssembly}=<test_assembly_path>");
-            Console.WriteLine($"{ConstConfiguration}=<configuration_file_path>");
+            var help = new StringBuilder()
+                .AppendLine("Required arguments:")
+                .AppendLine($"    {ConstTestAssembly}=PATH_TO_TEST_ASSEMBLY")
+                .AppendLine($"    {ConstConfiguration}=PATH_TO_CONFIGURATION_FILE")
+                .AppendLine()
+                .AppendLine("Optional arguments:")
+                .AppendLine($"    {ConstTrx}=TRX_FILE_NAME        trx is not generated by default");
+
+
+            Console.WriteLine(help.ToString());
         }
     }
 }
