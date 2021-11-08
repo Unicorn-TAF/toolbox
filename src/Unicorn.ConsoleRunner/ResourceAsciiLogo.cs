@@ -3,39 +3,37 @@
     public static class ResourceAsciiLogo
     {
         private const string LogoImage = @"
-                     WNXK00OOOOOOOO0KKXNW               
-                 WXKOkxxkkOO0000000OOkkkO0KNW           
-              WX0kxxk0KXNWW         WWNXKOkkOKNW        
-            WXOxdk0XW                    WNX0kk0XW      
-          WXOddOXW NXN                      WN0kk0NW    
-         WKxdkKW   WKO0XW   WNNNNNNNXXKKXNW   WN0kOKW   
-        W0ddON      WKxdk0XWXOxxxkkO0X0xdkO0KXW WKOkKW  
-       W0dd0W         Xkoodxxdooooood0X00KK0kxk0XNX0OKW 
-       KdoON          WKdooooooooooook00OkOKNKOxxOKNXKX 
-      NkoxX         WNOdooxdlloollooloooooodkXNKkddkKNNW
-      KdoOW       WXOdlldOOdllllllllllllllllld0NNOolokXW
-      0oo0W     WXOdllllooollllllllllllllllllclONW0l:;lK
-      0oo0    WNOdlllllllllllllllllcccccccccccclkWWO:,,x
-      KolOW   NxlllllllllllcloxOxlcccccccccc::::l0WXo,;k
-      XxlxN   Kollcclldk0K000XWWXdcccccc:::::::;:dNXo,c0
-      WOlo0W  N0dlcokKN         Nxccc::::::::;;;;l0O:,dN
-       NxldKW   NKOKW           Nxc:::::::::;;;;;cdl,lK 
-        Xxld0W                 WKo::::::::;;;;;;,;;;c0W 
-         XxloON               X0dc::::::;;;;;;;;,,;lKW  
-          NOold0N           WKdcc::::::;;;;;;;;,,:xX    
-           WXOxdx0XW      WKxl::::::;;;;;;;;;;;:dKW     
-              WNK0KNWWNX0kdc::::::;;;;;;;;;;;cxKW       
-                 WXOxdocc:::::::::;;;;;;;:lx0NW         
-                   WX0kxdolccc:::ccclodkOKN             
-                       WWNK00OOOO00KXNW                 ";
+                     _,yp@@@55@@@%yy,,                              
+                  ,#@5555555555555555}}@Fy,,,,,,                    
+               ,@@@555555555555555@^555}}}}5F`                      
+             ,@@@@@@555555555555F`,@555G,,_                         
+            @@@@@@@@@555555555F  /5555555}}}5@Vy,,_                 
+          ,@@@@@@@@@@@@5@55@`   {555555555}}}!!!!!!!5}5+==          
+          @@@@@@@@F'`    F     @55555555555}}}!}!!!!!!!y,,,,,,,,,,,-
+         @@@@@@F             ,@5555555555555}}}}}}!!!!!!!!!!!!!!!!! 
+        |@@@@^               T@555555555555555}}}}!!!!!!!!!!!!!!!F  
+        |@@F           ,pWy    `%55555555555555}}!!!!!!!!!!!!!!F    
+        @@F                       '$55555555555}}}}}!!!!!!!!!F`     
+        |F       {L                  '@555555555}}}}}!!!!!!F        
+        |        !!                    '55555555555}}}!!F`          
+                 !!!%,                  55555555555}8'`             
+                 !!!!!!!{@@@Wpwwy,,,_,a@55555555F^`      ,,         
+                 {!!!!!!!@@@@@@@@@@@5555555555555@@#w#@@}'          
+                  }!!!!!!@@@@@@@@@@@5555555555555555555F            
+                  `5!!!!!@@@@@@@@@@@@@55555555555555@`              
+                    T!!!!|@@@@@@@@@@@@@5555555555@F                 
+                      '5!!!|@@@@@@@@@@@@555555N'                    
+                        `'T!|$@@@@@@@@@@@@F^`                       
+                              `'''^'^`                              ";
 
 
         private const string LogoText = @"
-,--. ,--. ,--.  ,--. ,--.  ,-----.  ,-----.  ,------.  ,--.  ,--.
-|  | |  | |  ,'.|  | |  | '  .--./ '  .-.  ' |  .--. ' |  ,'.|  |
-|  | |  | |  |' '  | |  | |  |     |  | |  | |  '--'.' |  |' '  |
-'  '-'  ' |  | `   | |  | '  '--'\ '  '-'  ' |  |\  \  |  | `   |
- `-----'  `--'  `--' `--'  `-----'  `-----'  `--' '--' `--'  `--'";
+y     y_         y,                                   yyyyyyy  ,y,    ,yyyyy,
+@     @L .,,,_   ,_   ,,_     ,~,,     ,~_  .,,_        |@     @E@L   j@     
+@     @L @@^'$@  @L @B^'^%' {@^`'$@_ |@^`` |@F'^@L      |@    |@ |@   j@,,,  
+@     @L @L   @L @L|@      |@     |@ |@    |@   |@      |$   ;$G%P$@  j@```   
+$@,_,{@  @L   @L @L`$W,_,w, $W,_,a@` |@    |$   |@ ,    |$  ,@F    $b j@     
+  '^^`   ^    ^  ^   `'^^`    `^^`   ``    `^   `^ '    `^  `^     `^ `^     ";
 
         public const string Logo = LogoImage + "\n" + LogoText;
     }
