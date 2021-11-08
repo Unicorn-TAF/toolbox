@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Newtonsoft.Json;
+using System.Runtime.Serialization.Json;
 using Unicorn.Toolbox.Analysis;
 
 namespace Unicorn.Toolbox.Coverage
@@ -10,7 +10,12 @@ namespace Unicorn.Toolbox.Coverage
     {
         public SpecsCoverage(string jsonFile)
         {
-            Specs = JsonConvert.DeserializeObject<AppSpecs>(File.ReadAllText(jsonFile));
+            var formatter = new DataContractJsonSerializer(typeof(AppSpecs));
+
+            using (FileStream fs = new FileStream(jsonFile, FileMode.Open))
+            {
+                Specs = formatter.ReadObject(fs) as AppSpecs;
+            }
         }
 
         public AppSpecs Specs { get; set; }

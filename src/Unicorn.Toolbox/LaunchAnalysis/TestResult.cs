@@ -1,8 +1,12 @@
 ﻿using System;
-using Unicorn.Taf.Core.Testing;
 
 namespace Unicorn.Toolbox.LaunchAnalysis
 {
+    public enum Status
+    {
+        Passed, Failed, Skipped
+    }
+
     public struct TestResult
     {
         public TestResult(string name, Status status, DateTime start, DateTime end, string testListId, string testListName, string errorMessage)

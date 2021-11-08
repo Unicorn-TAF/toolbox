@@ -7,7 +7,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using Unicorn.Taf.Core.Testing;
 using Unicorn.Toolbox.LaunchAnalysis;
 
 namespace Unicorn.Toolbox.Visualization
