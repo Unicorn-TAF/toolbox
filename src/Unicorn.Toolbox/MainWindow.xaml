@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Unicorn.Toolbox"
         mc:Ignorable="d"
-        Title="Unicorn toolbox" Height="750" Width="1200" MinHeight="750" MinWidth="1200" WindowStartupLocation="CenterScreen" Icon="unicornIcon.ico">
+        Title="Unicorn toolbox" Height="750" Width="1200" MinHeight="750" MinWidth="1200" WindowStartupLocation="CenterScreen" Icon="app.ico">
     <Grid>
         <TabControl x:Name="tabControl" Margin="10,10,10,30" SelectionChanged="TabChanged">
             <TabItem x:Name="tabStatistics" Header="Tests statistics" Width="100">
