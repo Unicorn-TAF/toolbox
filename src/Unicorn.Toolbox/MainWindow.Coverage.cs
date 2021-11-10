@@ -46,6 +46,8 @@ namespace Unicorn.Toolbox
             {
                 buttonGetCoverage.IsEnabled = true;
             }
+
+            GetCoverage();
         }
 
         private void GetAutomationCoverage(object sender, RoutedEventArgs e) =>
