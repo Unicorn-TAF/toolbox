@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Unicorn.Toolbox"
         mc:Ignorable="d"
-        Title="Suite preview: " Height="626" Width="814" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" Icon="unicornIcon.ico">
+        Title="Suite preview: " Height="626" Width="814" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" Icon="app.ico">
     <Grid>
         <DataGrid x:Name="gridResults" SelectionUnit="CellOrRowHeader" ClipboardCopyMode="IncludeHeader" HorizontalScrollBarVisibility="Disabled" HeadersVisibility="All" Grid.Column="0" RowHeaderWidth="0" CanUserAddRows="False" AutoGenerateColumns="False"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="10">
             <DataGrid.Resources>

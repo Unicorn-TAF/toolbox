@@ -17,7 +17,7 @@ namespace Unicorn.Toolbox.LaunchAnalysis
             InitializeComponent();
 
             textErrorMessage.Text = tests.First().ErrorMessage;
-            labelFoundFailedTests.Content += tests.Count().ToString();
+            labelFoundFailedTests.Text += tests.Count().ToString();
 
             Height = 100;
             Width = 400;
