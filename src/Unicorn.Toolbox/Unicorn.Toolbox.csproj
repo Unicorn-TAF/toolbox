@@ -104,7 +104,7 @@
     <Compile Include="Visualization\Palettes\DeepPurple.cs" />
     <Compile Include="Visualization\Palettes\IPalette.cs" />
     <Compile Include="Visualization\LaunchVisualizer.cs" />
-    <Compile Include="Visualization\VizualizerBars.cs" />
+    <Compile Include="Visualization\VisualizerBars.cs" />
     <Compile Include="Visualization\VisualizerCircles.cs" />
     <Compile Include="Visualization\WindowVisualization.xaml.cs">
       <DependentUpon>WindowVisualization.xaml</DependentUpon>

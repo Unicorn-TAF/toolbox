@@ -82,8 +82,8 @@ namespace Unicorn.Toolbox.Visualization
 
         private void DrawFeature(string name, int tests, int index, int max, int featuresCount, Canvas canvas)
         {
-            var workHeight = canvas.RenderSize.Height - (2 * Margin);
-            var workWidth = canvas.RenderSize.Width - (2 * Margin);
+            double workHeight = canvas.RenderSize.Height - (2 * Margin);
+            double workWidth = canvas.RenderSize.Width - (2 * Margin);
 
             double height = Math.Max(MinBarHeight, (workHeight / featuresCount) - Margin);
             double width = tests == 0 ? 1 : workWidth * ((double)tests / max); 
@@ -94,7 +94,7 @@ namespace Unicorn.Toolbox.Visualization
             double colorIndexStep = (double)Palette.DataColors.Count / featuresCount;
             int currentColorIndex = (int)(((index + 1) * colorIndexStep) - 1);
 
-            var bar = new Rectangle()
+            Rectangle bar = new Rectangle()
             {
                 Fill = Palette.DataColors[currentColorIndex],
                 Width = width,
@@ -102,6 +102,22 @@ namespace Unicorn.Toolbox.Visualization
                 StrokeThickness = 1,
                 Stroke = Brushes.Black,
                 Effect = Shadow
+            };
+
+            double shift = Shadow.BlurRadius;
+
+            bar.MouseEnter += (s, e) => 
+            {
+                Canvas.SetLeft(bar, x + shift);
+                Canvas.SetTop(bar, y + shift);
+                bar.Effect = null;
+            };
+
+            bar.MouseLeave += (s, e) => 
+            {
+                Canvas.SetLeft(bar, x);
+                Canvas.SetTop(bar, y);
+                bar.Effect = Shadow;
             };
 
             Canvas.SetLeft(bar, x);
