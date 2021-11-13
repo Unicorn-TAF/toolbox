@@ -19,7 +19,7 @@ namespace Unicorn.Toolbox.LaunchAnalysis
             textErrorMessage.Text = tests.First().ErrorMessage;
             labelFoundFailedTests.Text += tests.Count().ToString();
 
-            Height = 100;
+            Height = 105;
             Width = 400;
 
             var uniqueSuites = new HashSet<string>(tests.Select(r => r.TestListName));

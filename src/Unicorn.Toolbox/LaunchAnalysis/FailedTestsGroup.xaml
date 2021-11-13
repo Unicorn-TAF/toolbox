@@ -9,7 +9,7 @@
     <Border BorderBrush="#FF808080" Margin="0,0,0,0">
         <Grid>
             <Border Margin="5,5,5,25" Background="#FF303030">
-                <TextBlock x:Name="textErrorMessage" Margin="2,2,2,2" Foreground="#FFEAEAEA" FontFamily="Consolas" TextWrapping="Wrap" FontSize="11"/>
+                <TextBox x:Name="textErrorMessage" Margin="2,2,2,2" IsReadOnly="True" Foreground="#FFEAEAEA" FontFamily="Consolas" TextWrapping="Wrap" FontSize="12" Background="{x:Null}"/>
             </Border>
             <TextBlock x:Name="labelFoundFailedTests" Text="Fails: " HorizontalAlignment="Right" Margin="0,0,10,5" FontWeight="Bold" Foreground="#FF3399FF" Cursor="Hand" MouseDown="LabelFoundFailedTests_MouseDown" Height="20" VerticalAlignment="Bottom"/>
         </Grid>

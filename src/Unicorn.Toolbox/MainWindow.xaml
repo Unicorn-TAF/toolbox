@@ -109,7 +109,17 @@
                 <Grid Background="#FFE5E5E5">
                     <Button x:Name="btnLoadTrx" Content="Load TRX files" VerticalAlignment="Top" Margin="10,25,0,0" Click="LoadTrx" HorizontalAlignment="Left" Width="80" Height="22"/>
                     <DataGrid x:Name="gridTestResults" HorizontalScrollBarVisibility="Disabled" HeadersVisibility="All" RowHeaderWidth="0" CanUserAddRows="False" CanUserResizeColumns="False"
-                              CanUserSortColumns="True" AutoGenerateColumns="False" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="10,165,0,10" HorizontalAlignment="Left" Width="700">
+                              CanUserSortColumns="True" AutoGenerateColumns="False" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="10,70,0,100" HorizontalAlignment="Left" Width="700">
+                        <DataGrid.Resources>
+                            <Style TargetType="{x:Type DataGridCell}">
+                                <Style.Triggers>
+                                    <Trigger Property="DataGridCell.IsSelected" Value="True">
+                                        <Setter Property="BorderBrush" Value="DarkSlateGray" />
+                                        <Setter Property="Background" Value="Gray" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.Resources>
                         <DataGrid.Columns>
                             <DataGridTemplateColumn Header="Execution" Width="*" ClipboardContentBinding="{Binding Name}">
                                 <DataGridTemplateColumn.HeaderTemplate>
@@ -184,11 +194,11 @@
                             </DataGridTemplateColumn>
                         </DataGrid.Columns>
                     </DataGrid>
-                    <TextBox x:Name="textBoxLaunchSummary" HorizontalAlignment="Left" Margin="10,70,0,490" TextWrapping="Wrap" Text="Summary . . ." Width="700" FontFamily="Consolas"/>
-                    <GroupBox Header="Find tests" Margin="0,0,10,10" HorizontalAlignment="Right" Width="400" Height="85" VerticalAlignment="Bottom">
+                    <TextBox x:Name="textBoxLaunchSummary" HorizontalAlignment="Left" Margin="10,0,0,10" TextWrapping="Wrap" Text="Summary . . ." Width="700" FontFamily="Consolas" Height="80" VerticalAlignment="Bottom"/>
+                    <GroupBox Header="Find failed tests" Margin="0,0,10,10" Height="85" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="400">
                         <Grid>
                             <TextBox x:Name="textBoxFailMessage" Margin="10,0,10,35" TextWrapping="Wrap" Text="" VerticalAlignment="Bottom" Height="22"/>
-                            <CheckBox x:Name="checkboxFailMessageRegex" Content="Regex" Margin="179,0,150,7.4" RenderTransformOrigin="0.544,1.385" Height="16" VerticalAlignment="Bottom"/>
+                            <CheckBox x:Name="checkboxFailMessageRegex" Content="Regex" Margin="140,0,0,7" RenderTransformOrigin="0.544,1.385" Height="16" VerticalAlignment="Bottom" HorizontalAlignment="Left"/>
                             <ComboBox x:Name="comboFilterExecutedTestsBy" HorizontalAlignment="Left" VerticalContentAlignment="Top" HorizontalContentAlignment="Center" Margin="10,0,0,5" Width="120" Height="22" VerticalAlignment="Bottom">
                                 <ComboBoxItem Content="By fail message" Selected="ActivateSearchByMessage"/>
                                 <ComboBoxItem Content="By time (local)" Selected="ActivateSearchByTime"/>
