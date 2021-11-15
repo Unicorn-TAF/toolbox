@@ -6,10 +6,20 @@
         xmlns:local="clr-namespace:Unicorn.Toolbox.LaunchAnalysis"
         mc:Ignorable="d"
         Title="Failed tests by error message filter" Height="626" Width="814" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" Icon="/Unicorn.Toolbox;component/app.ico">
-    <Grid>
-        <DataGrid x:Name="gridResults" HorizontalScrollBarVisibility="Disabled" HeadersVisibility="All" Grid.Column="0" RowHeaderWidth="0" CanUserAddRows="False" AutoGenerateColumns="False"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="10">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <DataGrid x:Name="gridResults" SelectionUnit="CellOrRowHeader" ClipboardCopyMode="IncludeHeader" HeadersVisibility="All" Grid.Column="0" RowHeaderWidth="0" CanUserAddRows="False" AutoGenerateColumns="False"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="10">
+            <DataGrid.Resources>
+                <Style TargetType="{x:Type DataGridCell}">
+                    <Style.Triggers>
+                        <Trigger Property="DataGridCell.IsSelected" Value="True">
+                            <Setter Property="BorderBrush" Value="DarkSlateGray" />
+                            <Setter Property="Background" Value="Gray" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.Resources>
             <DataGrid.Columns>
-                <DataGridTemplateColumn Header="Suite" Width="*">
+                <DataGridTemplateColumn Header="Suite" Width="*" ClipboardContentBinding="{Binding Key}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Grid>
@@ -21,9 +31,9 @@
                 <DataGridTemplateColumn Header="Tests" Width="400">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <DataGrid DataContext="{Binding Value}" ItemsSource="{Binding}" IsReadOnly="True" AutoGenerateColumns="False" HeadersVisibility="None">
+                            <DataGrid DataContext="{Binding Value}" ItemsSource="{Binding}" SelectionUnit="CellOrRowHeader" ClipboardCopyMode="IncludeHeader" IsReadOnly="True" AutoGenerateColumns="False" HeadersVisibility="None" Margin="-1,-1,-3,-3">
                                 <DataGrid.Columns>
-                                    <DataGridTemplateColumn Width="*">
+                                    <DataGridTemplateColumn Width="*" ClipboardContentBinding="{Binding Name}">
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
                                                 <TextBlock Text="{Binding Name}" ToolTip="{Binding ErrorMessage}"/>
@@ -37,5 +47,5 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
-    </Grid>
+    </ScrollViewer>
 </Window>
