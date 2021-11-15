@@ -8,16 +8,6 @@
         Title="Failed tests by error message filter" Height="626" Width="814" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" Icon="/Unicorn.Toolbox;component/app.ico">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <DataGrid x:Name="gridResults" SelectionUnit="CellOrRowHeader" ClipboardCopyMode="IncludeHeader" HeadersVisibility="All" Grid.Column="0" RowHeaderWidth="0" CanUserAddRows="False" AutoGenerateColumns="False"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="10">
-            <DataGrid.Resources>
-                <Style TargetType="{x:Type DataGridCell}">
-                    <Style.Triggers>
-                        <Trigger Property="DataGridCell.IsSelected" Value="True">
-                            <Setter Property="BorderBrush" Value="DarkSlateGray" />
-                            <Setter Property="Background" Value="Gray" />
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </DataGrid.Resources>
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="Suite" Width="*" ClipboardContentBinding="{Binding Key}">
                     <DataGridTemplateColumn.CellTemplate>
