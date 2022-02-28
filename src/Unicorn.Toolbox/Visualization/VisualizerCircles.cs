@@ -107,15 +107,33 @@ namespace Unicorn.Toolbox.Visualization
             double colorIndexStep = (double)Palette.DataColors.Count / featuresCount;
             int currentColorIndex = (int)(((index + 1) * colorIndexStep) - 1);
 
-            var ellipse = new Ellipse
+            double diameter = radius * 2;
+
+            Ellipse ellipse = new Ellipse
             {
                 Fill = Palette.DataColors[currentColorIndex],
-                Width = radius * 2,
-                Height = radius * 2,
-                StrokeThickness = 0.1,
+                Width = diameter,
+                Height = diameter,
+                StrokeThickness = 0.5,
                 Stroke = Brushes.Black,
                 Effect = Shadow,
                 ToolTip = tests
+            };
+
+            double shift = Shadow.BlurRadius / 2; // default shadow blur radius.
+
+            ellipse.MouseEnter += (s, e) =>
+            {
+                Canvas.SetLeft(ellipse, x - radius + shift);
+                Canvas.SetTop(ellipse, y - radius + shift);
+                ellipse.Effect = null;
+            };
+
+            ellipse.MouseLeave += (s, e) =>
+            {
+                Canvas.SetLeft(ellipse, x - radius);
+                Canvas.SetTop(ellipse, y - radius);
+                ellipse.Effect = Shadow;
             };
 
             canvas.Children.Add(ellipse);

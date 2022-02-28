@@ -1,22 +1,21 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
+using System.Runtime.Serialization;
 using Unicorn.Toolbox.Analysis;
 
 namespace Unicorn.Toolbox.Coverage
 {
+    [DataContract]
     public class Module
     {
-        [JsonProperty("name")]
+        [DataMember(Name = "name")]
         private string name;
 
-        [JsonProperty("features")]
+        [DataMember(Name = "features")]
         private List<string> features;
 
-        [JsonIgnore]
         public string Name => name.ToUpper();
 
-        [JsonIgnore]
         public List<string> Features => features.Select(f => f.ToUpperInvariant()).ToList();
 
         public List<SuiteInfo> Suites { get; set; } = new List<SuiteInfo>();

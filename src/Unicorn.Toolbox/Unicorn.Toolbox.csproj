@@ -39,28 +39,25 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>unicornIcon.ico</ApplicationIcon>
+    <ApplicationIcon>app.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>Unicorn.Toolbox.App</StartupObject>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Collections.Immutable, Version=1.2.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Collections.Immutable.1.7.0\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
     </Reference>
-    <Reference Include="System.Data" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
-    <Reference Include="Unicorn.Taf.Core, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Unicorn.Taf.Core.2.2.0\lib\net452\Unicorn.Taf.Core.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Unicorn.Taf.Core, Version=2.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Unicorn.Taf.Core.2.5.0\lib\net452\Unicorn.Taf.Core.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
@@ -107,7 +104,7 @@
     <Compile Include="Visualization\Palettes\DeepPurple.cs" />
     <Compile Include="Visualization\Palettes\IPalette.cs" />
     <Compile Include="Visualization\LaunchVisualizer.cs" />
-    <Compile Include="Visualization\VizualizerBars.cs" />
+    <Compile Include="Visualization\VisualizerBars.cs" />
     <Compile Include="Visualization\VisualizerCircles.cs" />
     <Compile Include="Visualization\WindowVisualization.xaml.cs">
       <DependentUpon>WindowVisualization.xaml</DependentUpon>
@@ -188,7 +185,7 @@
     <Analyzer Include="..\packages\SonarAnalyzer.CSharp.7.5.0.6605\analyzers\SonarAnalyzer.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="unicornIcon.ico" />
+    <Resource Include="app.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

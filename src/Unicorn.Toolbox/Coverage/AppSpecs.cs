@@ -1,17 +1,17 @@
 ﻿using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Runtime.Serialization;
 
 namespace Unicorn.Toolbox.Coverage
 {
+    [DataContract]
     public class AppSpecs
     {
-        [JsonProperty("name")]
+        [DataMember(Name = "name")]
         private string name;
 
-        [JsonIgnore]
         public string Name => name.ToUpper();
 
-        [JsonProperty("modules")]
+        [DataMember(Name = "modules")]
         public List<Module> Modules { get; set; }
     }
 }
