@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Unicorn.ConsoleRunner": {
+      "commandName": "Project",
+      "commandLineArgs": "--test-assembly=\"D:\\Dev\\Sources\\unicorn\\unicorntaf\\example\\Demo.Tests\\bin\\Debug\\net5.0\\Demo.Tests.dll\" --config=\"D:\\Dev\\Sources\\unicorn\\unicorntaf\\example\\Demo.Tests\\bin\\Debug\\net5.0\\unicorn.conf\""
+    }
+  }
+}

@@ -1,5 +1,10 @@
 ﻿using System.IO;
 using System.Reflection;
+
+#if NET || NETCOREAPP
+using System.Runtime.Loader;
+#endif
+
 using Unicorn.Taf.Core.Engine;
 
 namespace Unicorn.Toolbox.Analysis
@@ -26,12 +31,19 @@ namespace Unicorn.Toolbox.Analysis
 
         public void GetTestsStatistics()
         {
+#if NETFRAMEWORK
+
             var location = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
             using (var loader = new UnicornAppDomainIsolation<GetTestsStatisticsWorker>(location))
             {
                 Data = loader.Instance.GetTestsStatistics(_assemblyFile, _considerParameterization);
             }
+#endif
+
+#if NET || NETCOREAPP
+            Data = new GetTestsStatisticsWorkerNetCore().GetTestsStatistics(_assemblyFile, _considerParameterization);
+#endif
         }
     }
 }
