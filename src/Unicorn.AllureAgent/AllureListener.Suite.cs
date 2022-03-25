@@ -18,7 +18,7 @@ namespace Unicorn.AllureAgent
         {
             try
             {
-                string codeBase = Assembly.GetExecutingAssembly().CodeBase;
+                string codeBase = typeof(AllureListener).Assembly.Location;
                 var uri = new UriBuilder(codeBase);
                 string path = Path.GetDirectoryName(Uri.UnescapeDataString(uri.Path));
 

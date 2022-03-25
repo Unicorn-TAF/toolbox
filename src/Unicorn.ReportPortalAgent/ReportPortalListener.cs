@@ -28,7 +28,7 @@ namespace Unicorn.ReportPortalAgent
         /// </summary>
         public ReportPortalListener()
         {
-            var baseDir = Path.GetDirectoryName(new Uri(typeof(ReportPortalListener).Assembly.CodeBase).LocalPath);
+            var baseDir = Path.GetDirectoryName(new Uri(typeof(ReportPortalListener).Assembly.Location).LocalPath);
 
             Config = new ConfigurationBuilder().AddDefaults(baseDir).Build();
 

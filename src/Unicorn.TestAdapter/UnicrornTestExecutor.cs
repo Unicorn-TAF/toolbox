@@ -5,8 +5,10 @@ using System.Linq;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
-using TafTests = Unicorn.Taf.Core.Testing;
-using TafEngine = Unicorn.Taf.Core.Engine;
+using Unicorn.Taf.Api;
+using Unicorn.Taf.Core.Engine;
+using System.Reflection;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Unicorn.TestAdapter
 {
@@ -26,8 +28,6 @@ namespace Unicorn.TestAdapter
         internal static readonly Uri ExecutorUri = new Uri(ExecutorUriString);
 
         private bool runCancelled;
-        private IFrameworkHandle fwHandle;
-        private IEnumerable<TestCase> vsTests;
 
         public void RunTests(IEnumerable<string> sources, IRunContext runContext, IFrameworkHandle frameworkHandle)
         {
@@ -52,15 +52,15 @@ namespace Unicorn.TestAdapter
                     Environment.CurrentDirectory = runDir;
                     var newSource = source.Replace(Path.GetDirectoryName(source), runDir);
 
-                    var runner = new TafEngine.TestsRunner(newSource, false);
-                    runner.RunTests();
-                    var outcome = runner.Outcome;
+                    //var runner = new TafEngine.TestsRunner(newSource, false);
+                    //runner.RunTests();
+                    //var outcome = runner.Outcome;
 
-                    if (!outcome.RunInitialized)
-                    {
-                        frameworkHandle.SendMessage(TestMessageLevel.Error, 
-                            RunInitFailed + Environment.NewLine + outcome.RunnerException);
-                    }
+                    //if (!outcome.RunInitialized)
+                    //{
+                    //    frameworkHandle.SendMessage(TestMessageLevel.Error, 
+                    //        RunInitFailed + Environment.NewLine + outcome.RunnerException);
+                    //}
                 }
                 catch (Exception ex)
                 {
@@ -74,9 +74,6 @@ namespace Unicorn.TestAdapter
 
         public void RunTests(IEnumerable<TestCase> tests, IRunContext runContext, IFrameworkHandle frameworkHandle)
         {
-            fwHandle = frameworkHandle;
-            vsTests = tests;
-
             if (string.IsNullOrEmpty(runContext.SolutionDirectory))
             {
                 frameworkHandle.SendMessage(TestMessageLevel.Warning, NonVsRunDisabled);
@@ -91,87 +88,190 @@ namespace Unicorn.TestAdapter
             var runDir = ExecutorUtilities.PrepareRunDirectory(runContext.SolutionDirectory);
             ExecutorUtilities.CopyDeploymentItems(runContext, runDir, frameworkHandle);
 
-            TafTests.Test.OnTestStart += StartTestCase;
-            TafTests.Test.OnTestFinish += FinishTestCase;
-            TafTests.Test.OnTestSkip += SkipTestCase;
-
             foreach (var source in sources)
             {
                 ExecutorUtilities.CopySourceFilesToRunDir(Path.GetDirectoryName(source), runDir);
+                var masks = tests.Select(t => t.FullyQualifiedName).ToArray();
 
                 try
                 {
                     Environment.CurrentDirectory = runDir;
                     var newSource = source.Replace(Path.GetDirectoryName(source), runDir);
 
-                    var masks = tests.Select(t => t.FullyQualifiedName).ToArray();
-                    TafEngine.Configuration.Config.SetTestsMasks(masks);
-
-                    var runner = new TafEngine.TestsRunner(newSource, false);
-                    runner.RunTests();
-                    var outcome = runner.Outcome;
+                    LaunchOutcome outcome = RunTests(newSource, masks);
 
                     if (!outcome.RunInitialized)
                     {
-                        frameworkHandle.SendMessage(TestMessageLevel.Error, 
+                        frameworkHandle.SendMessage(TestMessageLevel.Error,
                             RunInitFailed + Environment.NewLine + outcome.RunnerException);
+
+                        foreach (TestCase test in tests)
+                        {
+                            SkipTest(test, frameworkHandle);
+                        }
+                    }
+                    else
+                    {
+                        foreach (TestCase test in tests)
+                        {
+                            var outcomes = outcome.SuitesOutcomes.SelectMany(so => so.TestsOutcomes).Where(to => to.FullMethodName.Equals(test.FullyQualifiedName));
+
+                            if (outcomes.Any())
+                            {
+                                var unicornOutcome = outcomes.First();
+                                var testResult = GetTestResultFromOutcome(unicornOutcome, test);
+                                frameworkHandle.RecordResult(testResult);
+                            }
+                            else
+                            {
+                                SkipTest(test, frameworkHandle);
+                            }
+                        }
                     }
                 }
                 catch (Exception ex)
                 {
                     frameworkHandle.SendMessage(TestMessageLevel.Error, 
                         RunnerError + Environment.NewLine + ex);
+
+                    foreach (TestCase test in tests)
+                    {
+                        SkipTest(test, frameworkHandle);
+                    }
                 }
             }
 
-            vsTests = null;
-            fwHandle = null;
             frameworkHandle.SendMessage(TestMessageLevel.Informational, RunComplete);
         }
 
         public void Cancel() =>
             runCancelled = true;
 
-        private void StartTestCase(TafTests.SuiteMethod suiteMethod)
+#if NETFRAMEWORK
+        private LaunchOutcome RunTests(string assemblyPath, string[] testsMasks)
         {
-            var testCase = GetTestCaseOf(suiteMethod);
-            fwHandle.RecordStart(testCase);
+            LaunchOutcome outcome = null;
+
+            AppDomain unicornDomain = AppDomain.CreateDomain("Unicorn.ConsoleRunner AppDomain");
+
+            try
+            {
+                string pathToDll = Assembly.GetExecutingAssembly().Location;
+
+                AppDomainRunner runner = (AppDomainRunner)unicornDomain
+                    .CreateInstanceFromAndUnwrap(pathToDll, typeof(AppDomainRunner).FullName);
+
+                outcome = runner.RunTests(assemblyPath, testsMasks);
+            }
+            finally
+            {
+                AppDomain.Unload(unicornDomain);
+            }
+
+            return outcome;
+        }
+#endif
+
+#if NET || NETCOREAPP
+        private LaunchOutcome RunTests(string assemblyPath, string[] testsMasks)
+        {
+            string contextDirectory = Path.GetDirectoryName(assemblyPath);
+            LaunchOutcome outcome = null;
+            UnicornAssemblyLoadContext runnerContext = new UnicornAssemblyLoadContext(contextDirectory);
+
+            try
+            {
+                runnerContext.Initialize(typeof(ITestRunner));
+
+                AssemblyName assemblyName = AssemblyName.GetAssemblyName(assemblyPath);
+                Assembly testAssembly = runnerContext.GetAssembly(assemblyName);
+
+                Type runnerType = runnerContext.GetAssemblyContainingType(typeof(ContextRunner))
+                    .GetTypes()
+                    .First(t => t.Name.Equals(typeof(ContextRunner).Name));
+
+                ITestRunner runner = Activator.CreateInstance(runnerType, testAssembly, testsMasks) as ITestRunner;
+
+                IOutcome ioutcome = runner.RunTests();
+
+                // Outcome transition between load contexts.
+                byte[] bytes = SerializeOutcome(ioutcome);
+                outcome = DeserializeOutcome(bytes);
+            }
+            finally
+            {
+                //runnerContext.Unload();
+            }
+
+            return outcome;
         }
 
-        private void FinishTestCase(TafTests.SuiteMethod suiteMethod)
+        private byte[] SerializeOutcome(IOutcome outcome)
         {
-            var testCase = GetTestCaseOf(suiteMethod);
-            var testResult = GetTestResultFromOutcome(suiteMethod.Outcome, testCase);
-            fwHandle.RecordEnd(testCase, testResult.Outcome);
-            fwHandle.RecordResult(testResult);
+            BinaryFormatter bf = new BinaryFormatter();
+
+            using (MemoryStream ms = new MemoryStream())
+            {
+                bf.Serialize(ms, outcome);
+                return ms.ToArray();
+            }
         }
 
-        private void SkipTestCase(TafTests.SuiteMethod suiteMethod)
+        private LaunchOutcome DeserializeOutcome(byte[] bytes)
         {
-            var testCase = GetTestCaseOf(suiteMethod);
-            var testResult = GetTestResultFromOutcome(suiteMethod.Outcome, testCase);
-            fwHandle.RecordResult(testResult);
-        }
+            BinaryFormatter binForm = new BinaryFormatter();
 
-        private TestResult GetTestResultFromOutcome(TafTests.TestOutcome outcome, TestCase testCase)
+            using (MemoryStream memStream = new MemoryStream())
+            {
+                memStream.Write(bytes, 0, bytes.Length);
+                memStream.Seek(0, SeekOrigin.Begin);
+                return binForm.Deserialize(memStream) as LaunchOutcome;
+            }
+        }
+#endif
+
+        //private void FailTest(TestCase test, Exception ex, IFrameworkHandle frameworkHandle)
+        //{
+        //    var testResult = new TestResult(test)
+        //    {
+        //        ComputerName = Environment.MachineName,
+        //        Outcome = TestOutcome.Failed,
+        //        ErrorMessage = ex.Message,
+        //        ErrorStackTrace = ex.StackTrace
+        //    };
+
+        //    frameworkHandle.RecordResult(testResult);
+        //}
+
+        private void SkipTest(TestCase test, IFrameworkHandle frameworkHandle)
         {
-            var testResult = new TestResult(testCase)
+            var testResult = new TestResult(test)
             {
                 ComputerName = Environment.MachineName,
-                Duration = outcome.ExecutionTime
+                Outcome = TestOutcome.Skipped
             };
+
+            frameworkHandle.RecordResult(testResult);
+        }
+
+        private TestResult GetTestResultFromOutcome(Taf.Core.Testing.TestOutcome outcome, TestCase testCase)
+        {
+            var testResult = new TestResult(testCase);
+            testResult.ComputerName = Environment.MachineName;
 
             switch (outcome.Result)
             {
-                case TafTests.Status.Passed:
+                case Taf.Core.Testing.Status.Passed:
                     testResult.Outcome = TestOutcome.Passed;
+                    testResult.Duration = outcome.ExecutionTime;
                     break;
-                case TafTests.Status.Failed:
+                case Taf.Core.Testing.Status.Failed:
                     testResult.Outcome = TestOutcome.Failed;
                     testResult.ErrorMessage = outcome.Exception.Message;
                     testResult.ErrorStackTrace = outcome.Exception.StackTrace;
+                    testResult.Duration = outcome.ExecutionTime;
                     break;
-                case TafTests.Status.Skipped:
+                case Taf.Core.Testing.Status.Skipped:
                     testResult.Outcome = TestOutcome.Skipped;
                     break;
                 default:
@@ -181,8 +281,5 @@ namespace Unicorn.TestAdapter
 
             return testResult;
         }
-
-        private TestCase GetTestCaseOf(TafTests.SuiteMethod suiteMethod) =>
-            vsTests.First(t => t.FullyQualifiedName.Equals(suiteMethod.Outcome.FullMethodName));
     }
 }

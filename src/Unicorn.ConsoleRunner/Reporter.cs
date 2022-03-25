@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 using Unicorn.Taf.Core.Engine;
-using Unicorn.Taf.Core.Engine.Configuration;
+using Unicorn.Taf.Core;
 using Unicorn.Taf.Core.Testing;
 
 namespace Unicorn.ConsoleRunner

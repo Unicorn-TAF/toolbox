@@ -33,12 +33,12 @@ namespace Unicorn.Toolbox.Analysis
         {
 #if NETFRAMEWORK
 
-            var location = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            //var location = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
-            using (var loader = new UnicornAppDomainIsolation<GetTestsStatisticsWorker>(location))
-            {
-                Data = loader.Instance.GetTestsStatistics(_assemblyFile, _considerParameterization);
-            }
+            //using (var loader = new Engine.UnicornAppDomainIsolation<GetTestsStatisticsWorker>(location))
+            //{
+            //    Data = loader.Instance.GetTestsStatistics(_assemblyFile, _considerParameterization);
+            //}
 #endif
 
 #if NET || NETCOREAPP
