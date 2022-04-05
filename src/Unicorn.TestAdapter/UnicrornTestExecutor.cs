@@ -9,6 +9,7 @@ using Unicorn.Taf.Api;
 using Unicorn.Taf.Core.Engine;
 using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
+using UnicornTest = Unicorn.Taf.Core.Testing;
 
 namespace Unicorn.TestAdapter
 {
@@ -27,8 +28,6 @@ namespace Unicorn.TestAdapter
 
         internal static readonly Uri ExecutorUri = new Uri(ExecutorUriString);
 
-        private bool runCancelled;
-
         public void RunTests(IEnumerable<string> sources, IRunContext runContext, IFrameworkHandle frameworkHandle)
         {
             if (string.IsNullOrEmpty(runContext.SolutionDirectory))
@@ -38,7 +37,6 @@ namespace Unicorn.TestAdapter
             }
 
             frameworkHandle.SendMessage(TestMessageLevel.Informational, RunStart);
-            runCancelled = false;
 
             var runDir = ExecutorUtilities.PrepareRunDirectory(runContext.SolutionDirectory);
             ExecutorUtilities.CopyDeploymentItems(runContext, runDir, frameworkHandle);
@@ -49,18 +47,8 @@ namespace Unicorn.TestAdapter
 
                 try
                 {
-                    Environment.CurrentDirectory = runDir;
                     var newSource = source.Replace(Path.GetDirectoryName(source), runDir);
-
-                    //var runner = new TafEngine.TestsRunner(newSource, false);
-                    //runner.RunTests();
-                    //var outcome = runner.Outcome;
-
-                    //if (!outcome.RunInitialized)
-                    //{
-                    //    frameworkHandle.SendMessage(TestMessageLevel.Error, 
-                    //        RunInitFailed + Environment.NewLine + outcome.RunnerException);
-                    //}
+                    RunTests(newSource, new string[0]);
                 }
                 catch (Exception ex)
                 {
@@ -83,7 +71,6 @@ namespace Unicorn.TestAdapter
             var sources = tests.Select(t => t.Source).Distinct();
 
             frameworkHandle.SendMessage(TestMessageLevel.Informational, RunStart);
-            runCancelled = false;
 
             var runDir = ExecutorUtilities.PrepareRunDirectory(runContext.SolutionDirectory);
             ExecutorUtilities.CopyDeploymentItems(runContext, runDir, frameworkHandle);
@@ -95,39 +82,9 @@ namespace Unicorn.TestAdapter
 
                 try
                 {
-                    Environment.CurrentDirectory = runDir;
                     var newSource = source.Replace(Path.GetDirectoryName(source), runDir);
-
                     LaunchOutcome outcome = RunTests(newSource, masks);
-
-                    if (!outcome.RunInitialized)
-                    {
-                        frameworkHandle.SendMessage(TestMessageLevel.Error,
-                            RunInitFailed + Environment.NewLine + outcome.RunnerException);
-
-                        foreach (TestCase test in tests)
-                        {
-                            SkipTest(test, frameworkHandle);
-                        }
-                    }
-                    else
-                    {
-                        foreach (TestCase test in tests)
-                        {
-                            var outcomes = outcome.SuitesOutcomes.SelectMany(so => so.TestsOutcomes).Where(to => to.FullMethodName.Equals(test.FullyQualifiedName));
-
-                            if (outcomes.Any())
-                            {
-                                var unicornOutcome = outcomes.First();
-                                var testResult = GetTestResultFromOutcome(unicornOutcome, test);
-                                frameworkHandle.RecordResult(testResult);
-                            }
-                            else
-                            {
-                                SkipTest(test, frameworkHandle);
-                            }
-                        }
-                    }
+                    ProcessLaunchOutcome(outcome, tests, frameworkHandle);
                 }
                 catch (Exception ex)
                 {
@@ -136,7 +93,7 @@ namespace Unicorn.TestAdapter
 
                     foreach (TestCase test in tests)
                     {
-                        SkipTest(test, frameworkHandle);
+                        ExecutorUtilities.SkipTest(test, ex.ToString(), frameworkHandle);
                     }
                 }
             }
@@ -144,15 +101,51 @@ namespace Unicorn.TestAdapter
             frameworkHandle.SendMessage(TestMessageLevel.Informational, RunComplete);
         }
 
-        public void Cancel() =>
-            runCancelled = true;
+        private void ProcessLaunchOutcome(LaunchOutcome outcome, IEnumerable<TestCase> tests, IFrameworkHandle fwHandle)
+        {
+            if (!outcome.RunInitialized)
+            {
+                fwHandle.SendMessage(
+                    TestMessageLevel.Error,
+                    RunInitFailed + Environment.NewLine + outcome.RunnerException);
+
+                foreach (TestCase test in tests)
+                {
+                    ExecutorUtilities.SkipTest(test, "Assembly initialization failed.\n" + outcome.RunnerException.ToString(), fwHandle);
+                }
+            }
+            else
+            {
+                foreach (TestCase test in tests)
+                {
+                    var outcomes = outcome.SuitesOutcomes
+                        .SelectMany(so => so.TestsOutcomes)
+                        .Where(to => to.FullMethodName.Equals(test.FullyQualifiedName));
+
+                    if (outcomes.Any())
+                    {
+                        var failedOutcomes = outcomes.Where(o => o.Result == UnicornTest.Status.Failed);
+                        var outcomeToRecord = failedOutcomes.Any() ? failedOutcomes.First() : outcomes.First();
+
+                        var testResult = ExecutorUtilities.GetTestResultFromOutcome(outcomeToRecord, test);
+                        fwHandle.RecordResult(testResult);
+                    }
+                    else
+                    {
+                        ExecutorUtilities.SkipTest(test, "Test was not executed by unknown reason", fwHandle);
+                    }
+                }
+            }
+        }
+
+        public void Cancel() 
+        { 
+        }
 
 #if NETFRAMEWORK
         private LaunchOutcome RunTests(string assemblyPath, string[] testsMasks)
         {
-            LaunchOutcome outcome = null;
-
-            AppDomain unicornDomain = AppDomain.CreateDomain("Unicorn.ConsoleRunner AppDomain");
+            AppDomain unicornDomain = AppDomain.CreateDomain("Unicorn.TestAdapter AppDomain");
 
             try
             {
@@ -161,14 +154,12 @@ namespace Unicorn.TestAdapter
                 AppDomainRunner runner = (AppDomainRunner)unicornDomain
                     .CreateInstanceFromAndUnwrap(pathToDll, typeof(AppDomainRunner).FullName);
 
-                outcome = runner.RunTests(assemblyPath, testsMasks);
+                return runner.RunTests(assemblyPath, testsMasks);
             }
             finally
             {
                 AppDomain.Unload(unicornDomain);
             }
-
-            return outcome;
         }
 #endif
 
@@ -176,110 +167,45 @@ namespace Unicorn.TestAdapter
         private LaunchOutcome RunTests(string assemblyPath, string[] testsMasks)
         {
             string contextDirectory = Path.GetDirectoryName(assemblyPath);
-            LaunchOutcome outcome = null;
             UnicornAssemblyLoadContext runnerContext = new UnicornAssemblyLoadContext(contextDirectory);
+            runnerContext.Initialize(typeof(ITestRunner));
 
-            try
-            {
-                runnerContext.Initialize(typeof(ITestRunner));
+            AssemblyName assemblyName = AssemblyName.GetAssemblyName(assemblyPath);
+            Assembly testAssembly = runnerContext.GetAssembly(assemblyName);
 
-                AssemblyName assemblyName = AssemblyName.GetAssemblyName(assemblyPath);
-                Assembly testAssembly = runnerContext.GetAssembly(assemblyName);
+            Type runnerType = runnerContext.GetAssemblyContainingType(typeof(LoadContextRunner))
+                .GetTypes()
+                .First(t => t.Name.Equals(typeof(LoadContextRunner).Name));
 
-                Type runnerType = runnerContext.GetAssemblyContainingType(typeof(ContextRunner))
-                    .GetTypes()
-                    .First(t => t.Name.Equals(typeof(ContextRunner).Name));
+            ITestRunner runner = Activator.CreateInstance(runnerType, testAssembly, testsMasks) as ITestRunner;
+            IOutcome ioutcome = runner.RunTests();
 
-                ITestRunner runner = Activator.CreateInstance(runnerType, testAssembly, testsMasks) as ITestRunner;
-
-                IOutcome ioutcome = runner.RunTests();
-
-                // Outcome transition between load contexts.
-                byte[] bytes = SerializeOutcome(ioutcome);
-                outcome = DeserializeOutcome(bytes);
-            }
-            finally
-            {
-                //runnerContext.Unload();
-            }
-
-            return outcome;
+            // Outcome transition between load contexts.
+            byte[] bytes = SerializeOutcome(ioutcome);
+            return DeserializeOutcome(bytes);
         }
 
+#pragma warning disable SYSLIB0011 // Type or member is obsolete
         private byte[] SerializeOutcome(IOutcome outcome)
         {
-            BinaryFormatter bf = new BinaryFormatter();
-
             using (MemoryStream ms = new MemoryStream())
             {
-                bf.Serialize(ms, outcome);
+                new BinaryFormatter().Serialize(ms, outcome);
                 return ms.ToArray();
             }
         }
 
         private LaunchOutcome DeserializeOutcome(byte[] bytes)
         {
-            BinaryFormatter binForm = new BinaryFormatter();
-
             using (MemoryStream memStream = new MemoryStream())
             {
                 memStream.Write(bytes, 0, bytes.Length);
                 memStream.Seek(0, SeekOrigin.Begin);
-                return binForm.Deserialize(memStream) as LaunchOutcome;
+                return new BinaryFormatter().Deserialize(memStream) as LaunchOutcome;
             }
         }
+#pragma warning restore SYSLIB0011 // Type or member is obsolete
+
 #endif
-
-        //private void FailTest(TestCase test, Exception ex, IFrameworkHandle frameworkHandle)
-        //{
-        //    var testResult = new TestResult(test)
-        //    {
-        //        ComputerName = Environment.MachineName,
-        //        Outcome = TestOutcome.Failed,
-        //        ErrorMessage = ex.Message,
-        //        ErrorStackTrace = ex.StackTrace
-        //    };
-
-        //    frameworkHandle.RecordResult(testResult);
-        //}
-
-        private void SkipTest(TestCase test, IFrameworkHandle frameworkHandle)
-        {
-            var testResult = new TestResult(test)
-            {
-                ComputerName = Environment.MachineName,
-                Outcome = TestOutcome.Skipped
-            };
-
-            frameworkHandle.RecordResult(testResult);
-        }
-
-        private TestResult GetTestResultFromOutcome(Taf.Core.Testing.TestOutcome outcome, TestCase testCase)
-        {
-            var testResult = new TestResult(testCase);
-            testResult.ComputerName = Environment.MachineName;
-
-            switch (outcome.Result)
-            {
-                case Taf.Core.Testing.Status.Passed:
-                    testResult.Outcome = TestOutcome.Passed;
-                    testResult.Duration = outcome.ExecutionTime;
-                    break;
-                case Taf.Core.Testing.Status.Failed:
-                    testResult.Outcome = TestOutcome.Failed;
-                    testResult.ErrorMessage = outcome.Exception.Message;
-                    testResult.ErrorStackTrace = outcome.Exception.StackTrace;
-                    testResult.Duration = outcome.ExecutionTime;
-                    break;
-                case Taf.Core.Testing.Status.Skipped:
-                    testResult.Outcome = TestOutcome.Skipped;
-                    break;
-                default:
-                    testResult.Outcome = TestOutcome.None;
-                    break;
-            }
-
-            return testResult;
-        }
     }
 }

@@ -29,8 +29,8 @@ namespace Unicorn.AllureAgent
             TestSuite.OnSuiteStart += _listener.StartSuite;
             TestSuite.OnSuiteFinish += _listener.FinishSuite;
 
-            StepsEvents.OnStepStart += _listener.StartStep;
-            StepsEvents.OnStepFinish += _listener.FinishStep;
+            StepEvents.OnStepStart += _listener.StartStep;
+            StepEvents.OnStepFinish += _listener.FinishStep;
         }
 
         /// <summary>
@@ -48,8 +48,8 @@ namespace Unicorn.AllureAgent
             TestSuite.OnSuiteStart -= _listener.StartSuite;
             TestSuite.OnSuiteFinish -= _listener.FinishSuite;
 
-            StepsEvents.OnStepStart -= _listener.StartStep;
-            StepsEvents.OnStepFinish -= _listener.FinishStep;
+            StepEvents.OnStepStart -= _listener.StartStep;
+            StepEvents.OnStepFinish -= _listener.FinishStep;
         }
     }
 }

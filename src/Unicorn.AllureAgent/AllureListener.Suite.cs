@@ -1,7 +1,6 @@
 ﻿using Allure.Commons;
 using System;
 using System.IO;
-using System.Reflection;
 using System.Text;
 using Unicorn.Taf.Core.Testing;
 

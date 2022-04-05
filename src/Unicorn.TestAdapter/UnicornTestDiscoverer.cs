@@ -4,12 +4,12 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
 using Unicorn.Taf.Api;
-using Unicorn.Taf.Core.Testing;
 
 namespace Unicorn.TestAdapter
 {
@@ -34,20 +34,22 @@ namespace Unicorn.TestAdapter
                 }
                 catch (Exception ex)
                 {
-                    logger?.SendMessage(TestMessageLevel.Error, Prefix + $"error discovering {source} source: {ex.Message}");
+                    logger?.SendMessage(TestMessageLevel.Error, 
+                        Prefix + $"error discovering {source} source: {ex.Message}");
                 }
             }
 
             logger?.SendMessage(TestMessageLevel.Informational, Prefix + "test discovery complete");
         }
 
-        private void DiscoverAssembly(string source, IMessageLogger logger, ITestCaseDiscoverySink discoverySink)
+        private static void DiscoverAssembly(string source, IMessageLogger logger, ITestCaseDiscoverySink discoverySink)
         {
-            List<ITestInfo> testsInfos = GetTestsInfo(source);
+            List<TestInfo> testsInfos = GetTestsInfo(source);
 
-            logger?.SendMessage(TestMessageLevel.Informational, $"Source: {Path.GetFileName(source)} (found {testsInfos.Count} tests)");
+            logger?.SendMessage(TestMessageLevel.Informational, 
+                $"Source: {Path.GetFileName(source)} (found {testsInfos.Count} tests)");
 
-            foreach (var testInfo in testsInfos)
+            foreach (TestInfo testInfo in testsInfos)
             {
                 string fullName = testInfo.ClassPath + "." + testInfo.MethodName;
 
@@ -66,21 +68,28 @@ namespace Unicorn.TestAdapter
                     testcase.Traits.Add(new Trait("Categories", string.Join(",", testInfo.Categories)));
                 }
 
+                if (testInfo.TestParametersCount > 0)
+                {
+                    testcase.Traits.Add(new Trait("Parameters", testInfo.TestParametersCount.ToString()));
+                }
+
                 discoverySink.SendTestCase(testcase);
             }
         }
 
 #if NETFRAMEWORK
-        private List<ITestInfo> GetTestsInfo(string source)
+        private static List<TestInfo> GetTestsInfo(string source)
         {
             AppDomain unicornDomain = AppDomain.CreateDomain("Unicorn.TestAdapter AppDomain");
 
             try
             {
-                AppDomainTestsObserver myObject = (AppDomainTestsObserver)unicornDomain.CreateInstanceFromAndUnwrap(
-                    Assembly.GetExecutingAssembly().Location, typeof(AppDomainTestsObserver).FullName);
+                string pathToDll = Assembly.GetExecutingAssembly().Location;
 
-                return myObject.GetTests(source);
+                AppDomainObserver observer = (AppDomainObserver)unicornDomain
+                    .CreateInstanceFromAndUnwrap(pathToDll, typeof(AppDomainObserver).FullName);
+
+                return observer.GetTests(source);
             }
             finally
             {
@@ -90,69 +99,52 @@ namespace Unicorn.TestAdapter
 #endif
 
 #if NETCOREAPP || NET
-        private List<ITestInfo> GetTestsInfo(string source)
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static List<TestInfo> GetTestsInfo(string source)
         {
             UnicornAssemblyLoadContext observerContext = new UnicornAssemblyLoadContext(Path.GetDirectoryName(source));
-            List<ITestInfo> testInfo = null;
 
-            observerContext.Initialize(typeof(ITestInfoCollector));
+            observerContext.Initialize(typeof(IDataCollector));
 
-            Type observerType = observerContext.GetAssemblyContainingType(typeof(ContextInfoObserver))
+            Type observerType = observerContext.GetAssemblyContainingType(typeof(LoadContextObserver))
                 .GetTypes()
-                .First(t => t.Name.Equals(typeof(ContextInfoObserver).Name));
+                .First(t => t.Name.Equals(typeof(LoadContextObserver).Name));
 
-            ITestInfoCollector observer = Activator.CreateInstance(observerType) as ITestInfoCollector;
+            IDataCollector observer = Activator.CreateInstance(observerType) as IDataCollector;
 
             AssemblyName assemblyName = AssemblyName.GetAssemblyName(source);
             Assembly testAssembly = observerContext.GetAssembly(assemblyName);
 
-            List<ITestInfo> iTestInfo = observer.CollectTestsInfo(testAssembly);
+            IOutcome iTestInfo = observer.CollectData(testAssembly);
 
             //Outcome transition between load contexts.
-            List<byte[]> bytes = SerializeInfo(iTestInfo);
-            testInfo = DeserializeInfo(bytes);
+            byte[] bytes = SerializeInfo(iTestInfo);
+            ObserverOutcome outcome = DeserializeInfo(bytes);
 
-            //runnerContext.Unload();
-
-            return testInfo;
+            return outcome.TestInfoList;
         }
 
-        private List<byte[]> SerializeInfo(List<ITestInfo> outcome)
+#pragma warning disable SYSLIB0011 // Type or member is obsolete
+        private static byte[] SerializeInfo(IOutcome outcome)
         {
-            List<byte[]> list = new List<byte[]>();
-
-            BinaryFormatter bf = new BinaryFormatter();
-
-            foreach(ITestInfo iti in outcome)
+            using (MemoryStream ms = new MemoryStream())
             {
-                using (MemoryStream ms = new MemoryStream())
-                {
-                    bf.Serialize(ms, iti);
-                    list.Add(ms.ToArray());
-                }
+                new BinaryFormatter().Serialize(ms, outcome);
+                return ms.ToArray();
             }
-
-            return list;
         }
 
-        private List<ITestInfo> DeserializeInfo(List<byte[]> bytes)
+        private static ObserverOutcome DeserializeInfo(byte[] bytes)
         {
-            List<ITestInfo> testInfo = new List<ITestInfo>();
-
-            BinaryFormatter binForm = new BinaryFormatter();
-
-            foreach (byte[] bite in bytes)
+            using (MemoryStream memStream = new MemoryStream())
             {
-                using (MemoryStream memStream = new MemoryStream())
-                {
-                    memStream.Write(bite, 0, bite.Length);
-                    memStream.Seek(0, SeekOrigin.Begin);
-                    testInfo.Add(binForm.Deserialize(memStream) as TestInfo);
-                }
+                memStream.Write(bytes, 0, bytes.Length);
+                memStream.Seek(0, SeekOrigin.Begin);
+                return new BinaryFormatter().Deserialize(memStream) as ObserverOutcome;
             }
-
-            return testInfo;
         }
+#pragma warning restore SYSLIB0011 // Type or member is obsolete
+
 #endif
     }
 }

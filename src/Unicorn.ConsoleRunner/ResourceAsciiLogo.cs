@@ -1,6 +1,6 @@
 ﻿namespace Unicorn.ConsoleRunner
 {
-    public static class ResourceAsciiLogo
+    internal static class ResourceAsciiLogo
     {
         private const string LogoImage = @"
                      _,yp@@@55@@@%yy,,                              
@@ -35,6 +35,6 @@ y     y_         y,                                   yyyyyyy  ,y,    ,yyyyy,
 $@,_,{@  @L   @L @L`$W,_,w, $W,_,a@` |@    |$   |@ ,    |$  ,@F    $b j@     
   '^^`   ^    ^  ^   `'^^`    `^^`   ``    `^   `^ '    `^  `^     `^ `^     ";
 
-        public const string Logo = LogoImage + "\n" + LogoText;
+        internal const string Logo = LogoImage + "\n" + LogoText;
     }
 }

@@ -2,63 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Unicorn.Taf.Core.Engine;
 using Unicorn.Taf.Core.Testing;
 using Unicorn.Taf.Core.Testing.Attributes;
 
 namespace Unicorn.Toolbox.Analysis
 {
-#pragma warning disable S3885 // "Assembly.Load" should be used
-    public class GetTestsStatisticsWorker : MarshalByRefObject
+    internal static class CollectorUtilities
     {
-        private readonly Type _baseSuiteType = typeof(TestSuite);
-
-        public AutomationData GetTestsStatistics(string assemblyPath, bool considerParameterization)
-        {
-            var data = new AutomationData();
-
-            var testsAssembly = Assembly.LoadFrom(assemblyPath);
-            var allSuites = TestsObserver.ObserveTestSuites(testsAssembly);
-
-            foreach (var suiteType in allSuites)
-            {
-                if (AdapterUtilities.IsSuiteParameterized(suiteType))
-                {
-                    foreach (var parametersSet in AdapterUtilities.GetSuiteData(suiteType))
-                    {
-                        var parameterizedSuite = testsAssembly
-                            .CreateInstance(
-                            suiteType.FullName, 
-                            true, 
-                            BindingFlags.Default, 
-                            null, 
-                            parametersSet.Parameters.ToArray(), 
-                            null, 
-                            null);
-
-                        ((TestSuite)parameterizedSuite).Outcome.DataSetName = parametersSet.Name;
-                        data.AddSuiteData(GetSuiteInfo(parameterizedSuite, considerParameterization));
-
-                        if (!considerParameterization)
-                        {
-                            break;
-                        }
-                    }
-                }
-                else
-                {
-                    var nonParameterizedSuite = testsAssembly.CreateInstance(suiteType.FullName);
-                    data.AddSuiteData(GetSuiteInfo(nonParameterizedSuite, considerParameterization));
-                }
-            }
-
-            return data;
-        }
-
-        private SuiteInfo GetSuiteInfo(object suiteInstance, bool considerParameterization)
+        internal static SuiteInfo GetSuiteInfo(object suiteInstance, bool considerParameterization)
         {
             int inheritanceCounter = 0;
             var currentType = suiteInstance.GetType();
+
+            Type _baseSuiteType = typeof(TestSuite);
 
             while (!currentType.Equals(_baseSuiteType) && inheritanceCounter++ < 50)
             {
@@ -96,7 +52,7 @@ namespace Unicorn.Toolbox.Analysis
             return suiteInfo;
         }
 
-        private TestInfo GetTestInfo(MethodInfo testMethod)
+        private static TestInfo GetTestInfo(MethodInfo testMethod)
         {
             var disabled = testMethod.GetCustomAttribute<DisabledAttribute>() != null;
 
@@ -111,7 +67,7 @@ namespace Unicorn.Toolbox.Analysis
             return new TestInfo(title, author, disabled, categories);
         }
 
-        private List<TestInfo> GetTestsInfo(MethodInfo testMethod, object suiteInstance, bool considerParameterization)
+        private static List<TestInfo> GetTestsInfo(MethodInfo testMethod, object suiteInstance, bool considerParameterization)
         {
             var infos = new List<TestInfo>();
 
@@ -132,7 +88,7 @@ namespace Unicorn.Toolbox.Analysis
             var dataSets = suiteInstance
                 .GetType()
                 .GetMethod(datasetsAttribute.Method)
-                .Invoke(suiteInstance, null) 
+                .Invoke(suiteInstance, null)
                 as List<DataSet>;
 
             if (considerParameterization)
@@ -150,5 +106,4 @@ namespace Unicorn.Toolbox.Analysis
             return infos;
         }
     }
-#pragma warning restore S3885 // "Assembly.Load" should be used
 }

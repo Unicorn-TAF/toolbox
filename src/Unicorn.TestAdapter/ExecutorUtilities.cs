@@ -2,8 +2,10 @@
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
+using UnicornTest = Unicorn.Taf.Core.Testing;
 
 namespace Unicorn.TestAdapter
 {
@@ -81,6 +83,53 @@ namespace Unicorn.TestAdapter
                 }
 
             }
+        }
+
+        internal static void SkipTest(TestCase test, string reason, IFrameworkHandle frameworkHandle)
+        {
+            var testResult = new TestResult(test)
+            {
+                ComputerName = Environment.MachineName,
+                Outcome = TestOutcome.Skipped
+            };
+
+            if (!string.IsNullOrEmpty(reason))
+            {
+                testResult.ErrorMessage = reason;
+            }
+
+            frameworkHandle.RecordResult(testResult);
+        }
+
+        internal static TestResult GetTestResultFromOutcome(UnicornTest.TestOutcome outcome, TestCase testCase)
+        {
+            var testResult = new TestResult(testCase)
+            {
+                ComputerName = Environment.MachineName
+            };
+
+            switch (outcome.Result)
+            {
+                case UnicornTest.Status.Passed:
+                    testResult.Outcome = TestOutcome.Passed;
+                    testResult.Duration = outcome.ExecutionTime;
+                    break;
+                case UnicornTest.Status.Failed:
+                    testResult.Outcome = TestOutcome.Failed;
+                    testResult.ErrorMessage = outcome.Exception.Message;
+                    testResult.ErrorStackTrace = outcome.Exception.StackTrace;
+                    testResult.Duration = outcome.ExecutionTime;
+                    break;
+                case UnicornTest.Status.Skipped:
+                    testResult.Outcome = TestOutcome.Skipped;
+                    testResult.ErrorMessage = "Suite initialization failed.";
+                    break;
+                default:
+                    testResult.Outcome = TestOutcome.None;
+                    break;
+            }
+
+            return testResult;
         }
     }
 }

@@ -9,12 +9,17 @@ namespace Unicorn.TestAdapter
     /// <summary>
     /// Provides ability to run unicorn tests in dedicated AppDomain.
     /// </summary>
-    public class ContextRunner : ITestRunner
+    public class LoadContextRunner : ITestRunner
     {
         private readonly Assembly _testsAssembly;
         private readonly string[] _testsMasks;
 
-        public ContextRunner(Assembly assembly, string[] testsMasks)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LoadContextRunner"/> class based on assembly and tests masks.
+        /// </summary>
+        /// <param name="assembly">assembly to run on</param>
+        /// <param name="testsMasks">masks of tests to be run</param>
+        public LoadContextRunner(Assembly assembly, string[] testsMasks)
         {
             _testsAssembly = assembly;
             _testsMasks = testsMasks;

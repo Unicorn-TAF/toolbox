@@ -1,7 +1,6 @@
 ﻿#if NETFRAMEWORK
 using System;
 using System.Reflection;
-using Unicorn.Taf.Api;
 using Unicorn.Taf.Core;
 using Unicorn.Taf.Core.Engine;
 
@@ -16,7 +15,7 @@ namespace Unicorn.TestAdapter
         /// Runs tests from specified assembly and specified configuration.
         /// </summary>
         /// <param name="assemblyPath">assembly file path</param>
-        /// <param name="configPath">configuration file path</param>
+        /// <param name="testsMasks">masks of tests to be run</param>
         /// <returns>outcome of tests run</returns>
         public LaunchOutcome RunTests(string assemblyPath, string[] testsMasks)
         {
