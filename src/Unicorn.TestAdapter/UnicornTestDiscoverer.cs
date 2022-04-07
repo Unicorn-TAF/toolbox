@@ -13,7 +13,7 @@ using Unicorn.Taf.Api;
 
 namespace Unicorn.TestAdapter
 {
-    [DefaultExecutorUri(UnicrornTestExecutor.ExecutorUriString)]
+    [DefaultExecutorUri(UnicornTestExecutor.ExecutorUriString)]
     [FileExtension(".dll")]
     [FileExtension(".exe")]
     [Category("managed")]
@@ -53,7 +53,7 @@ namespace Unicorn.TestAdapter
             {
                 string fullName = testInfo.ClassPath + "." + testInfo.MethodName;
 
-                TestCase testcase = new TestCase(fullName, UnicrornTestExecutor.ExecutorUri, source)
+                TestCase testcase = new TestCase(fullName, UnicornTestExecutor.ExecutorUri, source)
                 {
                     DisplayName = testInfo.MethodName,
                 };

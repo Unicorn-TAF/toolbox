@@ -14,7 +14,7 @@ using UnicornTest = Unicorn.Taf.Core.Testing;
 namespace Unicorn.TestAdapter
 {
     [ExtensionUri(ExecutorUriString)]
-    public class UnicrornTestExecutor : ITestExecutor
+    public class UnicornTestExecutor : ITestExecutor
     {
         internal const string ExecutorUriString = "executor://UnicornTestExecutor/v2";
 
@@ -125,14 +125,16 @@ namespace Unicorn.TestAdapter
                     if (outcomes.Any())
                     {
                         var failedOutcomes = outcomes.Where(o => o.Result == UnicornTest.Status.Failed);
-                        var outcomeToRecord = failedOutcomes.Any() ? failedOutcomes.First() : outcomes.First();
 
-                        var testResult = ExecutorUtilities.GetTestResultFromOutcome(outcomeToRecord, test);
-                        fwHandle.RecordResult(testResult);
+                        foreach (var outcomeToRecord in outcomes)
+                        {
+                            var testResult = ExecutorUtilities.GetTestResultFromOutcome(outcomeToRecord, test);
+                            fwHandle.RecordResult(testResult);
+                        }
                     }
                     else
                     {
-                        ExecutorUtilities.SkipTest(test, "Test was not executed by unknown reason", fwHandle);
+                        ExecutorUtilities.SkipTest(test, "Test was not executed, possibly it's disabled", fwHandle);
                     }
                 }
             }
