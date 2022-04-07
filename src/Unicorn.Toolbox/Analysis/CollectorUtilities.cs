@@ -45,16 +45,17 @@ namespace Unicorn.Toolbox.Analysis
                 }
                 else
                 {
-                    suiteInfo.TestsInfos.Add(GetTestInfo(test));
+                    suiteInfo.TestsInfos.Add(GetTestInfo(test, suiteInstance));
                 }
             }
 
             return suiteInfo;
         }
 
-        private static TestInfo GetTestInfo(MethodInfo testMethod)
+        private static TestInfo GetTestInfo(MethodInfo testMethod, object suiteInstance)
         {
-            var disabled = testMethod.GetCustomAttribute<DisabledAttribute>() != null;
+            var disabled = testMethod.IsDefined(typeof(DisabledAttribute), true) ||
+                suiteInstance.GetType().IsDefined(typeof(DisabledAttribute));
 
             var authorAttribute = testMethod.GetCustomAttribute<AuthorAttribute>();
             var author = authorAttribute != null ? authorAttribute.Author : "No Author";
@@ -71,7 +72,8 @@ namespace Unicorn.Toolbox.Analysis
         {
             var infos = new List<TestInfo>();
 
-            var disabled = testMethod.IsDefined(typeof(DisabledAttribute), true);
+            var disabled = testMethod.IsDefined(typeof(DisabledAttribute), true) || 
+                suiteInstance.GetType().IsDefined(typeof(DisabledAttribute));
 
             var authorAttribute = testMethod.GetCustomAttribute<AuthorAttribute>();
             var author = authorAttribute != null ? authorAttribute.Author : "No Author";

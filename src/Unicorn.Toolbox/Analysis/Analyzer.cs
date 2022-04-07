@@ -72,8 +72,6 @@ namespace Unicorn.Toolbox.Analysis
             // Outcome transition between load contexts.
             byte[] bytes = SerializeOutcome(ioutcome);
             Data = DeserializeOutcome(bytes);
-
-            //Data = new GetTestsStatisticsWorkerNetCore().GetTestsStatistics(_assemblyFile, _considerParameterization);
 #endif
         }
 
