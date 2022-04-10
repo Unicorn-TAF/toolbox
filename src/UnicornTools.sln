@@ -16,7 +16,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Unicorn.ConsoleRunner", "Un
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Unicorn.Toolbox", "Unicorn.Toolbox\Unicorn.Toolbox.csproj", "{CF701433-2C06-4E39-ADCA-8799F3BBE2A9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unicorn.TestAdapter", "Unicorn.TestAdapter\Unicorn.TestAdapter.csproj", "{6F916A0A-5157-4063-9E9E-3E9D2A149ACD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Unicorn.TestAdapter", "Unicorn.TestAdapter\Unicorn.TestAdapter.csproj", "{6F916A0A-5157-4063-9E9E-3E9D2A149ACD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
