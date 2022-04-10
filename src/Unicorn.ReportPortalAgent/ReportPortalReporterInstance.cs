@@ -48,7 +48,7 @@ namespace Unicorn.ReportPortalAgent
             TestSuite.OnSuiteStart += _listener.StartSuite;
             TestSuite.OnSuiteFinish += _listener.FinishSuite;
 
-            StepsEvents.OnStepStart += ReportInfo;
+            StepEvents.OnStepStart += ReportInfo;
         }
 
         /// <summary>
@@ -117,7 +117,7 @@ namespace Unicorn.ReportPortalAgent
                 TestSuite.OnSuiteStart -= _listener.StartSuite;
                 TestSuite.OnSuiteFinish -= _listener.FinishSuite;
 
-                StepsEvents.OnStepStart -= ReportInfo;
+                StepEvents.OnStepStart -= ReportInfo;
             }
         }
 

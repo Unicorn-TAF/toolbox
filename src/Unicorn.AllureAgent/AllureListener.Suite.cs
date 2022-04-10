@@ -1,7 +1,6 @@
 ﻿using Allure.Commons;
 using System;
 using System.IO;
-using System.Reflection;
 using System.Text;
 using Unicorn.Taf.Core.Testing;
 
@@ -18,7 +17,7 @@ namespace Unicorn.AllureAgent
         {
             try
             {
-                string codeBase = Assembly.GetExecutingAssembly().CodeBase;
+                string codeBase = typeof(AllureListener).Assembly.Location;
                 var uri = new UriBuilder(codeBase);
                 string path = Path.GetDirectoryName(Uri.UnescapeDataString(uri.Path));
 

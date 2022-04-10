@@ -1,62 +1,118 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.Serialization.Formatters.Binary;
+using Unicorn.Taf.Api;
+using Unicorn.Taf.Core;
 using Unicorn.Taf.Core.Engine;
-using Unicorn.Taf.Core.Engine.Configuration;
 using Unicorn.Taf.Core.Utility;
 
 namespace Unicorn.ConsoleRunner
 {
     public class Program
     {
-
         private Program()
         {
         }
 
         public static void Main(string[] args)
         {
-            Program app = new Program();
-
             ArgsParser parser = new ArgsParser();
             parser.ParseArguments(args);
-
-            app.Run(parser.AssemblyPath, parser.PropertiesPath, parser.TrxFileName);
+            new Program().Run(parser.AssemblyPath, parser.PropertiesPath, parser.TrxFileName);
         }
 
         private void Run(string assemblyPath, string propertiesPath, string trxFileName)
         {
             Config.FillFromFile(propertiesPath);
             Reporter.ReportHeader(assemblyPath);
-            LaunchOutcome outcome = null;
-            AppDomain unicornDomain = AppDomain.CreateDomain("Unicorn app domain");
 
             try
             {
-                string testAssemblyDir = Path.GetDirectoryName(assemblyPath);
-                Type runnerType = typeof(IsolatedTestsRunner);
-                string pathToDll = Path.Combine(testAssemblyDir, runnerType.Assembly.GetName().Name + ".dll");
+                LaunchOutcome outcome = ExecuteTests(assemblyPath, propertiesPath);
 
-                IsolatedTestsRunner myObject = (IsolatedTestsRunner)unicornDomain
-                    .CreateInstanceFromAndUnwrap(pathToDll, runnerType.FullName);
-
-                outcome = myObject.RunTests(assemblyPath, propertiesPath);
-
-                if (!string.IsNullOrEmpty(trxFileName))
+                if (outcome != null)
                 {
-                    new TrxCreator().GenerateTrxFile(outcome, trxFileName);
+                    if (!string.IsNullOrEmpty(trxFileName))
+                    {
+                        new TrxCreator().GenerateTrxFile(outcome, trxFileName);
+                    }
+
+                    Reporter.ReportResults(outcome);
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error running tests ({ex.Message})");
             }
+        }
 
-            AppDomain.Unload(unicornDomain);
+#if NETFRAMEWORK
+        private static LaunchOutcome ExecuteTests(string assemblyPath, string propertiesPath)
+        {
+            AppDomain unicornDomain = AppDomain.CreateDomain("Unicorn.ConsoleRunner AppDomain");
 
-            if (outcome != null)
+            try
             {
-                Reporter.ReportResults(outcome);
+                string pathToDll = Assembly.GetExecutingAssembly().Location;
+
+                AppDomainRunner runner = (AppDomainRunner)unicornDomain
+                    .CreateInstanceFromAndUnwrap(pathToDll, typeof(AppDomainRunner).FullName);
+
+                return runner.RunTests(assemblyPath, propertiesPath);
+            }
+            finally
+            {
+                AppDomain.Unload(unicornDomain);
             }
         }
+#endif
+
+#if NETCOREAPP || NET
+        private static LaunchOutcome ExecuteTests(string assemblyPath, string propertiesPath)
+        {
+            string contextDirectory = Path.GetDirectoryName(assemblyPath);
+            
+            UnicornAssemblyLoadContext runnerContext = new UnicornAssemblyLoadContext(contextDirectory);
+            runnerContext.Initialize(typeof(ITestRunner));
+
+            AssemblyName assemblyName = AssemblyName.GetAssemblyName(assemblyPath);
+            Assembly testAssembly = runnerContext.GetAssembly(assemblyName);
+
+            Type runnerType = runnerContext.GetAssemblyContainingType(typeof(TestsRunner))
+                .GetTypes()
+                .First(t => t.Name.Equals(typeof(TestsRunner).Name));
+
+            ITestRunner runner = Activator.CreateInstance(runnerType, testAssembly, propertiesPath) as ITestRunner;
+            IOutcome ioutcome = runner.RunTests();
+
+            // Outcome transition between load contexts.
+            byte[] bytes = SerializeOutcome(ioutcome);
+            return DeserializeOutcome(bytes);
+        }
+
+#pragma warning disable SYSLIB0011 // Type or member is obsolete
+        private static byte[] SerializeOutcome(IOutcome outcome)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                new BinaryFormatter().Serialize(ms, outcome);
+                return ms.ToArray();
+            }
+        }
+
+        private static LaunchOutcome DeserializeOutcome(byte[] bytes)
+        {
+            using (MemoryStream memStream = new MemoryStream())
+            {
+                memStream.Write(bytes, 0, bytes.Length);
+                memStream.Seek(0, SeekOrigin.Begin);
+                return new BinaryFormatter().Deserialize(memStream) as LaunchOutcome;
+            }
+        }
+#pragma warning restore SYSLIB0011 // Type or member is obsolete
+
+#endif
     }
 }

@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Unicorn.Taf.Api;
 using Unicorn.Toolbox.Analysis.Filtering;
 
 namespace Unicorn.Toolbox.Analysis
 {
     [Serializable]
-    public class AutomationData
+    public class AutomationData : IOutcome
     {
         public AutomationData()
         {

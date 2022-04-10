@@ -1,16 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.Serialization.Formatters.Binary;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
-using Unicorn.Taf.Core.Engine;
+using Unicorn.Taf.Api;
 
 namespace Unicorn.TestAdapter
 {
-    [DefaultExecutorUri(UnicrornTestExecutor.ExecutorUriString)]
+    [DefaultExecutorUri(UnicornTestExecutor.ExecutorUriString)]
     [FileExtension(".dll")]
     [FileExtension(".exe")]
+    [Category("managed")]
     public class UnicornTestDiscoverer : ITestDiscoverer
     {
         private const string Prefix = "Unicorn Adapter: ";
@@ -28,54 +34,122 @@ namespace Unicorn.TestAdapter
                 }
                 catch (Exception ex)
                 {
-                    // TODO: does not report error if assembly does not reference TestAdapter.
-
-                    logger?.SendMessage(TestMessageLevel.Error, Prefix + $"error discovering {source} source: {ex.Message}");
+                    logger?.SendMessage(TestMessageLevel.Error, 
+                        Prefix + $"error discovering {source} source: {ex.Message}");
                 }
             }
 
             logger?.SendMessage(TestMessageLevel.Informational, Prefix + "test discovery complete");
         }
 
-        private void DiscoverAssembly(string source, IMessageLogger logger, ITestCaseDiscoverySink discoverySink)
+        private static void DiscoverAssembly(string source, IMessageLogger logger, ITestCaseDiscoverySink discoverySink)
         {
-            List<TestInfo> testsInfos;
+            List<TestInfo> testsInfos = GetTestsInfo(source);
 
-            using (var discoverer = new UnicornAppDomainIsolation<IsolatedTestsInfoObserver>(Path.GetDirectoryName(source)))
+            logger?.SendMessage(TestMessageLevel.Informational, 
+                $"Source: {Path.GetFileName(source)} (found {testsInfos.Count} tests)");
+
+            foreach (TestInfo testInfo in testsInfos)
             {
-                Environment.CurrentDirectory = Path.GetDirectoryName(source);
-                testsInfos = discoverer.Instance.GetTests(source);
-            }
+                string fullName = testInfo.ClassPath + "." + testInfo.MethodName;
 
-            logger?.SendMessage(TestMessageLevel.Informational, $"Source: {Path.GetFileName(source)} (found {testsInfos.Count} tests)");
-
-            var testCoordinatesProvider = new TestCoordinatesProvider(source);
-
-            foreach (var testInfo in testsInfos)
-            {
-                var methodName = testInfo.MethodName;
-                var className = testInfo.ClassName;
-                var coordinates = testCoordinatesProvider.GetNavigationData(className, methodName);
-
-                var testcase = new TestCase(testInfo.FullName, UnicrornTestExecutor.ExecutorUri, source)
+                TestCase testcase = new TestCase(fullName, UnicornTestExecutor.ExecutorUri, source)
                 {
                     DisplayName = testInfo.MethodName,
-                    CodeFilePath = coordinates.FilePath,
-                    LineNumber = coordinates.LineNumber,
                 };
+
+                if (testInfo.Disabled)
+                {
+                    testcase.Traits.Add(new Trait("Disabled", string.Empty));
+                }
 
                 if (!string.IsNullOrEmpty(testInfo.Author))
                 {
                     testcase.Traits.Add(new Trait("Author", testInfo.Author));
                 }
 
-                if (!string.IsNullOrEmpty(testInfo.Categories))
+                if (testInfo.Categories.Any())
                 {
-                    testcase.Traits.Add(new Trait("Categories", testInfo.Categories));
+                    testcase.Traits.Add(new Trait("Categories", string.Join(",", testInfo.Categories)));
+                }
+
+                if (testInfo.TestParametersCount > 0)
+                {
+                    testcase.Traits.Add(new Trait("Parameters", testInfo.TestParametersCount.ToString()));
                 }
 
                 discoverySink.SendTestCase(testcase);
             }
         }
+
+#if NETFRAMEWORK
+        private static List<TestInfo> GetTestsInfo(string source)
+        {
+            AppDomain unicornDomain = AppDomain.CreateDomain("Unicorn.TestAdapter AppDomain");
+
+            try
+            {
+                string pathToDll = Assembly.GetExecutingAssembly().Location;
+
+                AppDomainObserver observer = (AppDomainObserver)unicornDomain
+                    .CreateInstanceFromAndUnwrap(pathToDll, typeof(AppDomainObserver).FullName);
+
+                return observer.GetTests(source);
+            }
+            finally
+            {
+                AppDomain.Unload(unicornDomain);
+            }
+        }
+#endif
+
+#if NETCOREAPP || NET
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static List<TestInfo> GetTestsInfo(string source)
+        {
+            UnicornAssemblyLoadContext observerContext = new UnicornAssemblyLoadContext(Path.GetDirectoryName(source));
+
+            observerContext.Initialize(typeof(IDataCollector));
+
+            Type observerType = observerContext.GetAssemblyContainingType(typeof(LoadContextObserver))
+                .GetTypes()
+                .First(t => t.Name.Equals(typeof(LoadContextObserver).Name));
+
+            IDataCollector observer = Activator.CreateInstance(observerType) as IDataCollector;
+
+            AssemblyName assemblyName = AssemblyName.GetAssemblyName(source);
+            Assembly testAssembly = observerContext.GetAssembly(assemblyName);
+
+            IOutcome iTestInfo = observer.CollectData(testAssembly);
+
+            //Outcome transition between load contexts.
+            byte[] bytes = SerializeInfo(iTestInfo);
+            ObserverOutcome outcome = DeserializeInfo(bytes);
+
+            return outcome.TestInfoList;
+        }
+
+#pragma warning disable SYSLIB0011 // Type or member is obsolete
+        private static byte[] SerializeInfo(IOutcome outcome)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                new BinaryFormatter().Serialize(ms, outcome);
+                return ms.ToArray();
+            }
+        }
+
+        private static ObserverOutcome DeserializeInfo(byte[] bytes)
+        {
+            using (MemoryStream memStream = new MemoryStream())
+            {
+                memStream.Write(bytes, 0, bytes.Length);
+                memStream.Seek(0, SeekOrigin.Begin);
+                return new BinaryFormatter().Deserialize(memStream) as ObserverOutcome;
+            }
+        }
+#pragma warning restore SYSLIB0011 // Type or member is obsolete
+
+#endif
     }
 }
