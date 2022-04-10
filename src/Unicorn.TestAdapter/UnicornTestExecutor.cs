@@ -124,8 +124,6 @@ namespace Unicorn.TestAdapter
 
                     if (outcomes.Any())
                     {
-                        var failedOutcomes = outcomes.Where(o => o.Result == UnicornTest.Status.Failed);
-
                         foreach (var outcomeToRecord in outcomes)
                         {
                             var testResult = ExecutorUtilities.GetTestResultFromOutcome(outcomeToRecord, test);
