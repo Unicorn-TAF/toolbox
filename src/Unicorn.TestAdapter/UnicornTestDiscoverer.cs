@@ -58,6 +58,11 @@ namespace Unicorn.TestAdapter
                     DisplayName = testInfo.MethodName,
                 };
 
+                if (testInfo.Disabled)
+                {
+                    testcase.Traits.Add(new Trait("Disabled", string.Empty));
+                }
+
                 if (!string.IsNullOrEmpty(testInfo.Author))
                 {
                     testcase.Traits.Add(new Trait("Author", testInfo.Author));
