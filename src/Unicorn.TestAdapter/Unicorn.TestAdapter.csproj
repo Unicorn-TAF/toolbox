@@ -7,6 +7,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Company>Vitaliy Dobriyan</Company>
     <Authors>Vitaliy Dobriyan</Authors>
+    <Title>Unicorn.TestAdapter</Title>
     <Description>
       Unicorn is test automation framework which provides wide spectrum of functionality out of box to start efficient test automation process in short terms.
       This package includes VS adapter for Unicorn tests.
@@ -18,13 +19,14 @@
     <RepositoryUrl>https://bitbucket.org/dobriyanchik/unicorntools</RepositoryUrl>
     <PackageProjectUrl>https://bitbucket.org/dobriyanchik/unicorntools</PackageProjectUrl>
     <PackageTags>automation tests testadapter visualstudio dotnet</PackageTags>
+    <PackageReleaseNotes>Support of netstandard, support of Taf.Core 3.0, support of multiple outcomes for executed tests.</PackageReleaseNotes>
     <PackageIcon>icon.png</PackageIcon>
     <PackageIconUrl />
     <BuildOutputTargetFolder>build</BuildOutputTargetFolder>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Unicorn.Taf.Core" Version="3.0.0" PrivateAssets="All"/> 
+    <PackageReference Include="Unicorn.Taf.Core" Version="3.0.0" PrivateAssets="All" /> 
   </ItemGroup>
   
   <ItemGroup Condition="'$(TargetFramework)' == 'net452'">

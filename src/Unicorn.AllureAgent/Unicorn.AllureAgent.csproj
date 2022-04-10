@@ -5,6 +5,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Company>Vitaliy Dobriyan</Company>
     <Authors>Vitaliy Dobriyan</Authors>
+    <Title>Unicorn.AllureAgent</Title>
     <Description>
       Unicorn.AllureAgent is Unicorn test automation framework extension which allows to report your tests execution into Allure report.
       This package includes ready for use implementation of Allure extension which is referenced by your tests.
@@ -16,6 +17,7 @@
     <RepositoryUrl>https://bitbucket.org/dobriyanchik/unicorntools</RepositoryUrl>
     <PackageProjectUrl>https://bitbucket.org/dobriyanchik/unicorntools</PackageProjectUrl>
     <PackageTags>automation allure reporting</PackageTags>
+    <PackageReleaseNotes>Support of netstandard, support of Taf.Core 3.0.</PackageReleaseNotes>
     <PackageIcon>icon.png</PackageIcon>
     <PackageIconUrl />
   </PropertyGroup>

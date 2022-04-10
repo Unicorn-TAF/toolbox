@@ -5,6 +5,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Company>Vitaliy Dobriyan</Company>
     <Authors>Vitaliy Dobriyan</Authors>
+    <Title>Unicorn.ReportPortalAgent</Title>
     <Description>
       Unicorn.ReportPortalAgent is Unicorn test automation framework extension which allows to report your tests execution into EPAM ReportPortal.
       This package includes ready for use implementation of EPAM ReportPortal extension which is referenced by your tests. 
@@ -17,6 +18,7 @@
     <RepositoryUrl>https://bitbucket.org/dobriyanchik/unicorntools</RepositoryUrl>
     <PackageProjectUrl>https://bitbucket.org/dobriyanchik/unicorntools</PackageProjectUrl>
     <PackageTags>automation report-portal reporting</PackageTags>
+    <PackageReleaseNotes>Support of netstandard, support of Taf.Core 3.0.</PackageReleaseNotes>
     <PackageIcon>icon.png</PackageIcon>
     <PackageIconUrl />
   </PropertyGroup>
