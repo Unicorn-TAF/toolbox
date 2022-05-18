@@ -8,24 +8,32 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using Unicorn.Toolbox.LaunchAnalysis;
-using Unicorn.Toolbox.Visualization;
 
-namespace Unicorn.Toolbox
+namespace Unicorn.Toolbox.Views
 {
-    public partial class MainWindow
+    /// <summary>
+    /// Interaction logic for LaunchResultView.xaml
+    /// </summary>
+    public partial class LaunchResultsView : UserControl
     {
-        private LaunchResult launchResult;
-        private ExecutedTestsFilter failedTestsFilter;
+        internal static LaunchResult launchResult;//TODO
         private ListCollectionView listCollectionView;
-        private bool groupBoxVisualizationStateTemp = false;
-        private bool trxLoaded = false;
-        private string StatusLineResults = string.Empty;
+        internal bool groupBoxVisualizationStateTemp = false;
+        internal bool trxLoaded = false;
+        private ExecutedTestsFilter failedTestsFilter;
 
+        public LaunchResultsView()
+        {
+            InitializeComponent();
+        }
+
+        public string Status { get; set; } = string.Empty;
 
         private void LoadTrx(object sender, RoutedEventArgs e)
         {
-            buttonVisualize.IsEnabled = false;
-            checkBoxFullscreen.IsEnabled = false;
+            // TODO
+            //buttonVisualize.IsEnabled = false;
+            //checkBoxFullscreen.IsEnabled = false;
 
             var openFileDialog = new OpenFileDialog
             {
@@ -39,8 +47,8 @@ namespace Unicorn.Toolbox
             }
 
             var trxFiles = openFileDialog.FileNames;
-            StatusLineResults = "Loading .trx";
-            statusBarText.Text = StatusLineResults;
+            Status = "Loading .trx";
+            //statusBarText.Text = StatusLineResults;
             var taskLoading = Task.Factory.StartNew(() =>
             {
                 launchResult = new LaunchResult();
@@ -69,8 +77,9 @@ namespace Unicorn.Toolbox
 
                     textBoxLaunchSummary.Text = launchResult.ToString();
 
-                    buttonVisualize.IsEnabled = true;
-                    checkBoxFullscreen.IsEnabled = true;
+                    //TODO
+                    //buttonVisualize.IsEnabled = true;
+                    //checkBoxFullscreen.IsEnabled = true;
                     trxLoaded = true;
 
                     stackPanelFails.Children.Clear();
@@ -84,7 +93,7 @@ namespace Unicorn.Toolbox
                 });
             }, TaskContinuationOptions.OnlyOnRanToCompletion);
 
-            StatusLineResults = $"{trxFiles.Count()} .trx files were loaded";
+            Status = $"{trxFiles.Count()} .trx files were loaded";
         }
 
         private void FilterExecutions(object sender, TextChangedEventArgs e)
@@ -97,13 +106,11 @@ namespace Unicorn.Toolbox
             listCollectionView.Filter = (item) => { return ((Execution)item).Name.Contains(((TextBox)sender).Text); };
         }
 
-        private void VisualizeResults()
-        {
-            var visualization = GetVisualizationWindow("Launch visualization");
-            visualization.Show();
+        private void ActivateSearchByMessage(object sender, RoutedEventArgs e) =>
+            checkboxFailMessageRegex.Visibility = Visibility.Visible;
 
-            new LaunchVisualizer(visualization.canvasVisualization, launchResult.Executions).Visualize();
-        }
+        private void ActivateSearchByTime(object sender, RoutedEventArgs e) =>
+            checkboxFailMessageRegex.Visibility = Visibility.Hidden;
 
         private void SearchInExecutedTests(object sender, RoutedEventArgs e)
         {
@@ -124,14 +131,8 @@ namespace Unicorn.Toolbox
         private void OpenFilteredTests(object sender, MouseButtonEventArgs e)
         {
             var window = new WindowTestsByMessage();
-            window.gridResults.ItemsSource = failedTestsFilter.FilteredResults;
+            window.SetDataSource(failedTestsFilter.FilteredResults);
             window.ShowDialog();
         }
-
-        private void ActivateSearchByMessage(object sender, RoutedEventArgs e) =>
-            checkboxFailMessageRegex.Visibility = Visibility.Visible;
-
-        private void ActivateSearchByTime(object sender, RoutedEventArgs e) =>
-            checkboxFailMessageRegex.Visibility = Visibility.Hidden;
     }
 }

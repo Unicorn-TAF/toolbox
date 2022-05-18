@@ -22,13 +22,13 @@ namespace Unicorn.Toolbox.Analysis
             }
         }
 
-        public string Name { get; set; }
+        public string Name { get; }
 
         public List<TestInfo> TestsInfos { get; set; }
 
-        public List<string> Tags { get; set; }
+        public List<string> Tags { get; }
 
-        public Dictionary<string, string> Metadata { get; set; }
+        public Dictionary<string, string> Metadata { get; }
 
         public string FeaturesString => "#" + string.Join(" #", Tags).ToLowerInvariant();
 

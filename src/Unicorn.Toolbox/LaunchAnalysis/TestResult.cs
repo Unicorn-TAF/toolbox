@@ -21,20 +21,20 @@ namespace Unicorn.Toolbox.LaunchAnalysis
             ErrorMessage = errorMessage;
         }
 
-        public string Name { get; set; }
+        public string Name { get; }
 
-        public Status Status { get; set; }
+        public Status Status { get;}
 
-        public DateTime StartTime { get; set; }
+        public DateTime StartTime { get;}
 
-        public DateTime EndTime { get; set; }
+        public DateTime EndTime { get;}
 
-        public TimeSpan Duration { get; set; }
+        public TimeSpan Duration { get;}
 
-        public string TestListId { get; set; }
+        public string TestListId { get;}
 
-        public string TestListName { get; set; }
+        public string TestListName { get;}
 
-        public string ErrorMessage { get; set; }
+        public string ErrorMessage { get;}
     }
 }

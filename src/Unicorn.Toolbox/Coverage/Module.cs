@@ -20,7 +20,7 @@ namespace Unicorn.Toolbox.Coverage
 
         public List<SuiteInfo> Suites { get; set; } = new List<SuiteInfo>();
 
-        public bool Covered => this.Suites.Any();
+        public bool Covered => Suites.Any();
 
         public override string ToString() =>
             $"Module '{Name}'";

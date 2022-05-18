@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using Unicorn.Toolbox.Analysis.Filtering;
 using Unicorn.Toolbox.Visualization;
 using Unicorn.Toolbox.Visualization.Palettes;
 
@@ -111,19 +112,20 @@ namespace Unicorn.Toolbox
         {
             if (tabResultsAnalysis.IsSelected)
             {
-                groupBoxVisualizationStateTemp = groupBoxVisualization.IsEnabled;
+                LaunchResultsView.groupBoxVisualizationStateTemp = groupBoxVisualization.IsEnabled;
                 groupBoxVisualization.IsEnabled = true;
-                buttonVisualize.IsEnabled = trxLoaded;
-                checkBoxFullscreen.IsEnabled = trxLoaded;
+                buttonVisualize.IsEnabled = LaunchResultsView.trxLoaded;
+                checkBoxFullscreen.IsEnabled = LaunchResultsView.trxLoaded;
                 checkBoxModern.IsEnabled = false;
                 comboBoxPalette.IsEnabled = false;
 
-                if (comboFilterExecutedTestsBy.SelectedIndex.Equals(-1))
-                {
-                    comboFilterExecutedTestsBy.SelectedIndex = 0;
-                }
+                //TODO
+                //if (comboFilterExecutedTestsBy.SelectedIndex.Equals(-1))
+                //{
+                //    comboFilterExecutedTestsBy.SelectedIndex = 0;
+                //}
 
-                statusBarText.Text = StatusLineResults;
+                statusBarText.Text = LaunchResultsView.Status;
             }
             else if (tabCoverage.IsSelected)
             {
@@ -131,18 +133,83 @@ namespace Unicorn.Toolbox
                 checkBoxFullscreen.IsEnabled = true;
                 checkBoxModern.IsEnabled = true;
                 comboBoxPalette.IsEnabled = true;
-                groupBoxVisualization.IsEnabled = groupBoxVisualizationStateTemp;
+                groupBoxVisualization.IsEnabled = LaunchResultsView.groupBoxVisualizationStateTemp;
 
-                statusBarText.Text = StatusLineCoverage;
+                statusBarText.Text = CoverageView.Status;
             }
             else if (tabStatistics.IsSelected)
             {
-                statusBarText.Text = StatusLineStatistics;
+                statusBarText.Text = StatisticsView.Status;
             }
             else
             {
                 throw new NotImplementedException($"Please update {nameof(statusBarText)} on tab change");
             }
+        }
+
+        private FilterType GetFilter()
+        {
+            if (StatisticsView.tabFeaures.IsSelected)
+            {
+                return FilterType.Feature;
+            }
+            else if (StatisticsView.tabCategories.IsSelected)
+            {
+                return FilterType.Category;
+            }
+            else
+            {
+                return FilterType.Author;
+            }
+        }
+
+        private void VisualizeStatistics()
+        {
+            var filter = GetFilter();
+
+            var visualization = GetVisualizationWindow($"Overall tests statistics: {filter}");
+            visualization.Show();
+
+            if (checkBoxModern.IsChecked.HasValue && checkBoxModern.IsChecked.Value)
+            {
+                new VisualizerCircles(visualization.canvasVisualization, GetPalette())
+                    .VisualizeAutomationData(StatisticsView.analyzer.Data, filter);
+            }
+            else
+            {
+                new VisualizerBars(visualization.canvasVisualization, GetPalette())
+                    .VisualizeAutomationData(StatisticsView.analyzer.Data, filter);
+
+                InjectExportToVisualization(visualization);
+            }
+        }
+
+        private void VisualizeCoverage()
+        {
+            var visualization = GetVisualizationWindow("Modules coverage by tests");
+            visualization.Show();
+
+            if (checkBoxModern.IsChecked.HasValue && checkBoxModern.IsChecked.Value)
+            {
+                new VisualizerCircles(visualization.canvasVisualization, GetPalette())
+                    .VisualizeCoverage(CoverageView._coverage.Specs);
+            }
+            else
+            {
+                new VisualizerBars(visualization.canvasVisualization, GetPalette())
+                    .VisualizeCoverage(CoverageView._coverage.Specs);
+
+                InjectExportToVisualization(visualization);
+            }
+        }
+
+        private void VisualizeResults()
+        {
+            var visualization = GetVisualizationWindow("Launch visualization");
+            visualization.Show();
+
+            new LaunchVisualizer(visualization.canvasVisualization, Views.LaunchResultsView.launchResult.Executions)
+                .Visualize();
         }
     }
 }

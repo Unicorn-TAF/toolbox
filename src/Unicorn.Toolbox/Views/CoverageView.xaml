@@ -1,0 +1,37 @@
+﻿<UserControl x:Class="Unicorn.Toolbox.Views.CoverageView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Unicorn.Toolbox.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="1125">
+    <Grid Background="#FFE5E5E5">
+        <Button x:Name="buttonLoadSpecs" Content="Load Specs" HorizontalAlignment="Left" Margin="10,25,0,0" VerticalAlignment="Top" Width="80" Click="LoadSpecs" Height="22"/>
+        <Button x:Name="buttonGetCoverage" Content="Get coverage" HorizontalAlignment="Left" Margin="130,25,0,0" VerticalAlignment="Top" Width="80" Click="GetAutomationCoverage" IsEnabled="False" Height="22"/>
+        <DataGrid x:Name="gridCoverage" HorizontalScrollBarVisibility="Disabled" HeadersVisibility="All" Grid.Column="0" RowHeaderWidth="0" CanUserAddRows="False" AutoGenerateColumns="False"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="220,70,10,100">
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Header="Module" Width="720">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <TextBlock VerticalAlignment="Center" Text="{Binding Name}"/>
+                            </Grid>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Width="*" IsReadOnly="True" Header="Covered by tests">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <CheckBox IsChecked="{Binding Path=Covered, Mode=OneWay}" IsEnabled="False" Margin="2,0,2,0" HorizontalAlignment="Center" VerticalAlignment="Stretch" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+        <ScrollViewer Margin="10,70,0,100" VerticalScrollBarVisibility="Auto" HorizontalAlignment="Left" Width="200">
+            <Grid x:Name="gridModules"/>
+        </ScrollViewer>
+        <TextBox x:Name="textBoxRunTags" Text="" Margin="10,0,10,10" FontSize="11" TextWrapping="Wrap" Height="80" VerticalAlignment="Bottom"/>
+    </Grid>
+</UserControl>

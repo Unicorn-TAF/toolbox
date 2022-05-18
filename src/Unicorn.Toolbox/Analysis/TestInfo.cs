@@ -22,13 +22,13 @@ namespace Unicorn.Toolbox.Analysis
             }
         }
 
-        public string Name { get; set; }
+        public string Name { get; }
 
-        public string Author { get; set; }
+        public string Author { get; }
 
-        public bool Disabled { get; set; }
+        public bool Disabled { get; }
 
-        public List<string> Categories { get; set; }
+        public List<string> Categories { get; }
 
         public string CategoriesString => string.Join(", ", Categories).ToLowerInvariant();
 

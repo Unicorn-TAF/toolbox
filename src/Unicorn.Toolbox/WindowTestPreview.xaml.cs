@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System.Collections.Generic;
+using System.Windows;
+using Unicorn.Toolbox.Analysis;
 
 namespace Unicorn.Toolbox
 {
@@ -10,6 +12,11 @@ namespace Unicorn.Toolbox
         public WindowTestPreview()
         {
             InitializeComponent();
+        }
+
+        public void SetDataSource(List<TestInfo> data)
+        {
+            TestsPreview.gridResults.ItemsSource = data;
         }
     }
 }

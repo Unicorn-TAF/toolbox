@@ -3,193 +3,20 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Unicorn.Toolbox"
+        xmlns:local="clr-namespace:Unicorn.Toolbox" 
+        xmlns:views="clr-namespace:Unicorn.Toolbox.Views"
         mc:Ignorable="d"
         Title="Unicorn toolbox" Height="750" Width="1200" MinHeight="750" MinWidth="1200" WindowStartupLocation="CenterScreen" Icon="app.ico">
     <Grid>
         <TabControl x:Name="tabControl" Margin="10,10,10,30" SelectionChanged="TabChanged">
             <TabItem x:Name="tabStatistics" Header="Tests statistics" Width="100">
-                <Grid x:Name="gridStatistics" Background="#FFE5E5E5">
-                    <DataGrid x:Name="gridResults" SelectionUnit="CellOrRowHeader" ClipboardCopyMode="IncludeHeader" HorizontalScrollBarVisibility="Disabled" HeadersVisibility="All" Grid.Column="0" RowHeaderWidth="0" CanUserAddRows="False" AutoGenerateColumns="False" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="220,70,10,100">
-                        <DataGrid.Columns>
-                            <DataGridTemplateColumn Header="Test Suite" Width="350" ClipboardContentBinding="{Binding Name}">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <DataGridCell Content="{Binding Name}" MouseDoubleClick="DataGridCell_MouseDoubleClick"/>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                            <DataGridTemplateColumn Header="Tags" Width="150" ClipboardContentBinding="{Binding FeaturesString}">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding FeaturesString}" TextWrapping="Wrap"/>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                            <DataGridTemplateColumn Header="Metadata" Width="*" ClipboardContentBinding="{Binding MetadataString}">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <DataGridCell Content="{Binding MetadataString}" />
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                    <Grid x:Name="gridFilters" Margin="0,70,950,100" IsEnabled="False">
-                        <TabControl x:Name="tabControlFilters" HorizontalAlignment="Left" Margin="10,0,0,0" Width="200">
-                            <TabItem x:Name="tabFeaures" Header="Tags">
-                                <ScrollViewer Margin="0,100,0,0" VerticalScrollBarVisibility="Auto">
-                                    <Grid x:Name="gridFeatures" Background="White"/>
-                                </ScrollViewer>
-                            </TabItem>
-                            <TabItem x:Name="tabCategories" Header="Categories">
-                                <ScrollViewer Margin="0,95,0,0" VerticalScrollBarVisibility="Auto">
-                                    <Grid x:Name="gridCategories" Background="White"/>
-                                </ScrollViewer>
-                            </TabItem>
-                            <TabItem x:Name="tabAuthors" Header="Authors">
-                                <ScrollViewer Margin="0,95,0,0" VerticalScrollBarVisibility="Auto">
-                                    <Grid x:Name="gridAuthors" Background="White"/>
-                                </ScrollViewer>
-                            </TabItem>
-                        </TabControl>
-                        <Button x:Name="buttonShowAll" Content="Show all" HorizontalAlignment="Left" VerticalAlignment="Top" Width="80" Margin="24,30,0,0" Click="ShowAllClick" Height="22"/>
-                        <Button x:Name="buttonApplyFilter" Content="Apply Filter" HorizontalAlignment="Left" VerticalAlignment="Top" Width="80" Margin="118,30,0,0" Click="ApplyFilter" Height="22"/>
-                        <CheckBox x:Name="checkBoxShowHide" Content="Show/Hide all" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="24,60,0,0" RenderTransformOrigin="0.633,1.422" Unchecked="HideAll" Checked="ShowAll"/>
-                        <CheckBox x:Name="checkOnlyEnabledTests" Content="Only Enabled tests" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="24,100,0,0" RenderTransformOrigin="0.633,1.422" Checked="FilterOnlyEnabledTests"/>
-                        <CheckBox x:Name="checkOnlyDisabledTests" Content="Only Disabled tests" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="24,80,0,0" RenderTransformOrigin="0.633,1.422" Checked="FilterOnlyDisabledTests"/>
-                    </Grid>
-                    <TextBox x:Name="textBoxCurrentFilter" Text="" Margin="10,0,10,10" FontSize="11" Height="80" VerticalAlignment="Bottom" IsEnabled="True" IsReadOnly="True"/>
-                    <Button x:Name="buttonLoadTestsAssembly" Content="Load tests dll" VerticalAlignment="Top" Click="LoadTestsAssembly" Margin="10,25,0,0" HorizontalAlignment="Left" Width="80" Height="22"/>
-                    <Button x:Name="buttonExportStats" Content="Export" Margin="0,25,10,0" VerticalAlignment="Top" Click="buttonExportStats_Click" HorizontalAlignment="Right" Width="80" IsEnabled="False" Height="22"/>
-                    <CheckBox x:Name="checkboxTestData" Content="consider parameterization" Margin="10,5,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" />
-                </Grid>
+                <views:StatisticsView x:Name="StatisticsView"/>
             </TabItem>
             <TabItem x:Name="tabCoverage" Header="Coverage" Width="100">
-                <Grid Background="#FFE5E5E5">
-                    <Button x:Name="buttonLoadSpecs" Content="Load Specs" HorizontalAlignment="Left" Margin="10,25,0,0" VerticalAlignment="Top" Width="80" Click="LoadSpecs" Height="22"/>
-                    <Button x:Name="buttonGetCoverage" Content="Get coverage" HorizontalAlignment="Left" Margin="130,25,0,0" VerticalAlignment="Top" Width="80" Click="GetAutomationCoverage" IsEnabled="False" Height="22"/>
-                    <DataGrid x:Name="gridCoverage" HorizontalScrollBarVisibility="Disabled" HeadersVisibility="All" Grid.Column="0" RowHeaderWidth="0" CanUserAddRows="False" AutoGenerateColumns="False"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="220,70,10,100">
-                        <DataGrid.Columns>
-                            <DataGridTemplateColumn Header="Module" Width="720">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Grid>
-                                            <TextBlock VerticalAlignment="Center" Text="{Binding Name}"/>
-                                        </Grid>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                            <DataGridTemplateColumn Width="*" IsReadOnly="True" Header="Covered by tests">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <CheckBox IsChecked="{Binding Path=Covered, Mode=OneWay}" IsEnabled="False" Margin="2,0,2,0" HorizontalAlignment="Center" VerticalAlignment="Stretch" />
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                    <ScrollViewer Margin="10,70,0,100" VerticalScrollBarVisibility="Auto" HorizontalAlignment="Left" Width="200">
-                        <Grid x:Name="gridModules"/>
-                    </ScrollViewer>
-                    <TextBox x:Name="textBoxRunTags" Text="" Margin="10,0,10,10" FontSize="11" TextWrapping="Wrap" Height="80" VerticalAlignment="Bottom"/>
-                </Grid>
+                <views:CoverageView x:Name="CoverageView" />
             </TabItem>
             <TabItem x:Name="tabResultsAnalysis" Header="Results Analysis" Width="100">
-                <Grid Background="#FFE5E5E5">
-                    <Button x:Name="btnLoadTrx" Content="Load TRX files" VerticalAlignment="Top" Margin="10,25,0,0" Click="LoadTrx" HorizontalAlignment="Left" Width="80" Height="22"/>
-                    <DataGrid x:Name="gridTestResults" HorizontalScrollBarVisibility="Disabled" HeadersVisibility="All" RowHeaderWidth="0" CanUserAddRows="False" CanUserResizeColumns="False"
-                              CanUserSortColumns="True" AutoGenerateColumns="False" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="10,70,0,100" HorizontalAlignment="Left" Width="700">
-                        <DataGrid.Columns>
-                            <DataGridTemplateColumn Header="Execution" Width="*" ClipboardContentBinding="{Binding Name}">
-                                <DataGridTemplateColumn.HeaderTemplate>
-                                    <DataTemplate>
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBlock VerticalAlignment="Center" Text="Execution:  "/>
-                                            <TextBox Width="150" TextChanged="FilterExecutions"/>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.HeaderTemplate>
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Grid>
-                                            <TextBlock VerticalAlignment="Center" Text="{Binding Name}"/>
-                                        </Grid>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                            <DataGridTemplateColumn Width="120" HeaderStyle="{StaticResource WrappedColumnHeaderStyle}" Header="Total duration (min)" SortMemberPath="DurationFullMin" ClipboardContentBinding="{Binding DurationFullMin}">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Grid>
-                                            <TextBlock VerticalAlignment="Center" TextAlignment="Center" ToolTip="Full TRX duration (finish - start)" Text="{Binding DurationFullMin, StringFormat={}{0:F1}}"/>
-                                        </Grid>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                            <DataGridTemplateColumn Width="140" HeaderStyle="{StaticResource WrappedColumnHeaderStyle}" Header="Raw test duration (min)"  SortMemberPath="DurationMin" ClipboardContentBinding="{Binding DurationMin}">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Grid>
-                                            <TextBlock VerticalAlignment="Center" TextAlignment="Center" ToolTip="Only tests duration(before/after suites and time in beetween tests excluded) (min)" Text="{Binding DurationMin, StringFormat={}{0:F1}}"/>
-                                        </Grid>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                            <DataGridTemplateColumn Width="50" Header="Suites" SortMemberPath="SuitesCount" ClipboardContentBinding="{Binding SuitesCount}">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Grid>
-                                            <TextBlock VerticalAlignment="Center" TextAlignment="Center"  Text="{Binding SuitesCount}"/>
-                                        </Grid>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                            <DataGridTemplateColumn Width="50" Header="Tests" SortMemberPath="TestsCount" ClipboardContentBinding="{Binding TestsCount}">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Grid>
-                                            <TextBlock VerticalAlignment="Center" TextAlignment="Center"  Text="{Binding TestsCount}"/>
-                                        </Grid>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                            <DataGridTemplateColumn Width="50" Header="Fails" SortMemberPath="FailedTests" ClipboardContentBinding="{Binding FailedTests}">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Grid>
-                                            <TextBlock VerticalAlignment="Center" TextAlignment="Center"  Text="{Binding FailedTests}"/>
-                                        </Grid>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                            <DataGridTemplateColumn Width="50" Header="Skips" SortMemberPath="SkippedTests" ClipboardContentBinding="{Binding SkippedTests}">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Grid>
-                                            <TextBlock VerticalAlignment="Center" TextAlignment="Center"  Text="{Binding SkippedTests}"/>
-                                        </Grid>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                    <TextBox x:Name="textBoxLaunchSummary" HorizontalAlignment="Left" Margin="10,0,0,10" TextWrapping="Wrap" Text="Summary . . ." Width="700" FontFamily="Consolas" Height="80" VerticalAlignment="Bottom"/>
-                    <GroupBox Header="Find failed tests" Margin="0,0,10,10" Height="85" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="400">
-                        <Grid>
-                            <TextBox x:Name="textBoxFailMessage" Margin="10,0,10,35" TextWrapping="Wrap" Text="" VerticalAlignment="Bottom" Height="22"/>
-                            <CheckBox x:Name="checkboxFailMessageRegex" Content="Regex" Margin="140,0,0,7" RenderTransformOrigin="0.544,1.385" Height="16" VerticalAlignment="Bottom" HorizontalAlignment="Left"/>
-                            <ComboBox x:Name="comboFilterExecutedTestsBy" HorizontalAlignment="Left" VerticalContentAlignment="Top" HorizontalContentAlignment="Center" Margin="10,0,0,5" Width="120" Height="22" VerticalAlignment="Bottom">
-                                <ComboBoxItem Content="By fail message" Selected="ActivateSearchByMessage"/>
-                                <ComboBoxItem Content="By time (local)" Selected="ActivateSearchByTime"/>
-                            </ComboBox>
-                            <Button x:Name="buttonSearchByFailMessage" Content="Search" Margin="0,0,10,5" VerticalAlignment="Bottom" Click="SearchInExecutedTests" RenderTransformOrigin="3.24,0.5" Height="22" HorizontalAlignment="Right" Width="80"/>
-                            <Label x:Name="labelFoundFailedTests" Content="" Margin="0,0,10,8" Height="26" HorizontalContentAlignment="Right" VerticalAlignment="Bottom" FontWeight="Bold" Foreground="#FF3399FF" Cursor="Hand" MouseDown="OpenFilteredTests" HorizontalAlignment="Right"/>
-                        </Grid>
-                    </GroupBox>
-                    <Label Content="Top 5 fail reasons" HorizontalAlignment="Right" Margin="0,0,160,0" VerticalAlignment="Top" FontWeight="Bold"/>
-                    <StackPanel x:Name="stackPanelFails" HorizontalAlignment="Right" Width="400" Margin="0,30,10,100" />
-                </Grid>
+                <views:LaunchResultsView x:Name="LaunchResultsView"/>
             </TabItem>
         </TabControl>
         <DockPanel Height="25" VerticalAlignment="Bottom">

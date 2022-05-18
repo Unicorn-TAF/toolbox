@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Collections.Generic;
+using System.Windows;
 
 namespace Unicorn.Toolbox.LaunchAnalysis
 {
@@ -10,6 +11,11 @@ namespace Unicorn.Toolbox.LaunchAnalysis
         public WindowTestsByMessage()
         {
             InitializeComponent();
+        }
+
+        public void SetDataSource(Dictionary<string, IEnumerable<TestResult>> data)
+        {
+            TestsByMessage.gridResults.ItemsSource = data;
         }
     }
 }

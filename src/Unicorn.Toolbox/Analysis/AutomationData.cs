@@ -19,15 +19,15 @@ namespace Unicorn.Toolbox.Analysis
             FilteredInfo = null;
         }
 
-        public List<SuiteInfo> SuitesInfos { get; protected set; }
+        public List<SuiteInfo> SuitesInfos { get; }
 
         public List<SuiteInfo> FilteredInfo { get; set; }
 
-        public HashSet<string> UniqueFeatures { get; protected set; }
+        public HashSet<string> UniqueFeatures { get; }
 
-        public HashSet<string> UniqueCategories { get; protected set; }
+        public HashSet<string> UniqueCategories { get; }
 
-        public HashSet<string> UniqueAuthors { get; protected set; }
+        public HashSet<string> UniqueAuthors { get; }
 
         public void ClearFilters() =>
             FilteredInfo = SuitesInfos;

@@ -2,8 +2,9 @@
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Unicorn.Toolbox.LaunchAnalysis;
 
-namespace Unicorn.Toolbox.LaunchAnalysis
+namespace Unicorn.Toolbox.Views
 {
     /// <summary>
     /// Interaction logic for FailedTestsGroup.xaml
@@ -36,7 +37,7 @@ namespace Unicorn.Toolbox.LaunchAnalysis
         private void LabelFoundFailedTests_MouseDown(object sender, MouseButtonEventArgs e)
         {
             var window = new WindowTestsByMessage();
-            window.gridResults.ItemsSource = FailedResults;
+            window.SetDataSource(FailedResults);
             window.ShowDialog();
         }
     }

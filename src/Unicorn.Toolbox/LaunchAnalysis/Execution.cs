@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using Unicorn.Taf.Core.Testing;
 
 namespace Unicorn.Toolbox.LaunchAnalysis
 {
