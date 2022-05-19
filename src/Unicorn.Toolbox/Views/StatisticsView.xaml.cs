@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using Unicorn.Toolbox.Analysis;
 using Unicorn.Toolbox.Analysis.Filtering;
+using Unicorn.Toolbox.ViewModels;
 
 namespace Unicorn.Toolbox.Views
 {
@@ -28,11 +29,22 @@ namespace Unicorn.Toolbox.Views
         {
             string testSuiteName = (sender as DataGridCell).Content.ToString();
 
-            WindowTestPreview preview = new WindowTestPreview();
-            preview.Title += testSuiteName;
-            preview.ShowActivated = false;
-            preview.Show();
-            preview.SetDataSource(analyzer.Data.FilteredInfo.First(s => s.Name.Equals(testSuiteName)).TestsInfos);
+            var window = new DialogHost("Suite preview: " + testSuiteName)
+            {
+                DataContext = new DialogHostViewModel(
+                    analyzer.Data.FilteredInfo.First(s => s.Name.Equals(testSuiteName)).TestsInfos),
+                ShowActivated = false
+            };
+
+            //window.SetDataSource(FailedResults);
+            window.ShowDialog();
+
+            // TODO
+            //WindowTestPreview preview = new WindowTestPreview();
+            //preview.Title += testSuiteName;
+            //preview.ShowActivated = false;
+            //preview.Show();
+            //preview.SetDataSource(analyzer.Data.FilteredInfo.First(s => s.Name.Equals(testSuiteName)).TestsInfos);
         }
 
         private void ShowAllClick(object sender, RoutedEventArgs e) => ShowAll();

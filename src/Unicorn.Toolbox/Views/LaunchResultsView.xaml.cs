@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using Unicorn.Toolbox.LaunchAnalysis;
+using Unicorn.Toolbox.ViewModels;
 
 namespace Unicorn.Toolbox.Views
 {
@@ -130,8 +131,11 @@ namespace Unicorn.Toolbox.Views
 
         private void OpenFilteredTests(object sender, MouseButtonEventArgs e)
         {
-            var window = new WindowTestsByMessage();
-            window.SetDataSource(failedTestsFilter.FilteredResults);
+            var window = new DialogHost("Failed tests by error message filter")
+            {
+                DataContext = new DialogHostViewModel(failedTestsFilter.FilteredResults)
+            };
+            //window.SetFailedTestsDataSource(failedTestsFilter.FilteredResults);
             window.ShowDialog();
         }
     }

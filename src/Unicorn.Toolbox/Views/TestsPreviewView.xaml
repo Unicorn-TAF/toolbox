@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <DataGrid x:Name="gridResults" SelectionUnit="CellOrRowHeader" ClipboardCopyMode="IncludeHeader" HorizontalScrollBarVisibility="Disabled" HeadersVisibility="All" Grid.Column="0" RowHeaderWidth="0" CanUserAddRows="False" AutoGenerateColumns="False"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="10">
+        <DataGrid x:Name="gridResults" ItemsSource="{Binding TestInfos}" SelectionUnit="CellOrRowHeader" ClipboardCopyMode="IncludeHeader" HorizontalScrollBarVisibility="Disabled" HeadersVisibility="All" Grid.Column="0" RowHeaderWidth="0" CanUserAddRows="False" AutoGenerateColumns="False"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="10">
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="Test" Width="*" ClipboardContentBinding="{Binding Name}">
                     <DataGridTemplateColumn.CellTemplate>

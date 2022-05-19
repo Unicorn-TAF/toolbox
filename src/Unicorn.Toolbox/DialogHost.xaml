@@ -4,9 +4,20 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Unicorn.Toolbox"
+        xmlns:views="clr-namespace:Unicorn.Toolbox.Views"
+        xmlns:vms="clr-namespace:Unicorn.Toolbox.ViewModels"
         mc:Ignorable="d"
-        Title="DialogHost" Height="450" Width="800">
+        Height="626" Width="814" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" Icon="/Unicorn.Toolbox;component/app.ico">
     <Grid>
-        
+        <Grid.Resources>
+            <DataTemplate DataType="{x:Type vms:FailedTestsViewModel}">
+                <views:FailedTestsView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vms:TestPreviewViewModel}">
+                <views:TestsPreviewView />
+            </DataTemplate>
+        </Grid.Resources>
+
+        <ContentControl x:Name="Content" Content="{Binding CurrentViewModel}" />
     </Grid>
 </Window>

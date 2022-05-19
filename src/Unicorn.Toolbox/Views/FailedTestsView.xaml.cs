@@ -18,9 +18,9 @@ namespace Unicorn.Toolbox.Views
     /// <summary>
     /// Interaction logic for TestsByMessageView.xaml
     /// </summary>
-    public partial class TestsByMessageView : UserControl
+    public partial class FailedTestsView : UserControl
     {
-        public TestsByMessageView()
+        public FailedTestsView()
         {
             InitializeComponent();
         }

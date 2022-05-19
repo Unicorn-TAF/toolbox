@@ -3,6 +3,7 @@ using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Unicorn.Toolbox.LaunchAnalysis;
+using Unicorn.Toolbox.ViewModels;
 
 namespace Unicorn.Toolbox.Views
 {
@@ -36,8 +37,12 @@ namespace Unicorn.Toolbox.Views
 
         private void LabelFoundFailedTests_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            var window = new WindowTestsByMessage();
-            window.SetDataSource(FailedResults);
+            var window = new DialogHost("Failed tests by error message filter")
+            { 
+                DataContext = new DialogHostViewModel(FailedResults) 
+            };
+
+            //window.SetDataSource(FailedResults);
             window.ShowDialog();
         }
     }
