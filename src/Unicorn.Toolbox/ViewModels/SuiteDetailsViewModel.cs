@@ -3,11 +3,11 @@ using Unicorn.Toolbox.Analysis;
 
 namespace Unicorn.Toolbox.ViewModels
 {
-    public class TestPreviewViewModel : ViewModelBase
+    public class SuiteDetailsViewModel : ViewModelBase
     {
         public List<TestInfo> TestInfos { get; private set; }
 
-        public TestPreviewViewModel(List<TestInfo> data)
+        public SuiteDetailsViewModel(List<TestInfo> data)
         {
             TestInfos = data;
         }

@@ -13,8 +13,8 @@
             <DataTemplate DataType="{x:Type vms:FailedTestsViewModel}">
                 <views:FailedTestsView />
             </DataTemplate>
-            <DataTemplate DataType="{x:Type vms:TestPreviewViewModel}">
-                <views:TestsPreviewView />
+            <DataTemplate DataType="{x:Type vms:SuiteDetailsViewModel}">
+                <views:SuiteDetailsView />
             </DataTemplate>
         </Grid.Resources>
 

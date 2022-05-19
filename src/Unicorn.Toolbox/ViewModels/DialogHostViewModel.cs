@@ -14,7 +14,7 @@ namespace Unicorn.Toolbox.ViewModels
 
         public DialogHostViewModel(List<TestInfo> data)
         {
-            CurrentViewModel = new TestPreviewViewModel(data);
+            CurrentViewModel = new SuiteDetailsViewModel(data);
             OnCurrentViewModelChanged();
         }
 
