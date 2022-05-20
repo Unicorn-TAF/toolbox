@@ -12,7 +12,14 @@
                 <DataGridTemplateColumn Header="Test Suite" Width="350" ClipboardContentBinding="{Binding Name}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <DataGridCell Content="{Binding Name}" MouseDoubleClick="DataGridCell_MouseDoubleClick"/>
+                            <DataGridCell Content="{Binding Name}">
+                                <DataGridCell.InputBindings>
+                                    <MouseBinding
+                                        MouseAction="LeftDoubleClick"
+                                        Command="{Binding DataContext.OpenSuiteDetailsCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding Name}"/>
+                                </DataGridCell.InputBindings>
+                            </DataGridCell>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -50,15 +57,15 @@
                     </ScrollViewer>
                 </TabItem>
             </TabControl>
-            <Button x:Name="buttonShowAll" Content="Show all" HorizontalAlignment="Left" VerticalAlignment="Top" Width="80" Margin="24,30,0,0" Click="ShowAllClick" Height="22"/>
-            <Button x:Name="buttonApplyFilter" Content="Apply Filter" HorizontalAlignment="Left" VerticalAlignment="Top" Width="80" Margin="118,30,0,0" Click="ApplyFilter" Height="22"/>
-            <CheckBox x:Name="checkBoxShowHide" Content="Show/Hide all" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="24,60,0,0" RenderTransformOrigin="0.633,1.422" Unchecked="HideAll" Checked="ShowAll"/>
-            <CheckBox x:Name="checkOnlyEnabledTests" Content="Only Enabled tests" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="24,100,0,0" RenderTransformOrigin="0.633,1.422" Checked="FilterOnlyEnabledTests"/>
-            <CheckBox x:Name="checkOnlyDisabledTests" Content="Only Disabled tests" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="24,80,0,0" RenderTransformOrigin="0.633,1.422" Checked="FilterOnlyDisabledTests"/>
+            <Button x:Name="buttonShowAll" Command="{Binding ShowAllStatisticsCommand}" Content="Show all" HorizontalAlignment="Left" VerticalAlignment="Top" Width="80" Margin="24,30,0,0" Height="22"/>
+            <Button x:Name="buttonApplyFilter" Content="Apply Filter" Command="{Binding ApplyFilterCommand}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="80" Margin="118,30,0,0" Height="22"/>
+            <CheckBox x:Name="checkBoxShowHide" Content="Show/Hide all" IsChecked="{Binding ShowHideAllCheckboxes}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="24,60,0,0" RenderTransformOrigin="0.633,1.422"/>
+            <CheckBox x:Name="checkOnlyEnabledTests" Content="Only Enabled tests" IsChecked="{Binding FilterOnlyEnabledTests}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="24,100,0,0" RenderTransformOrigin="0.633,1.422"/>
+            <CheckBox x:Name="checkOnlyDisabledTests" Content="Only Disabled tests" IsChecked="{Binding FilterOnlyDisabledTests}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="24,80,0,0" RenderTransformOrigin="0.633,1.422"/>
         </Grid>
         <TextBox x:Name="textBoxCurrentFilter" Text="" Margin="10,0,10,10" FontSize="11" Height="80" VerticalAlignment="Bottom" IsEnabled="True" IsReadOnly="True"/>
-        <Button x:Name="buttonLoadTestsAssembly" Content="Load tests dll" VerticalAlignment="Top" Click="LoadTestsAssembly" Margin="10,25,0,0" HorizontalAlignment="Left" Width="80" Height="22"/>
-        <Button x:Name="buttonExportStats" Content="Export" Margin="0,25,10,0" VerticalAlignment="Top" Click="buttonExportStats_Click" HorizontalAlignment="Right" Width="80" IsEnabled="False" Height="22"/>
-        <CheckBox x:Name="checkboxTestData" Content="consider parameterization" Margin="10,5,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" />
+        <Button x:Name="buttonLoadTestsAssembly" Command="{Binding LoadTestsAssemblyCommand}" Content="Load tests dll" VerticalAlignment="Top" Margin="10,25,0,0" HorizontalAlignment="Left" Width="80" Height="22"/>
+        <Button x:Name="buttonExportStats" Command="{Binding ExportStatisticsCommand}" Content="Export" Margin="0,25,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="80" IsEnabled="False" Height="22"/>
+        <CheckBox x:Name="checkboxTestData" Content="consider parameterization" Margin="10,5,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" IsChecked="{Binding ConsiderTestData}" />
     </Grid>
 </UserControl>

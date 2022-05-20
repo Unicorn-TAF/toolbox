@@ -1,0 +1,23 @@
+﻿using Unicorn.Toolbox.Analysis;
+using Unicorn.Toolbox.ViewModels;
+
+namespace Unicorn.Toolbox.Commands
+{
+    public class ShowAllStatisticsCommand : CommandBase
+    {
+        private readonly StatisticsViewModel _viewModel;
+        private readonly Analyzer _analyzer;
+
+        public ShowAllStatisticsCommand(StatisticsViewModel viewModel, Analyzer analyzer)
+        {
+            _viewModel = viewModel;
+            _analyzer = analyzer;
+        }
+
+        public override void Execute(object parameter)
+        {
+            _analyzer.Data.ClearFilters();
+            _viewModel.ApplyFilteredData(true);
+        }
+    }
+}

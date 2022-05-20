@@ -10,7 +10,7 @@
     <Grid>
         <TabControl x:Name="tabControl" Margin="10,10,10,30" SelectionChanged="TabChanged">
             <TabItem x:Name="tabStatistics" Header="Tests statistics" Width="100">
-                <views:StatisticsView x:Name="StatisticsView"/>
+                <views:StatisticsView x:Name="StatisticsView" DataContext="{Binding StatisticsViewModel}"/>
             </TabItem>
             <TabItem x:Name="tabCoverage" Header="Coverage" Width="100">
                 <views:CoverageView x:Name="CoverageView" />

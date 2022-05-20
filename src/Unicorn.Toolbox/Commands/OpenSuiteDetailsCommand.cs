@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using Unicorn.Toolbox.Analysis;
 using Unicorn.Toolbox.ViewModels;
 
@@ -21,7 +17,17 @@ namespace Unicorn.Toolbox.Commands
 
         public override void Execute(object parameter)
         {
-            throw new NotImplementedException();
+            string testSuiteName = parameter.ToString();
+
+            var window = new DialogHost("Suite preview: " + testSuiteName)
+            {
+                DataContext = new DialogHostViewModel(
+                    _analyzer.Data.FilteredInfo.First(s => s.Name.Equals(testSuiteName)).TestsInfos),
+                ShowActivated = false
+            };
+
+            //window.SetDataSource(FailedResults);
+            window.Show();
         }
     }
 }

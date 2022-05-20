@@ -13,16 +13,11 @@ namespace Unicorn.Toolbox.Analysis
 {
     public class Analyzer
     {
-        private readonly string _assemblyFile;
-        private readonly bool _considerParameterization;
+        private string _assemblyFile;
+        private bool _considerParameterization;
 
-        public Analyzer(string fileName, bool considerParameterization)
+        public Analyzer()
         {
-            _assemblyFile = fileName;
-            _considerParameterization = considerParameterization;
-            AssemblyFileName = Path.GetFileName(fileName);
-            TestsAssemblyName = AssemblyName.GetAssemblyName(fileName).FullName;
-            Data = new AutomationData();
         }
 
         public AutomationData Data { get; protected set; }
@@ -31,8 +26,15 @@ namespace Unicorn.Toolbox.Analysis
 
         public string TestsAssemblyName { get; protected set; }
 
-        public void GetTestsStatistics()
+        public void GetTestsStatistics(string fileName, bool considerParameterization)
         {
+            _assemblyFile = fileName;
+            _considerParameterization = considerParameterization;
+            AssemblyFileName = Path.GetFileName(fileName);
+            TestsAssemblyName = AssemblyName.GetAssemblyName(fileName).FullName;
+            Data = new AutomationData();
+
+
 #if NETFRAMEWORK
 
             AppDomain unicornDomain = AppDomain.CreateDomain("Unicorn.ConsoleRunner AppDomain");
