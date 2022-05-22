@@ -7,8 +7,8 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="1125">
     <Grid Background="#FFE5E5E5">
-        <Button x:Name="buttonLoadSpecs" Content="Load Specs" HorizontalAlignment="Left" Margin="10,25,0,0" VerticalAlignment="Top" Width="80" Click="LoadSpecs" Height="22"/>
-        <Button x:Name="buttonGetCoverage" Content="Get coverage" HorizontalAlignment="Left" Margin="130,25,0,0" VerticalAlignment="Top" Width="80" Click="GetAutomationCoverage" IsEnabled="False" Height="22"/>
+        <Button x:Name="buttonLoadSpecs" Content="Load Specs" Command="{Binding LoadSpecsCommand}" HorizontalAlignment="Left" Margin="10,25,0,0" VerticalAlignment="Top" Width="80" Height="22"/>
+        <Button x:Name="buttonGetCoverage" Content="Get coverage" Command="{Binding GetCoverageCommand}" HorizontalAlignment="Left" Margin="130,25,0,0" VerticalAlignment="Top" Width="80" IsEnabled="False" Height="22"/>
         <DataGrid x:Name="gridCoverage" HorizontalScrollBarVisibility="Disabled" HeadersVisibility="All" Grid.Column="0" RowHeaderWidth="0" CanUserAddRows="False" AutoGenerateColumns="False"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="220,70,10,100">
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="Module" Width="720">

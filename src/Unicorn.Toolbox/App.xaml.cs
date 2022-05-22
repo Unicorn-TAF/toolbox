@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using Unicorn.Toolbox.Analysis;
 using Unicorn.Toolbox.ViewModels;
 
 namespace Unicorn.Toolbox
@@ -12,7 +13,7 @@ namespace Unicorn.Toolbox
         {
             MainWindow = new MainWindow()
             {
-                DataContext = new MainViewModel()
+                DataContext = new MainViewModel(new Analyzer())
             };
 
             MainWindow.Show();

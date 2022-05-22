@@ -1,18 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Unicorn.Toolbox.Analysis;
 
 namespace Unicorn.Toolbox.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
-        public MainViewModel()
+        public MainViewModel(Analyzer analyzer)
         {
-            StatisticsViewModel = new StatisticsViewModel();
+            StatisticsViewModel = new StatisticsViewModel(analyzer);
+            CoverageViewModel = new CoverageViewModel(analyzer);
+            LaunchResultsViewModel = new LaunchResultsViewModel();
         }
 
         public ViewModelBase StatisticsViewModel { get; }
+
+        public ViewModelBase CoverageViewModel { get; }
+
+        public ViewModelBase LaunchResultsViewModel { get; }
     }
 }

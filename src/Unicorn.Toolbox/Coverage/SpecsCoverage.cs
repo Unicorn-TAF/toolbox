@@ -8,7 +8,7 @@ namespace Unicorn.Toolbox.Coverage
 {
     public class SpecsCoverage
     {
-        public SpecsCoverage(string jsonFile)
+        public void ReadSpecs(string jsonFile)
         {
             DataContractJsonSerializer formatter = new DataContractJsonSerializer(typeof(AppSpecs));
 
@@ -18,7 +18,7 @@ namespace Unicorn.Toolbox.Coverage
             }
         }
 
-        public AppSpecs Specs { get; }
+        public AppSpecs Specs { get; private set; }
 
         public void Analyze(List<SuiteInfo> suites)
         {

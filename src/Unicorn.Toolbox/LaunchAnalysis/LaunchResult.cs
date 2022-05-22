@@ -47,6 +47,11 @@ namespace Unicorn.Toolbox.LaunchAnalysis
 
         private int ExecutedSuites => Executions.Sum(e => e.SuitesCount);
         
+        public void Clear()
+        {
+            Executions.Clear();
+        }
+
         public void AppendResultsFromTrx(string trxFile)
         {
             TrxParser trxParser = new TrxParser(trxFile);

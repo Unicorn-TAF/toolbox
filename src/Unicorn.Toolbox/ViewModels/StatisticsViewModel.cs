@@ -18,10 +18,10 @@ namespace Unicorn.Toolbox.ViewModels
         private bool filterOnlyEnabledTests; 
         private bool showHideAllCheckboxes;
 
-        public StatisticsViewModel()
+        public StatisticsViewModel(Analyzer analyzer)
         {
             _window = App.Current.MainWindow as MainWindow;
-            _analyzer = new Analyzer();
+            _analyzer = analyzer;
             LoadTestsAssemblyCommand = new LoadTestsAssemblyCommand(this, _analyzer);
             ApplyFilterCommand = new ApplyFilterCommand(this, _analyzer);
             ExportStatisticsCommand = new ExportStatisticsCommand(_analyzer);

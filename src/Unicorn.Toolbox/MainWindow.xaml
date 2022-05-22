@@ -13,10 +13,10 @@
                 <views:StatisticsView x:Name="StatisticsView" DataContext="{Binding StatisticsViewModel}"/>
             </TabItem>
             <TabItem x:Name="tabCoverage" Header="Coverage" Width="100">
-                <views:CoverageView x:Name="CoverageView" />
+                <views:CoverageView x:Name="CoverageView" DataContext="{Binding CoverageViewModel}"/>
             </TabItem>
             <TabItem x:Name="tabResultsAnalysis" Header="Results Analysis" Width="100">
-                <views:LaunchResultsView x:Name="LaunchResultsView"/>
+                <views:LaunchResultsView x:Name="LaunchResultsView" DataContext="{Binding LaunchResultsViewModel}"/>
             </TabItem>
         </TabControl>
         <DockPanel Height="25" VerticalAlignment="Bottom">

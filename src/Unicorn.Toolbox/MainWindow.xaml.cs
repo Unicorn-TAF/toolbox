@@ -1,12 +1,10 @@
 ﻿using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using Unicorn.Toolbox.Analysis;
 using Unicorn.Toolbox.Analysis.Filtering;
 using Unicorn.Toolbox.ViewModels;
 using Unicorn.Toolbox.Visualization;
@@ -194,38 +192,20 @@ namespace Unicorn.Toolbox
             var visualization = GetVisualizationWindow("Modules coverage by tests");
             visualization.Show();
 
+            var vizData = (CoverageView.DataContext as CoverageViewModel).GetVisualizationData();
+
             if (checkBoxModern.IsChecked.HasValue && checkBoxModern.IsChecked.Value)
             {
                 new VisualizerCircles(visualization.canvasVisualization, GetPalette())
-                    .VisualizeData(GetCoverageVisualizationData());
+                    .VisualizeData(vizData);
             }
             else
             {
                 new VisualizerBars(visualization.canvasVisualization, GetPalette())
-                    .VisualizeData(GetCoverageVisualizationData());
+                    .VisualizeData(vizData);
 
                 InjectExportToVisualization(visualization);
             }
-        }
-
-        public IOrderedEnumerable<KeyValuePair<string, int>> GetCoverageVisualizationData()
-        {
-            var featuresStats = new Dictionary<string, int>();
-
-            foreach (var module in CoverageView._coverage.Specs.Modules)
-            {
-                var tests = from SuiteInfo s
-                            in module.Suites
-                            select s.TestsInfos;
-
-                featuresStats.Add(module.Name, tests.Sum(t => t.Count));
-            }
-
-            var items = from pair in featuresStats
-                        orderby pair.Value descending
-                        select pair;
-
-            return items;
         }
 
         private void VisualizeResults()
@@ -233,8 +213,9 @@ namespace Unicorn.Toolbox
             var visualization = GetVisualizationWindow("Launch visualization");
             visualization.Show();
 
-            new LaunchVisualizer(visualization.canvasVisualization, Views.LaunchResultsView.launchResult.Executions)
-                .Visualize();
+            //TODO
+            //new LaunchVisualizer(visualization.canvasVisualization, Views.LaunchResultsView.launchResult.Executions)
+            //    .Visualize();
         }
     }
 }
