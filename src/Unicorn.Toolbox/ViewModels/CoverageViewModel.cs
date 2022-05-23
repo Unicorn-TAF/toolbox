@@ -15,6 +15,8 @@ namespace Unicorn.Toolbox.ViewModels
         private readonly SpecsCoverage _coverage;
         private readonly Analyzer _analyzer;
         private readonly MainWindow _window;
+        private bool canGetCoverage;
+        private IEnumerable<Module> modulesList;
 
         public CoverageViewModel(Analyzer analyzer)
         {
@@ -23,17 +25,37 @@ namespace Unicorn.Toolbox.ViewModels
             _analyzer = analyzer;
 
             LoadSpecsCommand = new LoadSpecsCommand(this, _coverage);
-            GetCoverageCommand = new GetCoverageCommand(_coverage, _analyzer);
+            GetCoverageCommand = new GetCoverageCommand(this, _coverage, _analyzer);
         }
 
         public ICommand LoadSpecsCommand { get; }
 
         public ICommand GetCoverageCommand { get; }
 
+        public bool CanGetCoverage
+        {
+            get => canGetCoverage;
+
+            set
+            {
+                canGetCoverage = value;
+                OnPropertyChanged(nameof(CanGetCoverage));
+            }
+        }
+
+        public IEnumerable<Module> ModulesList
+        {
+            get => modulesList;
+
+            set
+            {
+                modulesList = value;
+                OnPropertyChanged(nameof(ModulesList));
+            }
+        }
+
         public void UpdateModel()
         {
-            _window.CoverageView.buttonGetCoverage.IsEnabled = true;
-
             UiUtils.FillGrid(_window.CoverageView.gridModules, new HashSet<string>(_coverage.Specs.Modules.Select(m => m.Name)));
 
             foreach (var checkbox in _window.CoverageView.gridModules.Children)
@@ -43,19 +65,12 @@ namespace Unicorn.Toolbox.ViewModels
                 ((CheckBox)checkbox).Unchecked += new RoutedEventHandler(UpdateRunTagsText);
             }
 
-            if (!_window.StatisticsView.gridStatistics.IsEnabled)
+            CanGetCoverage = _analyzer.Data != null;
+
+            if (CanGetCoverage)
             {
-                _window.CoverageView.buttonGetCoverage.IsEnabled = true;
+                GetCoverageCommand.Execute(null);
             }
-
-            GetCoverage();
-        }
-
-        private void GetCoverage()
-        {
-            _coverage.Analyze(_analyzer.Data.FilteredInfo);
-            _window.CoverageView.gridCoverage.ItemsSource = null;
-            _window.CoverageView.gridCoverage.ItemsSource = _coverage.Specs.Modules;
         }
 
         private void UpdateRunTagsText(object sender, RoutedEventArgs e)

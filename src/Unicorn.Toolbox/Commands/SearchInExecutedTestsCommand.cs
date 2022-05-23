@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Unicorn.Toolbox.LaunchAnalysis;
 using Unicorn.Toolbox.ViewModels;
@@ -20,21 +20,23 @@ namespace Unicorn.Toolbox.Commands
 
         public override void Execute(object parameter)
         {
-            if (_viewModel.SearchByMessage)
+            ExecutedTestsFilter testsFilter = new ExecutedTestsFilter();
+            IEnumerable<TestResult> results = _launchResult.Executions.SelectMany(exec => exec.TestResults);
+
+            switch (_viewModel.FilterFailsBy)
             {
-                ExecutedTestsFilter testsFilter = new ExecutedTestsFilter(_viewModel.FailMessage, _viewModel.Regex);
-                testsFilter.FilterTestsByFailMessage(_launchResult.Executions.SelectMany(exec => exec.TestResults));
-
-                _viewModel.Filter = testsFilter;
-            }
-            else
-            {
-                ExecutedTestsFilter testsFilter = new ExecutedTestsFilter(_viewModel.FailMessage);
-                testsFilter.FilterTestsByTime(_launchResult.Executions.SelectMany(exec => exec.TestResults));
-
-                _viewModel.Filter = testsFilter;
+                case FailsFilter.ErrorMessage:
+                    testsFilter.FilterTestsByFailMessage(results, _viewModel.FailSearchCriteria, false);
+                    break;
+                case FailsFilter.ErrorMessageRegex:
+                    testsFilter.FilterTestsByFailMessage(results, _viewModel.FailSearchCriteria, true);
+                    break;
+                case FailsFilter.Time:
+                    testsFilter.FilterTestsByTime(results, _viewModel.FailSearchCriteria);
+                    break;
             }
 
+            _viewModel.Filter = testsFilter;
             _viewModel.UpdateFilteredTestsCount();
         }
     }

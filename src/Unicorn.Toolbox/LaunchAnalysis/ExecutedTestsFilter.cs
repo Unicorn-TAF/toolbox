@@ -7,29 +7,29 @@ namespace Unicorn.Toolbox.LaunchAnalysis
 {
     public class ExecutedTestsFilter
     {
-        private readonly string _searchString;
-        private readonly bool _isRegex;
+        //private readonly string _searchString;
+        //private readonly bool _isRegex;
 
-        public ExecutedTestsFilter(string searchString, bool isRegex)
-        {
-            _searchString = searchString;
-            _isRegex = isRegex;
-        }
+        //public ExecutedTestsFilter(string searchString, bool isRegex)
+        //{
+        //    _searchString = searchString;
+        //    _isRegex = isRegex;
+        //}
 
-        public ExecutedTestsFilter(string dateTimeString)
-        {
-            _searchString = dateTimeString;
-        }
+        //public ExecutedTestsFilter(string dateTimeString)
+        //{
+        //    _searchString = dateTimeString;
+        //}
 
         public Dictionary<string, IEnumerable<TestResult>> FilteredResults { get; protected set; }
 
         public int MatchingTestsCount { get; protected set; }
 
-        public void FilterTestsByFailMessage(IEnumerable<TestResult> testResults)
+        public void FilterTestsByFailMessage(IEnumerable<TestResult> testResults, string searchString, bool isRegex)
         {
-            var results = _isRegex ?
-                testResults.Where(r => r.Status.Equals(Status.Failed) && Regex.IsMatch(r.ErrorMessage, _searchString)) :
-                testResults.Where(r => r.Status.Equals(Status.Failed) && r.ErrorMessage.Contains(_searchString));
+            var results = isRegex ?
+                testResults.Where(r => r.Status.Equals(Status.Failed) && Regex.IsMatch(r.ErrorMessage, searchString)) :
+                testResults.Where(r => r.Status.Equals(Status.Failed) && r.ErrorMessage.Contains(searchString));
 
             var uniqueSuites = new HashSet<string>(results.Select(r => r.TestListName));
 
@@ -44,9 +44,9 @@ namespace Unicorn.Toolbox.LaunchAnalysis
             }
         }
 
-        public void FilterTestsByTime(IEnumerable<TestResult> testResults)
+        public void FilterTestsByTime(IEnumerable<TestResult> testResults, string dateTimeString)
         {
-            var time = Convert.ToDateTime(_searchString);
+            var time = Convert.ToDateTime(dateTimeString);
             var results = testResults.Where(r => r.StartTime < time && r.EndTime > time);
 
             MatchingTestsCount = results.Count();

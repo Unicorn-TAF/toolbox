@@ -21,6 +21,9 @@
                     </Setter.Value>
                 </Setter>
             </Style>
+            <Style x:Key="CommonButton" TargetType="{x:Type Button}">
+                <Setter Property="Height" Value="22" />
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

@@ -11,10 +11,5 @@ namespace Unicorn.Toolbox.ViewModels
         {
             TestInfos = data;
         }
-
-        public void SetTestsData(List<TestInfo> data)
-        {
-            TestInfos = data;
-        }
     }
 }

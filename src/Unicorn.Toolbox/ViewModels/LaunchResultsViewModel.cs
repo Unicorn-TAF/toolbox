@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Data;
@@ -9,6 +10,13 @@ using Unicorn.Toolbox.Views;
 
 namespace Unicorn.Toolbox.ViewModels
 {
+    public enum FailsFilter
+    { 
+        ErrorMessage,
+        Time,
+        ErrorMessageRegex
+    }
+
     public class LaunchResultsViewModel : ViewModelBase
     {
         private readonly LaunchResult _launchResult;
@@ -21,6 +29,7 @@ namespace Unicorn.Toolbox.ViewModels
         public string failMessage;
         private bool regex;
         private bool searchByMessage;
+        private FailsFilter filterFailsBy = FailsFilter.ErrorMessage;
 
         public LaunchResultsViewModel()
         {
@@ -49,49 +58,27 @@ namespace Unicorn.Toolbox.ViewModels
             }
         }
 
-        public string FilterTestsBy
-        {
-            get => filterTestsBy;
+        public IEnumerable<FailsFilter> FailsFilters { get; } =
+            Enum.GetValues(typeof(FailsFilter)).Cast<FailsFilter>();
 
+        public FailsFilter FilterFailsBy
+        {
+            get => filterFailsBy;
             set
             {
-                filterTestsBy = value;
-                OnPropertyChanged(nameof(FilterTestsBy));
-
-                SearchByMessage = FilterTestsBy.Equals("By fail message", StringComparison.InvariantCultureIgnoreCase);
+                filterFailsBy = value;
+                OnPropertyChanged(nameof(FilterFailsBy));
             }
         }
 
-        public string FailMessage
+        public string FailSearchCriteria
         {
             get => failMessage;
 
             set
             {
                 failMessage = value;
-                OnPropertyChanged(nameof(FailMessage));
-            }
-        }
-
-        public bool Regex
-        {
-            get => regex;
-
-            set
-            {
-                regex = value;
-                OnPropertyChanged(nameof(Regex));
-            }
-        }
-
-        public bool SearchByMessage
-        {
-            get => searchByMessage;
-
-            set
-            {
-                searchByMessage = value;
-                OnPropertyChanged(nameof(SearchByMessage));
+                OnPropertyChanged(nameof(FailSearchCriteria));
             }
         }
 

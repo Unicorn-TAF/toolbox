@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="1125">
     <Grid Background="#FFE5E5E5">
-        <Button x:Name="btnLoadTrx" Content="Load TRX files" Command="{Binding LoadTrxCommand}" VerticalAlignment="Top" Margin="10,25,0,0" HorizontalAlignment="Left" Width="80" Height="22"/>
+        <Button x:Name="btnLoadTrx" Content="Load TRX files" Command="{Binding LoadTrxCommand}" VerticalAlignment="Top" Margin="10,25,0,0" HorizontalAlignment="Left" Width="80"/>
         <DataGrid x:Name="gridTestResults" HorizontalScrollBarVisibility="Disabled" HeadersVisibility="All" RowHeaderWidth="0" CanUserAddRows="False" CanUserResizeColumns="False"
                               CanUserSortColumns="True" AutoGenerateColumns="False" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="10,70,0,100" HorizontalAlignment="Left" Width="700">
             <DataGrid.Columns>
@@ -89,13 +89,9 @@
         <TextBox x:Name="textBoxLaunchSummary" HorizontalAlignment="Left" Margin="10,0,0,10" TextWrapping="Wrap" Text="Summary . . ." Width="700" FontFamily="Consolas" Height="80" VerticalAlignment="Bottom"/>
         <GroupBox Header="Find failed tests" Margin="0,0,10,10" Height="85" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="400">
             <Grid>
-                <TextBox x:Name="textBoxFailMessage" Margin="10,0,10,35" TextWrapping="Wrap" Text="{Binding FailMessage}" VerticalAlignment="Bottom" Height="22"/>
-                <CheckBox x:Name="checkboxFailMessageRegex" Content="Regex" IsChecked="{Binding Regex}" IsEnabled="{Binding SearchByMessage}" Margin="140,0,0,7" RenderTransformOrigin="0.544,1.385" Height="16" VerticalAlignment="Bottom" HorizontalAlignment="Left"/>
-                <ComboBox x:Name="comboFilterExecutedTestsBy" Text="{Binding FilterTestsBy}" HorizontalAlignment="Left" VerticalContentAlignment="Top" HorizontalContentAlignment="Center" Margin="10,0,0,5" Width="120" Height="22" VerticalAlignment="Bottom">
-                    <ComboBoxItem Content="By fail message"/>
-                    <ComboBoxItem Content="By time (local)"/>
-                </ComboBox>
-                <Button x:Name="buttonSearchByFailMessage" Content="Search" Command="{Binding SearchInExecutedTestsCommand}" Margin="0,0,100,5" VerticalAlignment="Bottom" Height="22" HorizontalAlignment="Right" Width="80"/>
+                <TextBox x:Name="textBoxFailMessage" Margin="10,0,10,35" TextWrapping="Wrap" Text="{Binding FailSearchCriteria}" VerticalAlignment="Bottom" Height="22"/>
+                <ComboBox x:Name="comboFilterExecutedTestsBy" ItemsSource="{Binding FailsFilters}" Text="{Binding FilterFailsBy}" HorizontalAlignment="Left" VerticalContentAlignment="Top" HorizontalContentAlignment="Center" Margin="10,0,0,5" Width="150" Height="22" VerticalAlignment="Bottom"/>
+                <Button x:Name="buttonSearchByFailMessage" Content="Search" Command="{Binding SearchInExecutedTestsCommand}" Margin="170,0,0,5" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="80"/>
                 <Label x:Name="labelFoundFailedTests" Content="" Margin="0,0,10,8" Height="26" HorizontalContentAlignment="Right" VerticalAlignment="Bottom" FontWeight="Bold" Foreground="#FF3399FF" Cursor="Hand" HorizontalAlignment="Right">
                     <Label.InputBindings>
                         <MouseBinding

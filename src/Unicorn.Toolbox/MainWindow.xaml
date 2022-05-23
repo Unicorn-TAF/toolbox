@@ -8,7 +8,7 @@
         mc:Ignorable="d"
         Title="Unicorn toolbox" Height="750" Width="1200" MinHeight="750" MinWidth="1200" WindowStartupLocation="CenterScreen" Icon="app.ico">
     <Grid>
-        <TabControl x:Name="tabControl" Margin="10,10,10,30" SelectionChanged="TabChanged">
+        <TabControl x:Name="tabControl" Margin="0,0,0,25" SelectionChanged="TabChanged">
             <TabItem x:Name="tabStatistics" Header="Tests statistics" Width="100">
                 <views:StatisticsView x:Name="StatisticsView" DataContext="{Binding StatisticsViewModel}"/>
             </TabItem>
@@ -26,7 +26,7 @@
                 </StatusBarItem>
             </StatusBar>
         </DockPanel>
-        <GroupBox x:Name="groupBoxVisualization" Header="Visualization" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="235,40,0,0" Height="55" Width="487" IsEnabled="False">
+        <GroupBox x:Name="groupBoxVisualization" Header="Visualization" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="222,30,0,0" Height="55" Width="490" IsEnabled="False">
             <DockPanel>
                 <ComboBox x:Name="comboBoxPalette" HorizontalAlignment="Left" Margin="10,5,0,0" VerticalAlignment="Top" Width="100
                           " Height="22" FontSize="11" VerticalContentAlignment="Top" HorizontalContentAlignment="Center">
