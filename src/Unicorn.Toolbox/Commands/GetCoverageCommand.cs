@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Linq;
 using Unicorn.Toolbox.Analysis;
 using Unicorn.Toolbox.Coverage;
 using Unicorn.Toolbox.ViewModels;
@@ -22,8 +23,12 @@ namespace Unicorn.Toolbox.Commands
         public override void Execute(object parameter)
         {
             _coverage.Analyze(_analyzer.Data.FilteredInfo);
-            _viewModel.ModulesList = null;
-            _viewModel.ModulesList = _coverage.Specs.Modules;
+            _viewModel.ModulesList.Clear();
+            
+            foreach (var module in _coverage.Specs.Modules.Distinct())
+            {
+                _viewModel.ModulesList.Add(new CoverageModuleViewModel(module));
+            }
         }
 
         public override bool CanExecute(object parameter) =>

@@ -136,7 +136,7 @@ namespace Unicorn.Toolbox
                 comboBoxPalette.IsEnabled = true;
                 groupBoxVisualization.IsEnabled = LaunchResultsView.groupBoxVisualizationStateTemp;
 
-                statusBarText.Text = CoverageView.Status;
+                statusBarText.Text = (CoverageView.DataContext as CoverageViewModel).Status;
             }
             else if (tabStatistics.IsSelected)
             {

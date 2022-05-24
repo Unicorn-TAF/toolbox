@@ -30,8 +30,16 @@
             </DataGrid.Columns>
         </DataGrid>
         <ScrollViewer Margin="10,70,0,100" VerticalScrollBarVisibility="Auto" HorizontalAlignment="Left" Width="200">
-            <Grid x:Name="gridModules"/>
+            <!--<Grid x:Name="gridModules">-->
+                <ListBox x:Name="listBox" ItemsSource="{Binding ModulesList}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <CheckBox Content="{Binding Name}" Margin="0,5,5,0" IsChecked="{Binding Selected}"/>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            <!--</Grid>-->
         </ScrollViewer>
-        <TextBox x:Name="textBoxRunTags" Text="" Margin="10,0,10,10" FontSize="11" TextWrapping="Wrap" Height="80" VerticalAlignment="Bottom"/>
+        <TextBox x:Name="textBoxRunTags" Text="{Binding RunTags}" Margin="10,0,10,10" FontSize="11" TextWrapping="Wrap" Height="80" VerticalAlignment="Bottom"/>
     </Grid>
 </UserControl>

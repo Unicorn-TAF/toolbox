@@ -1,4 +1,7 @@
 ﻿using Microsoft.Win32;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 using Unicorn.Toolbox.Coverage;
 using Unicorn.Toolbox.ViewModels;
 
@@ -22,17 +25,31 @@ namespace Unicorn.Toolbox.Commands
                 Filter = "Application specs|*.json"
             };
 
-            openFileDialog.ShowDialog();
-
-            string specFileName = openFileDialog.FileName;
-
-            if (string.IsNullOrEmpty(specFileName))
+            if (openFileDialog.ShowDialog().Value)
             {
-                return;
-            }
+                string specFileName = openFileDialog.FileName;
 
-            _coverage.ReadSpecs(specFileName);
-            _viewModel.UpdateModel();
+                _coverage.ReadSpecs(specFileName);
+                _viewModel.CanGetCoverage = true;
+                _viewModel.GetCoverageCommand.Execute(null);
+
+                foreach (CoverageModuleViewModel module in _viewModel.ModulesList)
+                {
+                    module.PropertyChanged += new PropertyChangedEventHandler(OnCheckboxCheck);
+                }
+            }
+        }
+
+        private void OnCheckboxCheck(object sender, PropertyChangedEventArgs e)
+        {
+            IEnumerable<string> runTags =
+                _viewModel.ModulesList
+                .Where(m => m.Selected)
+                .SelectMany(m => m.Features)
+                .Select(f => f.ToLowerInvariant())
+                .Distinct();
+
+            _viewModel.RunTags = "#" + string.Join(" #", runTags);
         }
     }
 }

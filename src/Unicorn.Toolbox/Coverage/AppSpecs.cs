@@ -12,6 +12,6 @@ namespace Unicorn.Toolbox.Coverage
         public string Name => name.ToUpper();
 
         [DataMember(Name = "modules")]
-        public List<Module> Modules { get; set; }
+        public List<CoverageModule> Modules { get; set; }
     }
 }

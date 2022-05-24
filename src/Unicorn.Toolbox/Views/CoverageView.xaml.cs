@@ -11,7 +11,5 @@ namespace Unicorn.Toolbox.Views
         {
             InitializeComponent();
         }
-
-        public string Status { get; set; } = string.Empty;
     }
 }

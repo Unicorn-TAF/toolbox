@@ -22,9 +22,9 @@ namespace Unicorn.Toolbox.Coverage
 
         public void Analyze(List<SuiteInfo> suites)
         {
-            foreach (Module module in Specs.Modules)
+            foreach (CoverageModule module in Specs.Modules)
             {
-                module.Suites = suites.Where(s => s.Tags.Intersect(module.Features).Any()).ToList();
+                module.Suites = suites.Where(s => s.Tags.Intersect(module.Features).Any());
             }
         }
     }

@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using Unicorn.Toolbox.Analysis;
 using Unicorn.Toolbox.Commands;
@@ -14,15 +13,16 @@ namespace Unicorn.Toolbox.ViewModels
     {
         private readonly SpecsCoverage _coverage;
         private readonly Analyzer _analyzer;
-        private readonly MainWindow _window;
         private bool canGetCoverage;
-        private IEnumerable<Module> modulesList;
+        private string runTags;
+        private readonly ObservableCollection<CoverageModuleViewModel> _modulesList;
 
         public CoverageViewModel(Analyzer analyzer)
         {
-            _window = App.Current.MainWindow as MainWindow;
             _coverage = new SpecsCoverage();
             _analyzer = analyzer;
+            _modulesList = new ObservableCollection<CoverageModuleViewModel>();
+            _modulesList.CollectionChanged += OnCollectionChange;
 
             LoadSpecsCommand = new LoadSpecsCommand(this, _coverage);
             GetCoverageCommand = new GetCoverageCommand(this, _coverage, _analyzer);
@@ -43,73 +43,44 @@ namespace Unicorn.Toolbox.ViewModels
             }
         }
 
-        public IEnumerable<Module> ModulesList
+        public ObservableCollection<CoverageModuleViewModel> ModulesList => _modulesList;
+
+        public string Status { get; set; } = string.Empty;
+
+        public string RunTags
         {
-            get => modulesList;
+            get => runTags;
 
             set
             {
-                modulesList = value;
-                OnPropertyChanged(nameof(ModulesList));
+                runTags = value;
+                OnPropertyChanged(nameof(RunTags));
             }
-        }
-
-        public void UpdateModel()
-        {
-            UiUtils.FillGrid(_window.CoverageView.gridModules, new HashSet<string>(_coverage.Specs.Modules.Select(m => m.Name)));
-
-            foreach (var checkbox in _window.CoverageView.gridModules.Children)
-            {
-                ((CheckBox)checkbox).IsChecked = false;
-                ((CheckBox)checkbox).Checked += new RoutedEventHandler(UpdateRunTagsText);
-                ((CheckBox)checkbox).Unchecked += new RoutedEventHandler(UpdateRunTagsText);
-            }
-
-            CanGetCoverage = _analyzer.Data != null;
-
-            if (CanGetCoverage)
-            {
-                GetCoverageCommand.Execute(null);
-            }
-        }
-
-        private void UpdateRunTagsText(object sender, RoutedEventArgs e)
-        {
-            var runTags = new HashSet<string>();
-
-            foreach (var child in _window.CoverageView.gridModules.Children)
-            {
-                var checkbox = child as CheckBox;
-
-                if (checkbox.IsChecked.Value)
-                {
-                    runTags.UnionWith(_coverage.Specs.Modules
-                        .First(m => m.Name.Equals(checkbox.Content.ToString(), StringComparison.InvariantCultureIgnoreCase))
-                        .Features);
-                }
-            }
-
-            _window.CoverageView.textBoxRunTags.Text = "#" + string.Join(" #", runTags);
         }
 
         public IOrderedEnumerable<KeyValuePair<string, int>> GetVisualizationData()
         {
-            var featuresStats = new Dictionary<string, int>();
+            Dictionary<string, int> featuresStats = new Dictionary<string, int>();
 
             foreach (var module in _coverage.Specs.Modules)
             {
-                var tests = from SuiteInfo s
-                            in module.Suites
-                            select s.TestsInfos;
+                IEnumerable<List<TestInfo>> tests = 
+                    from SuiteInfo s
+                    in module.Suites
+                    select s.TestsInfos;
 
                 featuresStats.Add(module.Name, tests.Sum(t => t.Count));
             }
 
-            var items = from pair in featuresStats
-                        orderby pair.Value descending
-                        select pair;
+            IOrderedEnumerable<KeyValuePair<string, int>> items = 
+                from pair in featuresStats
+                orderby pair.Value descending
+                select pair;
 
             return items;
         }
+
+        private void OnCollectionChange(object sender, NotifyCollectionChangedEventArgs e) =>
+            OnPropertyChanged(nameof(ModulesList));
     }
 }
