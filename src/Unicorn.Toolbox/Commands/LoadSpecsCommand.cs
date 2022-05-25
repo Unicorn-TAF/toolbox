@@ -30,7 +30,7 @@ namespace Unicorn.Toolbox.Commands
                 string specFileName = openFileDialog.FileName;
 
                 _coverage.ReadSpecs(specFileName);
-                _viewModel.CanGetCoverage = true;
+                _viewModel.DataLoaded = true;
                 _viewModel.GetCoverageCommand.Execute(null);
 
                 foreach (CoverageModuleViewModel module in _viewModel.ModulesList)

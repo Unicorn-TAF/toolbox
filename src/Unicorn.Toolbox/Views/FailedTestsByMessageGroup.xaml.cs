@@ -21,9 +21,6 @@ namespace Unicorn.Toolbox.Views
             textErrorMessage.Text = tests.First().ErrorMessage;
             labelFoundFailedTests.Text += tests.Count().ToString();
 
-            Height = 105;
-            Width = 400;
-
             var uniqueSuites = new HashSet<string>(tests.Select(r => r.SuiteName));
 
             FailedResults = new Dictionary<string, IEnumerable<TestResult>>();

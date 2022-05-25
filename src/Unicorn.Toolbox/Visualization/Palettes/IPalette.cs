@@ -3,13 +3,6 @@ using System.Windows.Media;
 
 namespace Unicorn.Toolbox.Visualization.Palettes
 {
-    public enum Palette
-    {
-        Green,
-        Orange,
-        Purple
-    }
-
     public interface IPalette
     {
         Brush BackColor { get; }

@@ -9,6 +9,7 @@ namespace Unicorn.Toolbox.ViewModels
             StatisticsViewModel = new StatisticsViewModel(analyzer);
             CoverageViewModel = new CoverageViewModel(analyzer);
             LaunchResultsViewModel = new LaunchResultsViewModel();
+            VisualizationViewModel = new VisualizationViewModel();
         }
 
         public ViewModelBase StatisticsViewModel { get; }
@@ -16,5 +17,7 @@ namespace Unicorn.Toolbox.ViewModels
         public ViewModelBase CoverageViewModel { get; }
 
         public ViewModelBase LaunchResultsViewModel { get; }
+
+        public ViewModelBase VisualizationViewModel { get; }
     }
 }

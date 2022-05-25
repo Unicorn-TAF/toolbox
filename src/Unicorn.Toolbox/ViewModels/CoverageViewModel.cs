@@ -29,14 +29,14 @@ namespace Unicorn.Toolbox.ViewModels
             GetCoverageCommand = new GetCoverageCommand(this, _coverage, _analyzer);
         }
 
-        public bool CanGetCoverage
+        public bool DataLoaded
         {
             get => canGetCoverage;
 
             set
             {
                 canGetCoverage = value;
-                OnPropertyChanged(nameof(CanGetCoverage));
+                OnPropertyChanged(nameof(DataLoaded));
             }
         }
 

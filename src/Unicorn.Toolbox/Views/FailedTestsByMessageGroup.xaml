@@ -4,14 +4,13 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Unicorn.Toolbox.Views"
-             mc:Ignorable="d" 
-             d:DesignHeight="120" d:DesignWidth="400">
+             mc:Ignorable="d" >
     <Border BorderBrush="#FF808080" Margin="0,0,0,0">
         <Grid>
-            <Border Margin="5,5,5,25" Background="#FF303030">
+            <Border Margin="5,5,5,20" Background="#FF303030">
                 <TextBox x:Name="textErrorMessage" Margin="2,2,2,2" IsReadOnly="True" Foreground="#FFEAEAEA" FontFamily="Consolas" TextWrapping="Wrap" FontSize="12" Background="{x:Null}"/>
             </Border>
-            <TextBlock x:Name="labelFoundFailedTests" Text="Fails: " HorizontalAlignment="Right" Margin="0,0,10,5" FontWeight="Bold" Foreground="#FF3399FF" Cursor="Hand" MouseDown="LabelFoundFailedTests_MouseDown" Height="20" VerticalAlignment="Bottom"/>
+            <TextBlock x:Name="labelFoundFailedTests" Text="Fails: " HorizontalAlignment="Right" Margin="0,0,5,5" FontWeight="Bold" Foreground="#FF3399FF" Cursor="Hand" MouseDown="LabelFoundFailedTests_MouseDown" Height="15" VerticalAlignment="Bottom"/>
         </Grid>
     </Border>
 </UserControl>

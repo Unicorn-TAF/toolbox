@@ -94,6 +94,25 @@ namespace Unicorn.Toolbox.ViewModels
             }
         }
 
+        public FilterType CurrentFilter
+        {
+            get
+            {
+                if (_window.StatisticsView.tabFeaures.IsSelected)
+                {
+                    return FilterType.Tag;
+                }
+                else if (_window.StatisticsView.tabCategories.IsSelected)
+                {
+                    return FilterType.Category;
+                }
+                else
+                {
+                    return FilterType.Author;
+                }
+            }
+        }
+
         public string Status { get; set; } = string.Empty;
 
         public IEnumerable<string> Features { get; set; }
@@ -102,10 +121,9 @@ namespace Unicorn.Toolbox.ViewModels
         
         public IEnumerable<string> Authors { get; set; }
 
-
         public void UpdateModel()
         {
-            _window.groupBoxVisualization.IsEnabled = true;
+            _window.VisualizationView.groupBoxVisualization.IsEnabled = true;
             //groupBoxVisualizationStateTemp = true;
 
             _window.StatisticsView.gridFilters.IsEnabled = true;
@@ -181,14 +199,14 @@ namespace Unicorn.Toolbox.ViewModels
             }
         }
 
-        public IOrderedEnumerable<KeyValuePair<string, int>> GetVisualizationData(FilterType filterType)
+        public IOrderedEnumerable<KeyValuePair<string, int>> GetVisualizationData()
         {
             var data = _analyzer.Data;
             var stats = new Dictionary<string, int>();
 
-            switch (filterType)
+            switch (CurrentFilter)
             {
-                case FilterType.Feature:
+                case FilterType.Tag:
                     {
                         foreach (var feature in data.UniqueFeatures)
                         {

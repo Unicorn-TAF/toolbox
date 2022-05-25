@@ -26,19 +26,6 @@
                 </StatusBarItem>
             </StatusBar>
         </DockPanel>
-        <GroupBox x:Name="groupBoxVisualization" Header="Visualization" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="222,30,0,0" Height="55" Width="490" IsEnabled="False">
-            <DockPanel>
-                <ComboBox x:Name="comboBoxPalette" HorizontalAlignment="Left" Margin="10,5,0,0" VerticalAlignment="Top" Width="100
-                          " Height="22" FontSize="11" VerticalContentAlignment="Top" HorizontalContentAlignment="Center">
-                    <ComboBoxItem Content="Light Green" Background="#558B2F" IsSelected="True"/>
-                    <ComboBoxItem Content="Deep Purple" Background="#311B92"/>
-                    <ComboBoxItem Content="Orange" Background="#EF6C00"/>
-                </ComboBox>
-                <CheckBox x:Name="checkBoxModern" Content="Circles" Margin="50,8,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.274,0.533" HorizontalAlignment="Left" Width="66"/>
-                <CheckBox x:Name="checkBoxFullscreen" Content="Fullscreen" Margin="10,8,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.274,0.533" HorizontalAlignment="Left" Width="78"/>
-                <Button x:Name="buttonVisualize" Content="Visualize" Width="80" Margin="0,5,10,0" VerticalAlignment="Top" Click="Visualize" HorizontalAlignment="Right" Height="22" />
-            </DockPanel>
-        </GroupBox>
-
+        <views:VisualizationView x:Name="VisualizationView" DataContext="{Binding VisualizationViewModel}" Margin="222,30,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
     </Grid>
 </Window>

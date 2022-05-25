@@ -39,8 +39,7 @@ namespace Unicorn.Toolbox.ViewModels
             LaunchSummary = "Summary . . .";
         }
 
-        internal bool GroupBoxVisualizationStateTemp = false;
-        internal bool TrxLoaded = false;
+        public bool TrxLoaded { get; set; } = false;
 
         public string Status { get; set; } = string.Empty;
 
@@ -126,20 +125,18 @@ namespace Unicorn.Toolbox.ViewModels
             listCollectionView = new ListCollectionView(_launchResult.Executions);
             OnPropertyChanged(nameof(ExecutionsList));
 
-            //TODO
-            _window.buttonVisualize.IsEnabled = true;
-            _window.checkBoxFullscreen.IsEnabled = true;
+            var results = ExecutedTestsFilter
+                .GetTopErrors(_launchResult.Executions.SelectMany(exec => exec.TestResults));
 
             _window.Dispatcher.Invoke(() =>
             {
                 _window.LaunchResultsView.stackPanelFails.Children.Clear();
 
-                var results = ExecutedTestsFilter
-                    .GetTopErrors(_launchResult.Executions.SelectMany(exec => exec.TestResults));
-
                 for (int i = 0; i < results.Count(); i++)
                 {
-                    _window.LaunchResultsView.stackPanelFails.Children.Add(new FailedTestsGroup(results.ElementAt(i)));
+                    var group = new FailedTestsGroup(results.ElementAt(i));
+
+                    _window.LaunchResultsView.stackPanelFails.Children.Add(group);
                 }
             });
 

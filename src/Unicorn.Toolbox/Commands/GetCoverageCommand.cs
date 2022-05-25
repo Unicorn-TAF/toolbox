@@ -32,11 +32,11 @@ namespace Unicorn.Toolbox.Commands
         }
 
         public override bool CanExecute(object parameter) =>
-            _viewModel.CanGetCoverage && base.CanExecute(parameter);
+            _viewModel.DataLoaded && base.CanExecute(parameter);
 
         private void OnViewPropertyChanged(object sender, PropertyChangedEventArgs e) 
         { 
-            if (e.PropertyName == nameof(CoverageViewModel.CanGetCoverage))
+            if (e.PropertyName == nameof(CoverageViewModel.DataLoaded))
             {
                 OnCanExecutedChanged();
             }

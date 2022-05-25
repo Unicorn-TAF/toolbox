@@ -2,7 +2,7 @@
 {
     public enum FilterType
     {
-        Feature,
+        Tag,
         Category,
         Author
     }

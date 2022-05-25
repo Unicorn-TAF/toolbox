@@ -22,6 +22,10 @@ namespace Unicorn.Toolbox.Visualization
             };
         }
 
+        public Brush MainColor => DataColors[0];
+
+        public string Name { get; } = "Light green";
+
         public Brush BackColor { get; } = Brushes.White;
 
         public List<Brush> DataColors { get; protected set; }
