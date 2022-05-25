@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Unicorn.Toolbox.Analysis.Filtering
+namespace Unicorn.Toolbox.Models.Stats.Filtering
 {
     public class CategoriesFilter : ISuitesFilter, ITestsFilter
     {

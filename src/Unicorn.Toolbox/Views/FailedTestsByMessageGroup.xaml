@@ -4,7 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Unicorn.Toolbox.Views"
-             mc:Ignorable="d" >
+             mc:Ignorable="d" 
+             d:DesignHeight="120" d:DesignWidth="400">
     <Border BorderBrush="#FF808080" Margin="0,0,0,0">
         <Grid>
             <Border Margin="5,5,5,20" Background="#FF303030">

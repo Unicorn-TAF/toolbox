@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Unicorn.Toolbox.LaunchAnalysis;
+using Unicorn.Toolbox.Models.Launch;
 
 namespace Unicorn.Toolbox.ViewModels
 {

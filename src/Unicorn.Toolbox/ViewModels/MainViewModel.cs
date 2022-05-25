@@ -1,10 +1,10 @@
-﻿using Unicorn.Toolbox.Analysis;
+﻿using Unicorn.Toolbox.Models.Stats;
 
 namespace Unicorn.Toolbox.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
-        public MainViewModel(Analyzer analyzer)
+        public MainViewModel(StatsCollector analyzer)
         {
             StatisticsViewModel = new StatisticsViewModel(analyzer);
             CoverageViewModel = new CoverageViewModel(analyzer);

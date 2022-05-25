@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Unicorn.Toolbox.LaunchAnalysis;
+using Unicorn.Toolbox.Models.Launch;
 using Unicorn.Toolbox.ViewModels;
 
 namespace Unicorn.Toolbox.Commands

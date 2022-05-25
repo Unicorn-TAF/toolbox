@@ -3,22 +3,22 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Windows.Input;
-using Unicorn.Toolbox.Analysis;
 using Unicorn.Toolbox.Commands;
-using Unicorn.Toolbox.Coverage;
+using Unicorn.Toolbox.Models.Coverage;
+using Unicorn.Toolbox.Models.Stats;
 
 namespace Unicorn.Toolbox.ViewModels
 {
     public class CoverageViewModel : ViewModelBase
     {
         private readonly SpecsCoverage _coverage;
-        private readonly Analyzer _analyzer;
+        private readonly StatsCollector _analyzer;
         private readonly ObservableCollection<CoverageModuleViewModel> _modulesList;
         
         private bool canGetCoverage;
         private string runTags;
 
-        public CoverageViewModel(Analyzer analyzer)
+        public CoverageViewModel(StatsCollector analyzer)
         {
             _coverage = new SpecsCoverage();
             _analyzer = analyzer;

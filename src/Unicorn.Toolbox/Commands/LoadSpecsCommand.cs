@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using Unicorn.Toolbox.Coverage;
+using Unicorn.Toolbox.Models.Coverage;
 using Unicorn.Toolbox.ViewModels;
 
 namespace Unicorn.Toolbox.Commands

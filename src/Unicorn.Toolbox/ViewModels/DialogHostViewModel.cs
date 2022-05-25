@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using Unicorn.Toolbox.Analysis;
-using Unicorn.Toolbox.LaunchAnalysis;
+using Unicorn.Toolbox.Models.Launch;
+using Unicorn.Toolbox.Models.Stats;
 
 namespace Unicorn.Toolbox.ViewModels
 {

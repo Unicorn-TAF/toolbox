@@ -2,7 +2,7 @@
 using System;
 using System.Linq;
 using System.Windows;
-using Unicorn.Toolbox.LaunchAnalysis;
+using Unicorn.Toolbox.Models.Launch;
 using Unicorn.Toolbox.ViewModels;
 
 namespace Unicorn.Toolbox.Commands

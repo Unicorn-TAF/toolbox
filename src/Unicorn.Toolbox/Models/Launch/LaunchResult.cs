@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace Unicorn.Toolbox.LaunchAnalysis
+namespace Unicorn.Toolbox.Models.Launch
 {
     public class LaunchResult
     {

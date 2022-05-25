@@ -1,5 +1,5 @@
 ﻿using Microsoft.Win32;
-using Unicorn.Toolbox.Analysis;
+using Unicorn.Toolbox.Models.Stats;
 using Unicorn.Toolbox.ViewModels;
 
 namespace Unicorn.Toolbox.Commands
@@ -7,9 +7,9 @@ namespace Unicorn.Toolbox.Commands
     public class LoadTestsAssemblyCommand : CommandBase
     {
         private readonly StatisticsViewModel _viewModel;
-        private readonly Analyzer _analyzer;
+        private readonly StatsCollector _analyzer;
 
-        public LoadTestsAssemblyCommand(StatisticsViewModel viewModel, Analyzer analyzer)
+        public LoadTestsAssemblyCommand(StatisticsViewModel viewModel, StatsCollector analyzer)
         {
             _viewModel = viewModel;
             _analyzer = analyzer;

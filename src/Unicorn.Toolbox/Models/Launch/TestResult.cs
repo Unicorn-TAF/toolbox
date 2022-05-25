@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Unicorn.Toolbox.LaunchAnalysis
+namespace Unicorn.Toolbox.Models.Launch
 {
     public enum Status
     {

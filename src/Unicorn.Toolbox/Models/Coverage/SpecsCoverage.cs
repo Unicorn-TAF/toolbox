@@ -2,9 +2,9 @@
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Json;
-using Unicorn.Toolbox.Analysis;
+using Unicorn.Toolbox.Models.Stats;
 
-namespace Unicorn.Toolbox.Coverage
+namespace Unicorn.Toolbox.Models.Coverage
 {
     public class SpecsCoverage
     {

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Unicorn.Toolbox.Coverage;
+using Unicorn.Toolbox.Models.Coverage;
 
 namespace Unicorn.Toolbox.ViewModels
 {

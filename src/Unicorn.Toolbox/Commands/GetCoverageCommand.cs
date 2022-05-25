@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Linq;
-using Unicorn.Toolbox.Analysis;
-using Unicorn.Toolbox.Coverage;
+using Unicorn.Toolbox.Models.Coverage;
+using Unicorn.Toolbox.Models.Stats;
 using Unicorn.Toolbox.ViewModels;
 
 namespace Unicorn.Toolbox.Commands
@@ -10,9 +10,9 @@ namespace Unicorn.Toolbox.Commands
     {
         private readonly CoverageViewModel _viewModel;
         private readonly SpecsCoverage _coverage;
-        private readonly Analyzer _analyzer;
+        private readonly StatsCollector _analyzer;
 
-        public GetCoverageCommand(CoverageViewModel viewModel, SpecsCoverage coverage, Analyzer analyzer)
+        public GetCoverageCommand(CoverageViewModel viewModel, SpecsCoverage coverage, StatsCollector analyzer)
         {
             _viewModel = viewModel;
             _coverage = coverage;

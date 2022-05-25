@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Unicorn.Taf.Api;
-using Unicorn.Toolbox.Analysis.Filtering;
+using Unicorn.Toolbox.Models.Stats.Filtering;
 
-namespace Unicorn.Toolbox.Analysis
+namespace Unicorn.Toolbox.Models.Stats
 {
     [Serializable]
     public class AutomationData : IOutcome

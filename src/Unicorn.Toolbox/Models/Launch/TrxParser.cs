@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Xml.Linq;
 
-namespace Unicorn.Toolbox.LaunchAnalysis
+namespace Unicorn.Toolbox.Models.Launch
 {
     public class TrxParser
     {

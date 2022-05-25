@@ -3,22 +3,22 @@ using System.Linq;
 using System.Text;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Unicorn.Toolbox.Analysis;
-using Unicorn.Toolbox.Analysis.Filtering;
 using Unicorn.Toolbox.Commands;
+using Unicorn.Toolbox.Models.Stats;
+using Unicorn.Toolbox.Models.Stats.Filtering;
 
 namespace Unicorn.Toolbox.ViewModels
 {
     public class StatisticsViewModel : ViewModelBase
     {
-        private readonly Analyzer _analyzer;
+        private readonly StatsCollector _analyzer;
         private readonly MainWindow _window;
         private bool considerTestData;
         private bool filterOnlyDisabledTests;
         private bool filterOnlyEnabledTests; 
         private bool showHideAllCheckboxes;
 
-        public StatisticsViewModel(Analyzer analyzer)
+        public StatisticsViewModel(StatsCollector analyzer)
         {
             _window = App.Current.MainWindow as MainWindow;
             _analyzer = analyzer;

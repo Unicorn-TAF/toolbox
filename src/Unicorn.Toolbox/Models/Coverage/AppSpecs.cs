@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace Unicorn.Toolbox.Coverage
+namespace Unicorn.Toolbox.Models.Coverage
 {
     [DataContract]
     public class AppSpecs

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 
-namespace Unicorn.Toolbox.LaunchAnalysis
+namespace Unicorn.Toolbox.Models.Launch
 {
     public class Execution
     {

@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using Unicorn.Toolbox.Analysis;
+using Unicorn.Toolbox.Models.Stats;
 
-namespace Unicorn.Toolbox.Coverage
+namespace Unicorn.Toolbox.Models.Coverage
 {
     [DataContract]
     public class CoverageModule : IEqualityComparer<CoverageModule>

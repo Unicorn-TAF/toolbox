@@ -4,7 +4,7 @@ using System.Linq;
 using System.Windows.Data;
 using System.Windows.Input;
 using Unicorn.Toolbox.Commands;
-using Unicorn.Toolbox.LaunchAnalysis;
+using Unicorn.Toolbox.Models.Launch;
 using Unicorn.Toolbox.Views;
 
 namespace Unicorn.Toolbox.ViewModels

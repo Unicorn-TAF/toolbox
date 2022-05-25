@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace Unicorn.Toolbox.LaunchAnalysis
+namespace Unicorn.Toolbox.Models.Launch
 {
     public class ExecutedTestsFilter
     {

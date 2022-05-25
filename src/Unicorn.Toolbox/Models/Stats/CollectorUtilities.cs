@@ -5,7 +5,7 @@ using System.Reflection;
 using Unicorn.Taf.Core.Testing;
 using Unicorn.Taf.Core.Testing.Attributes;
 
-namespace Unicorn.Toolbox.Analysis
+namespace Unicorn.Toolbox.Models.Stats
 {
     internal static class CollectorUtilities
     {

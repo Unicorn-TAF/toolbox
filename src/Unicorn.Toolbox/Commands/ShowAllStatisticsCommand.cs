@@ -1,4 +1,4 @@
-﻿using Unicorn.Toolbox.Analysis;
+﻿using Unicorn.Toolbox.Models.Stats;
 using Unicorn.Toolbox.ViewModels;
 
 namespace Unicorn.Toolbox.Commands
@@ -6,9 +6,9 @@ namespace Unicorn.Toolbox.Commands
     public class ShowAllStatisticsCommand : CommandBase
     {
         private readonly StatisticsViewModel _viewModel;
-        private readonly Analyzer _analyzer;
+        private readonly StatsCollector _analyzer;
 
-        public ShowAllStatisticsCommand(StatisticsViewModel viewModel, Analyzer analyzer)
+        public ShowAllStatisticsCommand(StatisticsViewModel viewModel, StatsCollector analyzer)
         {
             _viewModel = viewModel;
             _analyzer = analyzer;

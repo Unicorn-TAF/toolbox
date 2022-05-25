@@ -9,14 +9,14 @@ using System.Runtime.Serialization.Formatters.Binary;
 using Unicorn.Taf.Api;
 #endif
 
-namespace Unicorn.Toolbox.Analysis
+namespace Unicorn.Toolbox.Models.Stats
 {
-    public class Analyzer
+    public class StatsCollector
     {
         private string _assemblyFile;
         private bool _considerParameterization;
 
-        public Analyzer()
+        public StatsCollector()
         {
         }
 

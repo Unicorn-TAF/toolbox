@@ -1,15 +1,15 @@
 ﻿using Microsoft.Win32;
 using System.IO;
 using System.Text;
-using Unicorn.Toolbox.Analysis;
+using Unicorn.Toolbox.Models.Stats;
 
 namespace Unicorn.Toolbox.Commands
 {
     public class ExportStatisticsCommand : CommandBase
     {
-        private readonly Analyzer _analyzer;
+        private readonly StatsCollector _analyzer;
 
-        public ExportStatisticsCommand(Analyzer analyzer)
+        public ExportStatisticsCommand(StatsCollector analyzer)
         {
             _analyzer = analyzer;
         }

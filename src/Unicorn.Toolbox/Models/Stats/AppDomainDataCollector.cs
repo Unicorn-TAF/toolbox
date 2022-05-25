@@ -3,7 +3,7 @@ using System.Reflection;
 using Unicorn.Taf.Core.Engine;
 using Unicorn.Taf.Core.Testing;
 
-namespace Unicorn.Toolbox.Analysis
+namespace Unicorn.Toolbox.Models.Stats
 {
 #pragma warning disable S3885 // "Assembly.Load" should be used
     public class AppDomainDataCollector : MarshalByRefObject

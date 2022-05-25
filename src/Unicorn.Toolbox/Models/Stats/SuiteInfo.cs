@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Unicorn.Toolbox.Analysis
+namespace Unicorn.Toolbox.Models.Stats
 {
     [Serializable]
     public struct SuiteInfo

@@ -1,5 +1,5 @@
-﻿using Unicorn.Toolbox.Analysis;
-using Unicorn.Toolbox.Analysis.Filtering;
+﻿using Unicorn.Toolbox.Models.Stats;
+using Unicorn.Toolbox.Models.Stats.Filtering;
 using Unicorn.Toolbox.ViewModels;
 
 namespace Unicorn.Toolbox.Commands
@@ -7,9 +7,9 @@ namespace Unicorn.Toolbox.Commands
     public class ApplyFilterCommand : CommandBase
     {
         private readonly StatisticsViewModel _viewModel;
-        private readonly Analyzer _analyzer;
+        private readonly StatsCollector _analyzer;
 
-        public ApplyFilterCommand(StatisticsViewModel viewModel, Analyzer analyzer)
+        public ApplyFilterCommand(StatisticsViewModel viewModel, StatsCollector analyzer)
         {
             _viewModel = viewModel;
             _analyzer = analyzer;
