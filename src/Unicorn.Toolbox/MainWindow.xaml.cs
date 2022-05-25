@@ -113,20 +113,16 @@ namespace Unicorn.Toolbox
         {
             if (tabResultsAnalysis.IsSelected)
             {
-                LaunchResultsView.groupBoxVisualizationStateTemp = groupBoxVisualization.IsEnabled;
+                var viewModel = LaunchResultsView.DataContext as LaunchResultsViewModel;
+
+                viewModel.GroupBoxVisualizationStateTemp = groupBoxVisualization.IsEnabled;
                 groupBoxVisualization.IsEnabled = true;
-                buttonVisualize.IsEnabled = LaunchResultsView.trxLoaded;
-                checkBoxFullscreen.IsEnabled = LaunchResultsView.trxLoaded;
+                buttonVisualize.IsEnabled = viewModel.TrxLoaded;
+                checkBoxFullscreen.IsEnabled = viewModel.TrxLoaded;
                 checkBoxModern.IsEnabled = false;
                 comboBoxPalette.IsEnabled = false;
 
-                //TODO
-                //if (comboFilterExecutedTestsBy.SelectedIndex.Equals(-1))
-                //{
-                //    comboFilterExecutedTestsBy.SelectedIndex = 0;
-                //}
-
-                statusBarText.Text = LaunchResultsView.Status;
+                statusBarText.Text = viewModel.Status;
             }
             else if (tabCoverage.IsSelected)
             {
@@ -134,13 +130,13 @@ namespace Unicorn.Toolbox
                 checkBoxFullscreen.IsEnabled = true;
                 checkBoxModern.IsEnabled = true;
                 comboBoxPalette.IsEnabled = true;
-                groupBoxVisualization.IsEnabled = LaunchResultsView.groupBoxVisualizationStateTemp;
+                groupBoxVisualization.IsEnabled = (LaunchResultsView.DataContext as LaunchResultsViewModel).GroupBoxVisualizationStateTemp;
 
                 statusBarText.Text = (CoverageView.DataContext as CoverageViewModel).Status;
             }
             else if (tabStatistics.IsSelected)
             {
-                statusBarText.Text = StatisticsView.Status;
+                statusBarText.Text = (StatisticsView.DataContext as StatisticsViewModel)?.Status;
             }
             else
             {

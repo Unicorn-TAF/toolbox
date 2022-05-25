@@ -15,7 +15,7 @@ namespace Unicorn.Toolbox.Commands
         {
             var window = new DialogHost("Failed tests by error message filter")
             {
-                DataContext = new DialogHostViewModel(_viewModel.Filter.FilteredResults)
+                DataContext = new DialogHostViewModel(_viewModel.Filter.FilteredData)
             };
             //window.SetFailedTestsDataSource(failedTestsFilter.FilteredResults);
             window.ShowDialog();

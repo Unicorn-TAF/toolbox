@@ -22,16 +22,16 @@ namespace Unicorn.Toolbox.Analysis
 
         public AutomationData Data { get; protected set; }
 
-        public string AssemblyFileName { get; protected set; }
+        public string AssemblyFile { get; protected set; }
 
-        public string TestsAssemblyName { get; protected set; }
+        public string AssemblyName { get; protected set; }
 
         public void GetTestsStatistics(string fileName, bool considerParameterization)
         {
             _assemblyFile = fileName;
             _considerParameterization = considerParameterization;
-            AssemblyFileName = Path.GetFileName(fileName);
-            TestsAssemblyName = AssemblyName.GetAssemblyName(fileName).FullName;
+            AssemblyFile = Path.GetFileName(fileName);
+            AssemblyName = System.Reflection.AssemblyName.GetAssemblyName(fileName).FullName;
             Data = new AutomationData();
 
 
@@ -61,7 +61,7 @@ namespace Unicorn.Toolbox.Analysis
             UnicornAssemblyLoadContext collectorContext = new UnicornAssemblyLoadContext(contextDirectory);
             collectorContext.Initialize(typeof(ITestRunner));
             collectorContext.LoadAssemblyFrom(Assembly.GetExecutingAssembly().Location);
-            AssemblyName assemblyName = AssemblyName.GetAssemblyName(_assemblyFile);
+            AssemblyName assemblyName = System.Reflection.AssemblyName.GetAssemblyName(_assemblyFile);
             Assembly testAssembly = collectorContext.GetAssembly(assemblyName);
 
             Type collectorType = collectorContext.GetAssemblyContainingType(typeof(LoadContextDataCollector))

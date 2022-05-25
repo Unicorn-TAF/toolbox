@@ -59,6 +59,6 @@ namespace Unicorn.Toolbox.LaunchAnalysis
         /// <summary>
         /// Used for data binding
         /// </summary>
-        public int SuitesCount => new HashSet<string>(TestResults.Select(tr => tr.TestListId)).Count;
+        public int SuitesCount => new HashSet<string>(TestResults.Select(tr => tr.SuiteId)).Count;
     }
 }

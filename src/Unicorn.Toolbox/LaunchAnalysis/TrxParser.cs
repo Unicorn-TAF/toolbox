@@ -17,66 +17,69 @@ namespace Unicorn.Toolbox.LaunchAnalysis
             xNamespace = _trx.Root.GetDefaultNamespace();
         }
 
-        public ImmutableList<TestResult> AllTests
+        public ImmutableList<TestResult> GetTestsData()
         {
-            get
+            var tests = new List<TestResult>();
+            var xUnitTests = _trx.Root.Element(xNamespace + "TestDefinitions").Elements(xNamespace + "UnitTest");
+            var xTestLists = _trx.Root.Element(xNamespace + "TestLists").Elements(xNamespace + "TestList");
+            var results = _trx.Root.Element(xNamespace + "Results").Elements(xNamespace + "UnitTestResult");
+
+            foreach (var xUnitTest in xUnitTests)
             {
-                var tests = new List<TestResult>();
-                var xUnitTests = _trx.Root.Element(xNamespace + "TestDefinitions").Elements(xNamespace + "UnitTest");
-                var xTestLists = _trx.Root.Element(xNamespace + "TestLists").Elements(xNamespace + "TestList");
-                var results = _trx.Root.Element(xNamespace + "Results").Elements(xNamespace + "UnitTestResult");
+                var id = xUnitTest.Attribute("id").Value;
 
-                foreach (var xUnitTest in xUnitTests)
+                var name = xUnitTest.Attribute("name").Value;
+                var description = xUnitTest.Element(xNamespace + "Description")?.Value;
+                var title = description ?? name;
+
+                var xResult = results.First(r => r.Attribute("testId").Value.Equals(id));
+                var startTime = Convert.ToDateTime(xResult.Attribute("startTime").Value);
+                var endTime = Convert.ToDateTime(xResult.Attribute("endTime").Value);
+                var suiteId = xResult.Attribute("testListId").Value;
+                var suiteName = xTestLists.First(tl => tl.Attribute("id").Value.Equals(suiteId)).Attribute("name").Value;
+
+                Status outcome;
+
+                switch(xResult.Attribute("outcome").Value)
                 {
-                    var id = xUnitTest.Attribute("id").Value;
-
-                    var name = xUnitTest.Attribute("name").Value;
-                    var description = xUnitTest.Element(xNamespace + "Description")?.Value;
-                    var title = description ?? name;
-
-                    var xResult = results.First(r => r.Attribute("testId").Value.Equals(id));
-                    var startTime = Convert.ToDateTime(xResult.Attribute("startTime").Value);
-                    var endTime = Convert.ToDateTime(xResult.Attribute("endTime").Value);
-                    var testListId = xResult.Attribute("testListId").Value;
-                    var testListName = xTestLists.First(tl => tl.Attribute("id").Value.Equals(testListId)).Attribute("name").Value;
-
-                    Status outcome;
-
-                    switch(xResult.Attribute("outcome").Value)
-                    {
-                        case "Failed":
-                            outcome = Status.Failed;
-                            break;
-                        case "Inconclusive":
-                            outcome = Status.Skipped;
-                            break;
-                        default:
-                            outcome = Status.Passed;
-                            break;
-                    }
-
-                    var errorMessage = outcome.Equals(Status.Failed) ?
-                        xResult.Element(xNamespace + "Output").Element(xNamespace + "ErrorInfo").Element(xNamespace + "Message").Value :
-                        null;
-                    var testResult = new TestResult(title, outcome, startTime, endTime, testListId, testListName, errorMessage);
-
-                    tests.Add(testResult);
+                    case "Failed":
+                        outcome = Status.Failed;
+                        break;
+                    case "Inconclusive":
+                        outcome = Status.Skipped;
+                        break;
+                    default:
+                        outcome = Status.Passed;
+                        break;
                 }
 
-                return tests.ToImmutableList();
+                string errorMessage = null;
+                
+                if (outcome.Equals(Status.Failed))
+                {
+                    errorMessage = xResult
+                        .Element(xNamespace + "Output")
+                        .Element(xNamespace + "ErrorInfo")
+                        .Element(xNamespace + "Message")
+                        .Value;
+                }
+
+                TestResult testResult = 
+                    new TestResult(title, outcome, startTime, endTime, suiteId, suiteName, errorMessage);
+
+                tests.Add(testResult);
             }
+
+            return tests.ToImmutableList();
         }
 
-        public TimeSpan TrxDuration
+        public TimeSpan GetLaunchDuration()
         {
-            get
-            {
-                var timeNode = _trx.Root.Element(xNamespace + "Times");
+            XElement timeNode = _trx.Root.Element(xNamespace + "Times");
 
-                var finish = Convert.ToDateTime(timeNode.Attribute("finish").Value);
-                var start = Convert.ToDateTime(timeNode.Attribute("start").Value);
-                return finish - start;
-            }
+            DateTime finish = Convert.ToDateTime(timeNode.Attribute("finish").Value);
+            DateTime start = Convert.ToDateTime(timeNode.Attribute("start").Value);
+            return finish - start;
         }
     }
 }

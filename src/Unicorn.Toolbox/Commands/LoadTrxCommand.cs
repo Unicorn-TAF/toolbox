@@ -41,24 +41,24 @@ namespace Unicorn.Toolbox.Commands
 
             _launchResult.Clear();
 
-            //var taskLoading = Task.Factory.StartNew(() =>
-            //{
-                foreach (var trxFile in trxFiles)
+            foreach (var trxFile in trxFiles)
+            {
+                try
                 {
-                    try
-                    {
-                        _launchResult.AppendResultsFromTrx(trxFile);
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(
-                            $"Error parsing {trxFile} file:" + ex.ToString(), 
-                            "Error", 
-                            MessageBoxButton.OK, 
-                            MessageBoxImage.Error);
-                    }
+                    _launchResult.AppendResultsFromTrx(trxFile);
                 }
-            //});
+                catch (Exception ex)
+                {
+                    MessageBox.Show(
+                        $"Error parsing {trxFile} file:" + ex.ToString(), 
+                        "Error", 
+                        MessageBoxButton.OK, 
+                        MessageBoxImage.Error);
+                }
+            }
+
+            _viewModel.TrxLoaded = true;
+            _viewModel.LaunchSummary = _launchResult.ToString();
 
             _viewModel.UpdateModel();
         }

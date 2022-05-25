@@ -1,7 +1,4 @@
-﻿using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using Unicorn.Toolbox.LaunchAnalysis;
+﻿using System.Windows.Controls;
 
 namespace Unicorn.Toolbox.Views
 {
@@ -10,15 +7,9 @@ namespace Unicorn.Toolbox.Views
     /// </summary>
     public partial class LaunchResultsView : UserControl
     {
-        internal bool groupBoxVisualizationStateTemp = false;
-        internal bool trxLoaded = false;
-        
-
         public LaunchResultsView()
         {
             InitializeComponent();
         }
-
-        public string Status { get; set; } = string.Empty;
     }
 }

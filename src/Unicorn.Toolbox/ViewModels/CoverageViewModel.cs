@@ -13,9 +13,10 @@ namespace Unicorn.Toolbox.ViewModels
     {
         private readonly SpecsCoverage _coverage;
         private readonly Analyzer _analyzer;
+        private readonly ObservableCollection<CoverageModuleViewModel> _modulesList;
+        
         private bool canGetCoverage;
         private string runTags;
-        private readonly ObservableCollection<CoverageModuleViewModel> _modulesList;
 
         public CoverageViewModel(Analyzer analyzer)
         {
@@ -27,10 +28,6 @@ namespace Unicorn.Toolbox.ViewModels
             LoadSpecsCommand = new LoadSpecsCommand(this, _coverage);
             GetCoverageCommand = new GetCoverageCommand(this, _coverage, _analyzer);
         }
-
-        public ICommand LoadSpecsCommand { get; }
-
-        public ICommand GetCoverageCommand { get; }
 
         public bool CanGetCoverage
         {
@@ -45,8 +42,6 @@ namespace Unicorn.Toolbox.ViewModels
 
         public ObservableCollection<CoverageModuleViewModel> ModulesList => _modulesList;
 
-        public string Status { get; set; } = string.Empty;
-
         public string RunTags
         {
             get => runTags;
@@ -57,6 +52,12 @@ namespace Unicorn.Toolbox.ViewModels
                 OnPropertyChanged(nameof(RunTags));
             }
         }
+
+        public string Status { get; set; } = string.Empty;
+
+        public ICommand GetCoverageCommand { get; }
+
+        public ICommand LoadSpecsCommand { get; }
 
         public IOrderedEnumerable<KeyValuePair<string, int>> GetVisualizationData()
         {

@@ -24,13 +24,13 @@ namespace Unicorn.Toolbox.Views
             Height = 105;
             Width = 400;
 
-            var uniqueSuites = new HashSet<string>(tests.Select(r => r.TestListName));
+            var uniqueSuites = new HashSet<string>(tests.Select(r => r.SuiteName));
 
             FailedResults = new Dictionary<string, IEnumerable<TestResult>>();
 
             foreach (var suite in uniqueSuites)
             {
-                var matchingResults = tests.Where(r => r.TestListName.Equals(suite));
+                var matchingResults = tests.Where(r => r.SuiteName.Equals(suite));
                 FailedResults.Add(suite, matchingResults);
             }
         }

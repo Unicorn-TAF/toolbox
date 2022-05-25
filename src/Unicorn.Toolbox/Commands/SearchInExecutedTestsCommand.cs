@@ -8,7 +8,7 @@ namespace Unicorn.Toolbox.Commands
     public class SearchInExecutedTestsCommand : CommandBase
     {
         private readonly LaunchResultsViewModel _viewModel;
-        private LaunchResult _launchResult;
+        private readonly LaunchResult _launchResult;
 
         public SearchInExecutedTestsCommand(
             LaunchResultsViewModel viewModel, 
@@ -26,18 +26,18 @@ namespace Unicorn.Toolbox.Commands
             switch (_viewModel.FilterFailsBy)
             {
                 case FailsFilter.ErrorMessage:
-                    testsFilter.FilterTestsByFailMessage(results, _viewModel.FailSearchCriteria, false);
+                    testsFilter.FilterByFailMessage(results, _viewModel.FailSearchCriteria, false);
                     break;
                 case FailsFilter.ErrorMessageRegex:
-                    testsFilter.FilterTestsByFailMessage(results, _viewModel.FailSearchCriteria, true);
+                    testsFilter.FilterByFailMessage(results, _viewModel.FailSearchCriteria, true);
                     break;
                 case FailsFilter.Time:
-                    testsFilter.FilterTestsByTime(results, _viewModel.FailSearchCriteria);
+                    testsFilter.FilterByTime(results, _viewModel.FailSearchCriteria);
                     break;
             }
 
             _viewModel.Filter = testsFilter;
-            _viewModel.UpdateFilteredTestsCount();
+            _viewModel.FoundFailsCount = _viewModel.Filter.MatchingTestsCount;
         }
     }
 }

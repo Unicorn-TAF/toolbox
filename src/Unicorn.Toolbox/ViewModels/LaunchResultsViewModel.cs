@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -23,28 +22,35 @@ namespace Unicorn.Toolbox.ViewModels
         private readonly MainWindow _window;
         private ListCollectionView listCollectionView;
 
-        //private ExecutedTestsFilter failedTestsFilter;
-        public string filterGridBy;
-        public string filterTestsBy;
-        public string failMessage;
-        private bool regex;
-        private bool searchByMessage;
+        private string filterGridBy;
+        private string failMessage;
+        private string launchSummary;
         private FailsFilter filterFailsBy = FailsFilter.ErrorMessage;
+        private int foundFailsCount;
 
         public LaunchResultsViewModel()
         {
             _window = App.Current.MainWindow as MainWindow;
             _launchResult = new LaunchResult();
+
             LoadTrxCommand = new LoadTrxCommand(this, _launchResult);
             SearchInExecutedTestsCommand = new SearchInExecutedTestsCommand(this, _launchResult);
             OpenFilteredTestsCommand = new OpenFilteredTestsCommand(this);
+            LaunchSummary = "Summary . . .";
         }
+
+        internal bool GroupBoxVisualizationStateTemp = false;
+        internal bool TrxLoaded = false;
+
+        public string Status { get; set; } = string.Empty;
 
         public ICommand LoadTrxCommand { get; }
 
         public ICommand SearchInExecutedTestsCommand { get; }
 
         public ICommand OpenFilteredTestsCommand { get; }
+
+        public ListCollectionView ExecutionsList => listCollectionView;
 
         public string FilterGridBy
         {
@@ -55,6 +61,17 @@ namespace Unicorn.Toolbox.ViewModels
                 filterGridBy = value;
                 OnPropertyChanged(nameof(FilterGridBy));
                 FilterExecutions();
+            }
+        }
+
+        public int FoundFailsCount
+        {
+            get => foundFailsCount;
+
+            set
+            {
+                foundFailsCount = value;
+                OnPropertyChanged(nameof(FoundFailsCount));
             }
         }
 
@@ -84,6 +101,16 @@ namespace Unicorn.Toolbox.ViewModels
 
         public ExecutedTestsFilter Filter { get; set; }
 
+        public string LaunchSummary
+        { 
+            get => launchSummary;
+            set
+            {
+                launchSummary = value;
+                OnPropertyChanged(nameof(LaunchSummary));
+            }
+        }
+
         private void FilterExecutions()
         {
             if (listCollectionView == null)
@@ -96,39 +123,27 @@ namespace Unicorn.Toolbox.ViewModels
 
         public void UpdateModel()
         {
-            //taskLoading.ContinueWith((t1) =>
-            //{
-                var obColl = new ObservableCollection<Execution>(_launchResult.Executions);
-                _window.Dispatcher.Invoke(() =>
+            listCollectionView = new ListCollectionView(_launchResult.Executions);
+            OnPropertyChanged(nameof(ExecutionsList));
+
+            //TODO
+            _window.buttonVisualize.IsEnabled = true;
+            _window.checkBoxFullscreen.IsEnabled = true;
+
+            _window.Dispatcher.Invoke(() =>
+            {
+                _window.LaunchResultsView.stackPanelFails.Children.Clear();
+
+                var results = ExecutedTestsFilter
+                    .GetTopErrors(_launchResult.Executions.SelectMany(exec => exec.TestResults));
+
+                for (int i = 0; i < results.Count(); i++)
                 {
-                    listCollectionView = new ListCollectionView(obColl);
-                    _window.LaunchResultsView.gridTestResults.ItemsSource = null;
-                    _window.LaunchResultsView.gridTestResults.ItemsSource = listCollectionView;
+                    _window.LaunchResultsView.stackPanelFails.Children.Add(new FailedTestsGroup(results.ElementAt(i)));
+                }
+            });
 
-                    _window.LaunchResultsView.textBoxLaunchSummary.Text = _launchResult.ToString();
-
-                    //TODO
-                    _window.buttonVisualize.IsEnabled = true;
-                    _window.checkBoxFullscreen.IsEnabled = true;
-                    //trxLoaded = true;
-
-                    _window.LaunchResultsView.stackPanelFails.Children.Clear();
-
-                    var results = ExecutedTestsFilter.GetTopErrors(_launchResult.Executions.SelectMany(exec => exec.TestResults));
-
-                    for (int i = 0; i < results.Count(); i++)
-                    {
-                        _window.LaunchResultsView.stackPanelFails.Children.Add(new FailedTestsGroup(results.ElementAt(i)));
-                    }
-                });
-            //}, TaskContinuationOptions.OnlyOnRanToCompletion);
-
-            _window.LaunchResultsView.Status = $"{_launchResult.Executions.Count()} .trx files were loaded";
-        }
-
-        public void UpdateFilteredTestsCount()
-        {
-            _window.LaunchResultsView.labelFoundFailedTests.Content = "Found: " + Filter.MatchingTestsCount;
+            Status = $"{_launchResult.Executions.Count()} .trx files were loaded";
         }
     }
 }

@@ -94,6 +94,8 @@ namespace Unicorn.Toolbox.ViewModels
             }
         }
 
+        public string Status { get; set; } = string.Empty;
+
         public IEnumerable<string> Features { get; set; }
         
         public IEnumerable<string> Categories { get; set; }
@@ -109,8 +111,8 @@ namespace Unicorn.Toolbox.ViewModels
             _window.StatisticsView.gridFilters.IsEnabled = true;
             _window.StatisticsView.buttonExportStats.IsEnabled = true;
 
-            _window.StatisticsView.Status = $"Assembly: {_analyzer.AssemblyFileName} ({_analyzer.TestsAssemblyName})    |    " + _analyzer.Data.ToString();
-            _window.statusBarText.Text = _window.StatisticsView.Status;
+            Status = $"Assembly: {_analyzer.AssemblyFile} ({_analyzer.AssemblyName})    |    {_analyzer.Data}";
+            _window.statusBarText.Text = Status;
 
             FillFiltersFrom(_analyzer.Data);
             ShowAll();

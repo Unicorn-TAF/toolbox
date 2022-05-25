@@ -55,11 +55,11 @@ namespace Unicorn.Toolbox.LaunchAnalysis
         public void AppendResultsFromTrx(string trxFile)
         {
             TrxParser trxParser = new TrxParser(trxFile);
-            var results = trxParser.AllTests;
+            var results = trxParser.GetTestsData();
 
             if (results.Any())
             {
-                Execution exeution = new Execution(Path.GetFileNameWithoutExtension(trxFile), results, trxParser.TrxDuration);
+                Execution exeution = new Execution(Path.GetFileNameWithoutExtension(trxFile), results, trxParser.GetLaunchDuration());
                 Executions.Add(exeution);
             }
         }

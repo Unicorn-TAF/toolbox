@@ -8,7 +8,7 @@
              d:DesignHeight="450" d:DesignWidth="1125">
     <Grid Background="#FFE5E5E5">
         <Button x:Name="btnLoadTrx" Content="Load TRX files" Command="{Binding LoadTrxCommand}" VerticalAlignment="Top" Margin="10,25,0,0" HorizontalAlignment="Left" Width="80"/>
-        <DataGrid x:Name="gridTestResults" HorizontalScrollBarVisibility="Disabled" HeadersVisibility="All" RowHeaderWidth="0" CanUserAddRows="False" CanUserResizeColumns="False"
+        <DataGrid x:Name="gridTestResults" ItemsSource="{Binding ExecutionsList}" HorizontalScrollBarVisibility="Disabled" HeadersVisibility="All" RowHeaderWidth="0" CanUserAddRows="False" CanUserResizeColumns="False"
                               CanUserSortColumns="True" AutoGenerateColumns="False" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="10,70,0,100" HorizontalAlignment="Left" Width="700">
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="Execution" Width="*" ClipboardContentBinding="{Binding Name}">
@@ -16,7 +16,7 @@
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock VerticalAlignment="Center" Text="Execution:  "/>
-                                <TextBox Width="150" Text=""/>
+                                <TextBox Width="150" Text="{Binding DataContext.FilterGridBy, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=PropertyChanged}"/>
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.HeaderTemplate>
@@ -84,15 +84,14 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
-        <TextBox Text="{Binding FilterGridBy, UpdateSourceTrigger=PropertyChanged}" Margin="77,70,917,0" Height="25" VerticalAlignment="Top"/>
 
-        <TextBox x:Name="textBoxLaunchSummary" HorizontalAlignment="Left" Margin="10,0,0,10" TextWrapping="Wrap" Text="Summary . . ." Width="700" FontFamily="Consolas" Height="80" VerticalAlignment="Bottom"/>
+        <TextBox x:Name="textBoxLaunchSummary" Text="{Binding LaunchSummary}" HorizontalAlignment="Left" Margin="10,0,0,10" TextWrapping="Wrap" Width="700" FontFamily="Consolas" Height="80" VerticalAlignment="Bottom"/>
         <GroupBox Header="Find failed tests" Margin="0,0,10,10" Height="85" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="400">
             <Grid>
                 <TextBox x:Name="textBoxFailMessage" Margin="10,0,10,35" TextWrapping="Wrap" Text="{Binding FailSearchCriteria}" VerticalAlignment="Bottom" Height="22"/>
                 <ComboBox x:Name="comboFilterExecutedTestsBy" ItemsSource="{Binding FailsFilters}" Text="{Binding FilterFailsBy}" SelectedIndex="0" HorizontalAlignment="Left" VerticalContentAlignment="Top" HorizontalContentAlignment="Center" Margin="10,0,0,5" Width="150" Height="22" VerticalAlignment="Bottom"/>
                 <Button x:Name="buttonSearchByFailMessage" Content="Search" Command="{Binding SearchInExecutedTestsCommand}" Margin="170,0,0,5" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="80"/>
-                <Label x:Name="labelFoundFailedTests" Content="" Margin="0,0,10,8" Height="26" HorizontalContentAlignment="Right" VerticalAlignment="Bottom" FontWeight="Bold" Foreground="#FF3399FF" Cursor="Hand" HorizontalAlignment="Right">
+                <Label x:Name="labelFoundFailedTests" Content="{Binding FoundFailsCount}" Margin="0,0,10,8" Height="26" HorizontalContentAlignment="Right" VerticalAlignment="Bottom" FontWeight="Bold" Foreground="#FF3399FF" Cursor="Hand" HorizontalAlignment="Right">
                     <Label.InputBindings>
                         <MouseBinding
                             MouseAction="LeftClick"
