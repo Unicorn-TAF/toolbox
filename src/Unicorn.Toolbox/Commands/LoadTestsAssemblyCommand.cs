@@ -6,13 +6,13 @@ namespace Unicorn.Toolbox.Commands
 {
     public class LoadTestsAssemblyCommand : CommandBase
     {
-        private readonly StatisticsViewModel _viewModel;
-        private readonly StatsCollector _analyzer;
+        private readonly StatsViewModel _viewModel;
+        private readonly StatsCollector _statsCollector;
 
-        public LoadTestsAssemblyCommand(StatisticsViewModel viewModel, StatsCollector analyzer)
+        public LoadTestsAssemblyCommand(StatsViewModel viewModel, StatsCollector statsCollector)
         {
             _viewModel = viewModel;
-            _analyzer = analyzer;
+            _statsCollector = statsCollector;
         }
 
         public override void Execute(object parameter)
@@ -31,8 +31,8 @@ namespace Unicorn.Toolbox.Commands
                 return;
             }
 
-            _analyzer.GetTestsStatistics(assemblyFile, _viewModel.ConsiderTestData);
-            _viewModel.UpdateModel();
+            _statsCollector.GetTestsStatistics(assemblyFile, _viewModel.ConsiderTestData);
+            _viewModel.UpdateViewModel();
         }
     }
 }

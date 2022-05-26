@@ -16,7 +16,7 @@ namespace Unicorn.Toolbox.ViewModels
         ErrorMessageRegex
     }
 
-    public class LaunchResultsViewModel : ViewModelBase
+    public class LaunchViewModel : ViewModelBase
     {
         private readonly LaunchResult _launchResult;
         private readonly ObservableCollection<FailedTestsGroup> _topFailsList;
@@ -28,7 +28,7 @@ namespace Unicorn.Toolbox.ViewModels
         private FailsFilter filterFailsBy = FailsFilter.ErrorMessage;
         private int foundFailsCount;
 
-        public LaunchResultsViewModel()
+        public LaunchViewModel()
         {
             _launchResult = new LaunchResult();
             _topFailsList = new ObservableCollection<FailedTestsGroup>();

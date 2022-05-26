@@ -21,7 +21,7 @@ namespace Unicorn.Toolbox
         {
             if (tabResultsAnalysis.IsSelected)
             {
-                var launchResultsViewModel = LaunchResultsView.DataContext as LaunchResultsViewModel;
+                var launchResultsViewModel = LaunchView.DataContext as LaunchViewModel;
                 Visualization.CurrentViewModel = launchResultsViewModel;
 
                 Visualization.Available = launchResultsViewModel.TrxLoaded;
@@ -39,7 +39,7 @@ namespace Unicorn.Toolbox
             }
             else if (tabStatistics.IsSelected)
             {
-                var statsViewModel = StatisticsView.DataContext as StatisticsViewModel;
+                var statsViewModel = StatsView.DataContext as StatsViewModel;
                 
                 if (statsViewModel != null)
                 {

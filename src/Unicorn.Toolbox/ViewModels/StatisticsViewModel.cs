@@ -9,24 +9,24 @@ using Unicorn.Toolbox.Models.Stats.Filtering;
 
 namespace Unicorn.Toolbox.ViewModels
 {
-    public class StatisticsViewModel : ViewModelBase
+    public class StatsViewModel : ViewModelBase
     {
-        private readonly StatsCollector _analyzer;
+        private readonly StatsCollector _statsCollector;
         private readonly MainWindow _window;
         private bool considerTestData;
         private bool filterOnlyDisabledTests;
         private bool filterOnlyEnabledTests; 
         private bool showHideAllCheckboxes;
 
-        public StatisticsViewModel(StatsCollector analyzer)
+        public StatsViewModel(StatsCollector statsCollector)
         {
             _window = App.Current.MainWindow as MainWindow;
-            _analyzer = analyzer;
-            LoadTestsAssemblyCommand = new LoadTestsAssemblyCommand(this, _analyzer);
-            ApplyFilterCommand = new ApplyFilterCommand(this, _analyzer);
-            ExportStatisticsCommand = new ExportStatisticsCommand(_analyzer);
-            ShowAllStatisticsCommand = new ShowAllStatisticsCommand(this, _analyzer);
-            OpenSuiteDetailsCommand = new OpenSuiteDetailsCommand(this, _analyzer);
+            _statsCollector = statsCollector;
+            LoadTestsAssemblyCommand = new LoadTestsAssemblyCommand(this, _statsCollector);
+            ApplyFilterCommand = new ApplyFilterCommand(this, _statsCollector);
+            ExportStatisticsCommand = new ExportStatisticsCommand(_statsCollector);
+            ShowAllStatisticsCommand = new ShowAllStatisticsCommand(this, _statsCollector);
+            OpenSuiteDetailsCommand = new OpenSuiteDetailsCommand(this, _statsCollector);
         }
 
         public ICommand LoadTestsAssemblyCommand { get; }
@@ -98,11 +98,11 @@ namespace Unicorn.Toolbox.ViewModels
         {
             get
             {
-                if (_window.StatisticsView.tabFeaures.IsSelected)
+                if (_window.StatsView.tabFeaures.IsSelected)
                 {
                     return FilterType.Tag;
                 }
-                else if (_window.StatisticsView.tabCategories.IsSelected)
+                else if (_window.StatsView.tabCategories.IsSelected)
                 {
                     return FilterType.Category;
                 }
@@ -121,55 +121,55 @@ namespace Unicorn.Toolbox.ViewModels
         
         public IEnumerable<string> Authors { get; set; }
 
-        public void UpdateModel()
+        public void UpdateViewModel()
         {
             _window.VisualizationView.groupBoxVisualization.IsEnabled = true;
             //groupBoxVisualizationStateTemp = true;
 
-            _window.StatisticsView.gridFilters.IsEnabled = true;
-            _window.StatisticsView.buttonExportStats.IsEnabled = true;
+            _window.StatsView.gridFilters.IsEnabled = true;
+            _window.StatsView.buttonExportStats.IsEnabled = true;
 
-            Status = $"Assembly: {_analyzer.AssemblyFile} ({_analyzer.AssemblyName})    |    {_analyzer.Data}";
+            Status = $"Assembly: {_statsCollector.AssemblyFile} ({_statsCollector.AssemblyName})    |    {_statsCollector.Data}";
             _window.statusBarText.Text = Status;
 
-            FillFiltersFrom(_analyzer.Data);
+            FillFiltersFrom(_statsCollector.Data);
             ShowAll();
-            _window.StatisticsView.checkBoxShowHide.IsChecked = true;
+            _window.StatsView.checkBoxShowHide.IsChecked = true;
         }
 
         public void ApplyFilteredData(bool emptyText)
         {
-            _window.StatisticsView.gridResults.ItemsSource = _analyzer.Data.FilteredInfo;
+            _window.StatsView.gridResults.ItemsSource = _statsCollector.Data.FilteredInfo;
 
-            var foundTestsCount = _analyzer.Data.FilteredInfo.SelectMany(si => si.TestsInfos).Count();
+            var foundTestsCount = _statsCollector.Data.FilteredInfo.SelectMany(si => si.TestsInfos).Count();
 
             var filterText = new StringBuilder()
                 .AppendFormat("Found {0} tests. Filters:\nFeatures[{1}]\n", foundTestsCount, string.Join(",", Features))
                 .AppendFormat("Categories[{0}]\n", string.Join(", ", Categories))
                 .AppendFormat("Authors[{0}]", string.Join(", ", Authors));
 
-            _window.StatisticsView.textBoxCurrentFilter.Text = emptyText ? string.Empty : filterText.ToString();
+            _window.StatsView.textBoxCurrentFilter.Text = emptyText ? string.Empty : filterText.ToString();
         }
 
         private void ShowAll()
         {
-            _analyzer.Data.ClearFilters();
-            _window.StatisticsView.gridResults.ItemsSource = _analyzer.Data.FilteredInfo;
-            _window.StatisticsView.textBoxCurrentFilter.Text = string.Empty;
+            _statsCollector.Data.ClearFilters();
+            _window.StatsView.gridResults.ItemsSource = _statsCollector.Data.FilteredInfo;
+            _window.StatsView.textBoxCurrentFilter.Text = string.Empty;
         }
 
         private void FillFiltersFrom(AutomationData data)
         {
-            UiUtils.FillGrid(_window.StatisticsView.gridFeatures, data.UniqueFeatures);
-            UiUtils.FillGrid(_window.StatisticsView.gridCategories, data.UniqueCategories);
-            UiUtils.FillGrid(_window.StatisticsView.gridAuthors, data.UniqueAuthors);
+            UiUtils.FillGrid(_window.StatsView.gridFeatures, data.UniqueFeatures);
+            UiUtils.FillGrid(_window.StatsView.gridCategories, data.UniqueCategories);
+            UiUtils.FillGrid(_window.StatsView.gridAuthors, data.UniqueAuthors);
         }
 
         public void PopulateDataFromFilters()
         {
-            Features = GetCheckedCheckboxesNames(_window.StatisticsView.gridFeatures);
-            Categories = GetCheckedCheckboxesNames(_window.StatisticsView.gridCategories);
-            Authors = GetCheckedCheckboxesNames(_window.StatisticsView.gridAuthors);
+            Features = GetCheckedCheckboxesNames(_window.StatsView.gridFeatures);
+            Categories = GetCheckedCheckboxesNames(_window.StatsView.gridCategories);
+            Authors = GetCheckedCheckboxesNames(_window.StatsView.gridAuthors);
         }
 
         private IEnumerable<string> GetCheckedCheckboxesNames(Grid grid) =>
@@ -185,23 +185,23 @@ namespace Unicorn.Toolbox.ViewModels
 
         private Grid GetActiveGrid()
         {
-            if (_window.StatisticsView.tabFeaures.IsSelected)
+            if (_window.StatsView.tabFeaures.IsSelected)
             {
-                return _window.StatisticsView.gridFeatures;
+                return _window.StatsView.gridFeatures;
             }
-            else if (_window.StatisticsView.tabCategories.IsSelected)
+            else if (_window.StatsView.tabCategories.IsSelected)
             {
-                return _window.StatisticsView.gridCategories;
+                return _window.StatsView.gridCategories;
             }
             else
             {
-                return _window.StatisticsView.gridAuthors;
+                return _window.StatsView.gridAuthors;
             }
         }
 
         public IOrderedEnumerable<KeyValuePair<string, int>> GetVisualizationData()
         {
-            var data = _analyzer.Data;
+            var data = _statsCollector.Data;
             var stats = new Dictionary<string, int>();
 
             switch (CurrentFilter)

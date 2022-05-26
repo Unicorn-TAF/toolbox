@@ -5,9 +5,9 @@ namespace Unicorn.Toolbox.Views
     /// <summary>
     /// Interaction logic for LaunchResultView.xaml
     /// </summary>
-    public partial class LaunchResultsView : UserControl
+    public partial class LaunchView : UserControl
     {
-        public LaunchResultsView()
+        public LaunchView()
         {
             InitializeComponent();
         }

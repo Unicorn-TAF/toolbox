@@ -4,19 +4,19 @@ namespace Unicorn.Toolbox.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
-        public MainViewModel(StatsCollector analyzer)
+        public MainViewModel(StatsCollector statsCollector)
         {
-            StatisticsViewModel = new StatisticsViewModel(analyzer);
-            CoverageViewModel = new CoverageViewModel(analyzer);
-            LaunchResultsViewModel = new LaunchResultsViewModel();
+            StatsViewModel = new StatsViewModel(statsCollector);
+            CoverageViewModel = new CoverageViewModel(statsCollector);
+            LaunchViewModel = new LaunchViewModel();
             VisualizationViewModel = new VisualizationViewModel();
         }
 
-        public ViewModelBase StatisticsViewModel { get; }
+        public ViewModelBase StatsViewModel { get; }
 
         public ViewModelBase CoverageViewModel { get; }
 
-        public ViewModelBase LaunchResultsViewModel { get; }
+        public ViewModelBase LaunchViewModel { get; }
 
         public ViewModelBase VisualizationViewModel { get; }
     }

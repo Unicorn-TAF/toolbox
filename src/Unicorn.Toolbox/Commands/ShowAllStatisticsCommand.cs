@@ -5,10 +5,10 @@ namespace Unicorn.Toolbox.Commands
 {
     public class ShowAllStatisticsCommand : CommandBase
     {
-        private readonly StatisticsViewModel _viewModel;
+        private readonly StatsViewModel _viewModel;
         private readonly StatsCollector _analyzer;
 
-        public ShowAllStatisticsCommand(StatisticsViewModel viewModel, StatsCollector analyzer)
+        public ShowAllStatisticsCommand(StatsViewModel viewModel, StatsCollector analyzer)
         {
             _viewModel = viewModel;
             _analyzer = analyzer;

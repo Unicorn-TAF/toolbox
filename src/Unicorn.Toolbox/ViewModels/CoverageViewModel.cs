@@ -12,21 +12,21 @@ namespace Unicorn.Toolbox.ViewModels
     public class CoverageViewModel : ViewModelBase
     {
         private readonly SpecsCoverage _coverage;
-        private readonly StatsCollector _analyzer;
+        private readonly StatsCollector _statsCollector;
         private readonly ObservableCollection<CoverageModuleViewModel> _modulesList;
         
         private bool canGetCoverage;
         private string runTags;
 
-        public CoverageViewModel(StatsCollector analyzer)
+        public CoverageViewModel(StatsCollector statsCollector)
         {
             _coverage = new SpecsCoverage();
-            _analyzer = analyzer;
+            _statsCollector = statsCollector;
             _modulesList = new ObservableCollection<CoverageModuleViewModel>();
             _modulesList.CollectionChanged += OnCollectionChange;
 
             LoadSpecsCommand = new LoadSpecsCommand(this, _coverage);
-            GetCoverageCommand = new GetCoverageCommand(this, _coverage, _analyzer);
+            GetCoverageCommand = new GetCoverageCommand(this, _coverage, _statsCollector);
         }
 
         public bool DataLoaded

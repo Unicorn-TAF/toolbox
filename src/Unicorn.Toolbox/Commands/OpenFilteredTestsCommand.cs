@@ -4,9 +4,9 @@ namespace Unicorn.Toolbox.Commands
 {
     public class OpenFilteredTestsCommand : CommandBase
     {
-        private readonly LaunchResultsViewModel _viewModel;
+        private readonly LaunchViewModel _viewModel;
 
-        public OpenFilteredTestsCommand(LaunchResultsViewModel viewModel)
+        public OpenFilteredTestsCommand(LaunchViewModel viewModel)
         {
             _viewModel = viewModel;
         }

@@ -17,7 +17,7 @@ namespace Unicorn.Toolbox.Commands
 
         public override void Execute(object parameter)
         {
-            if (_viewModel.CurrentViewModel is StatisticsViewModel stats)
+            if (_viewModel.CurrentViewModel is StatsViewModel stats)
             {
                 VisualizeStatistics(stats);
             } 
@@ -27,11 +27,11 @@ namespace Unicorn.Toolbox.Commands
             }
             else
             {
-                VisualizeResults(_viewModel.CurrentViewModel as LaunchResultsViewModel);
+                VisualizeResults(_viewModel.CurrentViewModel as LaunchViewModel);
             }
         }
 
-        private void VisualizeStatistics(StatisticsViewModel stats)
+        private void VisualizeStatistics(StatsViewModel stats)
         {
             WindowVisualization visualization = GetVisualizationWindow($"Overall tests statistics: {stats.CurrentFilter}");
 
@@ -71,7 +71,7 @@ namespace Unicorn.Toolbox.Commands
             }
         }
 
-        private void VisualizeResults(LaunchResultsViewModel launchResults)
+        private void VisualizeResults(LaunchViewModel launchResults)
         {
             var visualization = GetVisualizationWindow("Launch visualization");
 

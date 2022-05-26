@@ -6,10 +6,10 @@ namespace Unicorn.Toolbox.Commands
 {
     public class ApplyFilterCommand : CommandBase
     {
-        private readonly StatisticsViewModel _viewModel;
+        private readonly StatsViewModel _viewModel;
         private readonly StatsCollector _analyzer;
 
-        public ApplyFilterCommand(StatisticsViewModel viewModel, StatsCollector analyzer)
+        public ApplyFilterCommand(StatsViewModel viewModel, StatsCollector analyzer)
         {
             _viewModel = viewModel;
             _analyzer = analyzer;

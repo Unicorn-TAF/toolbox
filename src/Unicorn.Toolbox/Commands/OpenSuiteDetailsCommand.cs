@@ -6,10 +6,10 @@ namespace Unicorn.Toolbox.Commands
 {
     public class OpenSuiteDetailsCommand : CommandBase
     {
-        private readonly StatisticsViewModel _viewModel;
+        private readonly StatsViewModel _viewModel;
         private readonly StatsCollector _analyzer;
 
-        public OpenSuiteDetailsCommand(StatisticsViewModel viewModel, StatsCollector analyzer)
+        public OpenSuiteDetailsCommand(StatsViewModel viewModel, StatsCollector analyzer)
         {
             _viewModel = viewModel;
             _analyzer = analyzer;

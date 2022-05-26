@@ -5,10 +5,10 @@ namespace Unicorn.Toolbox.Views
     /// <summary>
     /// Interaction logic for StatisticsView.xaml
     /// </summary>
-    public partial class StatisticsView : UserControl
+    public partial class StatsView : UserControl
     {
 
-        public StatisticsView()
+        public StatsView()
         {
             InitializeComponent();
         }

@@ -10,9 +10,9 @@ namespace Unicorn.Toolbox.Commands
     public class LoadTrxCommand : CommandBase
     {
         private readonly LaunchResult _launchResult;
-        private readonly LaunchResultsViewModel _viewModel;
+        private readonly LaunchViewModel _viewModel;
 
-        public LoadTrxCommand(LaunchResultsViewModel viewModel, LaunchResult launchResult)
+        public LoadTrxCommand(LaunchViewModel viewModel, LaunchResult launchResult)
         {
             _launchResult = launchResult;
             _viewModel = viewModel;

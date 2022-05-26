@@ -7,11 +7,11 @@ namespace Unicorn.Toolbox.Commands
 {
     public class SearchInExecutedTestsCommand : CommandBase
     {
-        private readonly LaunchResultsViewModel _viewModel;
+        private readonly LaunchViewModel _viewModel;
         private readonly LaunchResult _launchResult;
 
         public SearchInExecutedTestsCommand(
-            LaunchResultsViewModel viewModel, 
+            LaunchViewModel viewModel, 
             LaunchResult launchResult)
         {
             _viewModel = viewModel;

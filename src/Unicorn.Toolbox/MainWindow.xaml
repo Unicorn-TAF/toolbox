@@ -10,13 +10,13 @@
     <Grid>
         <TabControl x:Name="tabControl" Margin="0,0,0,25" SelectionChanged="TabChanged">
             <TabItem x:Name="tabStatistics" Header="Tests statistics" Width="100">
-                <views:StatisticsView x:Name="StatisticsView" DataContext="{Binding StatisticsViewModel}"/>
+                <views:StatsView x:Name="StatsView" DataContext="{Binding StatsViewModel}"/>
             </TabItem>
             <TabItem x:Name="tabCoverage" Header="Coverage" Width="100">
                 <views:CoverageView x:Name="CoverageView" DataContext="{Binding CoverageViewModel}"/>
             </TabItem>
             <TabItem x:Name="tabResultsAnalysis" Header="Results Analysis" Width="100">
-                <views:LaunchResultsView x:Name="LaunchResultsView" DataContext="{Binding LaunchResultsViewModel}"/>
+                <views:LaunchView x:Name="LaunchView" DataContext="{Binding LaunchViewModel}"/>
             </TabItem>
         </TabControl>
         <DockPanel Height="25" VerticalAlignment="Bottom">
