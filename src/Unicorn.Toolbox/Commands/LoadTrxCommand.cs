@@ -20,10 +20,6 @@ namespace Unicorn.Toolbox.Commands
 
         public override void Execute(object parameter)
         {
-            // TODO
-            //buttonVisualize.IsEnabled = false;
-            //checkBoxFullscreen.IsEnabled = false;
-
             var openFileDialog = new OpenFileDialog
             {
                 Filter = "Trx files|*.trx",
@@ -35,11 +31,8 @@ namespace Unicorn.Toolbox.Commands
                 return;
             }
 
-            var trxFiles = openFileDialog.FileNames;
-            //Status = "Loading .trx";
-            //statusBarText.Text = StatusLineResults;
-
             _launchResult.Clear();
+            var trxFiles = openFileDialog.FileNames;
 
             foreach (var trxFile in trxFiles)
             {
@@ -60,7 +53,7 @@ namespace Unicorn.Toolbox.Commands
             _viewModel.TrxLoaded = true;
             _viewModel.LaunchSummary = _launchResult.ToString();
 
-            _viewModel.UpdateModel();
+            _viewModel.UpdateViewModel();
         }
     }
 }

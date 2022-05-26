@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Data;
 using System.Windows.Input;
 using Unicorn.Toolbox.Commands;
 using Unicorn.Toolbox.Models.Launch;
-using Unicorn.Toolbox.Views;
 
 namespace Unicorn.Toolbox.ViewModels
 {
@@ -19,7 +19,7 @@ namespace Unicorn.Toolbox.ViewModels
     public class LaunchResultsViewModel : ViewModelBase
     {
         private readonly LaunchResult _launchResult;
-        private readonly MainWindow _window;
+        private readonly ObservableCollection<FailedTestsGroup> _topFailsList;
         private ListCollectionView listCollectionView;
 
         private string filterGridBy;
@@ -30,12 +30,13 @@ namespace Unicorn.Toolbox.ViewModels
 
         public LaunchResultsViewModel()
         {
-            _window = App.Current.MainWindow as MainWindow;
             _launchResult = new LaunchResult();
+            _topFailsList = new ObservableCollection<FailedTestsGroup>();
 
             LoadTrxCommand = new LoadTrxCommand(this, _launchResult);
             SearchInExecutedTestsCommand = new SearchInExecutedTestsCommand(this, _launchResult);
             OpenFilteredTestsCommand = new OpenFilteredTestsCommand(this);
+            OpenFailsByMessageCommand = new OpenFailsByMessageCommand();
             LaunchSummary = "Summary . . .";
         }
 
@@ -48,6 +49,8 @@ namespace Unicorn.Toolbox.ViewModels
         public ICommand SearchInExecutedTestsCommand { get; }
 
         public ICommand OpenFilteredTestsCommand { get; }
+
+        public ICommand OpenFailsByMessageCommand { get; }
 
         public ListCollectionView ExecutionsList => listCollectionView;
 
@@ -76,6 +79,8 @@ namespace Unicorn.Toolbox.ViewModels
 
         public IEnumerable<FailsFilter> FailsFilters { get; } =
             Enum.GetValues(typeof(FailsFilter)).Cast<FailsFilter>();
+
+        public IEnumerable<FailedTestsGroup> TopFailsList => _topFailsList;
 
         public FailsFilter FilterFailsBy
         {
@@ -120,7 +125,7 @@ namespace Unicorn.Toolbox.ViewModels
             listCollectionView.Filter = (item) => { return ((Execution)item).Name.Contains(FilterGridBy); };
         }
 
-        public void UpdateModel()
+        public void UpdateViewModel()
         {
             listCollectionView = new ListCollectionView(_launchResult.Executions);
             OnPropertyChanged(nameof(ExecutionsList));
@@ -128,17 +133,14 @@ namespace Unicorn.Toolbox.ViewModels
             var results = ExecutedTestsFilter
                 .GetTopErrors(_launchResult.Executions.SelectMany(exec => exec.TestResults));
 
-            _window.Dispatcher.Invoke(() =>
+            _topFailsList.Clear();
+
+            for (int i = 0; i < results.Count(); i++)
             {
-                _window.LaunchResultsView.stackPanelFails.Children.Clear();
+                _topFailsList.Add(new FailedTestsGroup(results.ElementAt(i)));
+            }
 
-                for (int i = 0; i < results.Count(); i++)
-                {
-                    var group = new FailedTestsGroup(results.ElementAt(i));
-
-                    _window.LaunchResultsView.stackPanelFails.Children.Add(group);
-                }
-            });
+            OnPropertyChanged(nameof(TopFailsList));
 
             Status = $"{_launchResult.Executions.Count()} .trx files were loaded";
         }

@@ -101,6 +101,29 @@
             </Grid>
         </GroupBox>
         <Label Content="Top 5 fail reasons" HorizontalAlignment="Right" Margin="0,0,160,0" VerticalAlignment="Top" FontWeight="Bold"/>
-        <UniformGrid x:Name="stackPanelFails" Margin="720,30,10,100" Rows="5"/>
+            <ItemsControl x:Name="stackPanelFails" ItemsSource="{Binding TopFailsList}" Margin="720,30,10,100">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderBrush="#FF808080" Margin="0,0,0,0">
+                            <Grid>
+                                <Border Margin="5,5,5,20" Background="#FF303030">
+                                    <TextBox  x:Name="textErrorMessage" Margin="2,2,2,2" Text="{Binding ErrorMessage, Mode=OneWay}" IsReadOnly="True" Foreground="#FFEAEAEA" FontFamily="Consolas" TextWrapping="Wrap" FontSize="12" Background="{x:Null}"/>
+                                </Border>
+                            <TextBlock x:Name="labelFoundFailedTests" Text="{Binding Count}" HorizontalAlignment="Right" Margin="0,0,5,5" FontWeight="Bold" Foreground="#FF3399FF" Cursor="Hand" Height="15" VerticalAlignment="Bottom">
+                                <TextBlock.InputBindings>
+                                    <MouseBinding MouseAction="LeftClick"
+                                    Command="{Binding DataContext.OpenFailsByMessageCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding FailedResults}"/>
+                                </TextBlock.InputBindings>
+                            </TextBlock>
+                        </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Rows="5"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
     </Grid>
 </UserControl>
