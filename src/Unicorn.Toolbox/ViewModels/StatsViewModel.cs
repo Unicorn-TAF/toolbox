@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Windows.Controls;
 using System.Windows.Input;
 using Unicorn.Toolbox.Commands;
 using Unicorn.Toolbox.Models.Stats;
@@ -17,6 +16,8 @@ namespace Unicorn.Toolbox.ViewModels
         private bool filterOnlyDisabledTests;
         private bool filterOnlyEnabledTests; 
         private bool showHideAllCheckboxes;
+        private string currentFilterText;
+        private bool dataLoaded;
 
         public StatsViewModel(StatsCollector statsCollector)
         {
@@ -27,17 +28,19 @@ namespace Unicorn.Toolbox.ViewModels
             ExportStatisticsCommand = new ExportStatisticsCommand(_statsCollector);
             ShowAllStatisticsCommand = new ShowAllStatisticsCommand(this, _statsCollector);
             OpenSuiteDetailsCommand = new OpenSuiteDetailsCommand(this, _statsCollector);
+            DataLoaded = false;
         }
 
-        public ICommand LoadTestsAssemblyCommand { get; }
+        public bool DataLoaded
+        {
+            get => dataLoaded;
 
-        public ICommand ApplyFilterCommand { get; }
-
-        public ICommand ExportStatisticsCommand { get; }
-
-        public ICommand ShowAllStatisticsCommand { get; }
-
-        public ICommand OpenSuiteDetailsCommand { get; }
+            set
+            {
+                dataLoaded = value;
+                OnPropertyChanged(nameof(DataLoaded));
+            }
+        }
 
         public bool ConsiderTestData
         {
@@ -113,89 +116,100 @@ namespace Unicorn.Toolbox.ViewModels
             }
         }
 
+        public string CurrentFilterText
+        {
+            get => currentFilterText;
+
+            set
+            {
+                currentFilterText = value;
+                OnPropertyChanged(nameof(CurrentFilterText));
+            }
+        }
+
         public string Status { get; set; } = string.Empty;
 
-        public IEnumerable<string> Features { get; set; }
+        public IEnumerable<FilterItemViewModel> Tags { get; set; }
         
-        public IEnumerable<string> Categories { get; set; }
+        public IEnumerable<FilterItemViewModel> Categories { get; set; }
         
-        public IEnumerable<string> Authors { get; set; }
+        public IEnumerable<FilterItemViewModel> Authors { get; set; }
+
+        public IEnumerable<SuiteInfo> FilteredInfo => _statsCollector.Data?.FilteredInfo;
+
+        public ICommand LoadTestsAssemblyCommand { get; }
+
+        public ICommand ApplyFilterCommand { get; }
+
+        public ICommand ExportStatisticsCommand { get; }
+
+        public ICommand ShowAllStatisticsCommand { get; }
+
+        public ICommand OpenSuiteDetailsCommand { get; }
 
         public void UpdateViewModel()
         {
-            _window.VisualizationView.groupBoxVisualization.IsEnabled = true;
             //groupBoxVisualizationStateTemp = true;
-
-            _window.StatsView.gridFilters.IsEnabled = true;
-            _window.StatsView.buttonExportStats.IsEnabled = true;
 
             Status = $"Assembly: {_statsCollector.AssemblyFile} ({_statsCollector.AssemblyName})    |    {_statsCollector.Data}";
             _window.statusBarText.Text = Status;
 
             FillFiltersFrom(_statsCollector.Data);
-            ShowAll();
-            _window.StatsView.checkBoxShowHide.IsChecked = true;
+            ShowAllStatisticsCommand.Execute(null);
+            ShowHideAllCheckboxes = true;
         }
 
-        public void ApplyFilteredData(bool emptyText)
+        public void ApplyFilteredData()
         {
-            _window.StatsView.gridResults.ItemsSource = _statsCollector.Data.FilteredInfo;
+            OnPropertyChanged(nameof(FilteredInfo));
 
-            var foundTestsCount = _statsCollector.Data.FilteredInfo.SelectMany(si => si.TestsInfos).Count();
+            string filterText = string.Empty;
 
-            var filterText = new StringBuilder()
-                .AppendFormat("Found {0} tests. Filters:\nFeatures[{1}]\n", foundTestsCount, string.Join(",", Features))
-                .AppendFormat("Categories[{0}]\n", string.Join(", ", Categories))
-                .AppendFormat("Authors[{0}]", string.Join(", ", Authors));
+            if (_statsCollector.Data.FilteredInfo.Count() != _statsCollector.Data.SuitesInfos.Count())
+            {
+                var foundTestsCount = _statsCollector.Data.FilteredInfo.SelectMany(si => si.TestsInfos).Count();
 
-            _window.StatsView.textBoxCurrentFilter.Text = emptyText ? string.Empty : filterText.ToString();
-        }
+                filterText = new StringBuilder()
+                    .AppendFormat("Found {0} tests. Filters:\n", foundTestsCount)
+                    .AppendFormat("Tags: {0}\n", string.Join(", ", Tags.Where(t => t.Selected).Select(t => t.Name)))
+                    .AppendFormat("Categories: {0}\n", string.Join(", ", Categories.Where(c => c.Selected).Select(c => c.Name)))
+                    .AppendFormat("Authors: {0}", string.Join(", ", Authors.Where(a => a.Selected).Select(a => a.Name)))
+                    .ToString(); ;
+            }
 
-        private void ShowAll()
-        {
-            _statsCollector.Data.ClearFilters();
-            _window.StatsView.gridResults.ItemsSource = _statsCollector.Data.FilteredInfo;
-            _window.StatsView.textBoxCurrentFilter.Text = string.Empty;
+            CurrentFilterText = filterText;
         }
 
         private void FillFiltersFrom(AutomationData data)
         {
-            UiUtils.FillGrid(_window.StatsView.gridFeatures, data.UniqueFeatures);
-            UiUtils.FillGrid(_window.StatsView.gridCategories, data.UniqueCategories);
-            UiUtils.FillGrid(_window.StatsView.gridAuthors, data.UniqueAuthors);
+            Tags = new List<FilterItemViewModel>(data.UniqueFeatures.OrderBy(f => f).Select(f => new FilterItemViewModel(f)));
+            Categories = new List<FilterItemViewModel>(data.UniqueCategories.OrderBy(c => c).Select(c => new FilterItemViewModel(c)));
+            Authors = new List<FilterItemViewModel>(data.UniqueAuthors.OrderBy(a => a).Select(a => new FilterItemViewModel(a)));
+            OnPropertyChanged(nameof(Tags));
+            OnPropertyChanged(nameof(Categories));
+            OnPropertyChanged(nameof(Authors));
         }
-
-        public void PopulateDataFromFilters()
-        {
-            Features = GetCheckedCheckboxesNames(_window.StatsView.gridFeatures);
-            Categories = GetCheckedCheckboxesNames(_window.StatsView.gridCategories);
-            Authors = GetCheckedCheckboxesNames(_window.StatsView.gridAuthors);
-        }
-
-        private IEnumerable<string> GetCheckedCheckboxesNames(Grid grid) =>
-            from CheckBox cBox in grid.Children where cBox.IsChecked.Value select (string)cBox.Content;
 
         private void SetCheckboxesCheckedState(bool isChecked)
         {
-            foreach (var child in GetActiveGrid().Children)
-            {
-                ((CheckBox)child).IsChecked = isChecked;
-            }
-        }
+            IEnumerable<FilterItemViewModel> list;
 
-        private Grid GetActiveGrid()
-        {
             if (_window.StatsView.tabFeaures.IsSelected)
             {
-                return _window.StatsView.gridFeatures;
+                list = Tags;
             }
             else if (_window.StatsView.tabCategories.IsSelected)
             {
-                return _window.StatsView.gridCategories;
+                list = Categories;
             }
             else
             {
-                return _window.StatsView.gridAuthors;
+                list = Authors;
+            }
+
+            foreach (FilterItemViewModel item in list)
+            {
+                item.Selected = isChecked;
             }
         }
 

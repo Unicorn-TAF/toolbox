@@ -1,4 +1,5 @@
-﻿using Unicorn.Toolbox.Models.Stats;
+﻿using System.Linq;
+using Unicorn.Toolbox.Models.Stats;
 using Unicorn.Toolbox.Models.Stats.Filtering;
 using Unicorn.Toolbox.ViewModels;
 
@@ -17,12 +18,10 @@ namespace Unicorn.Toolbox.Commands
 
         public override void Execute(object parameter)
         {
-            _viewModel.PopulateDataFromFilters();
-
             _analyzer.Data.ClearFilters();
-            _analyzer.Data.FilterBy(new FeaturesFilter(_viewModel.Features));
-            _analyzer.Data.FilterBy(new CategoriesFilter(_viewModel.Categories));
-            _analyzer.Data.FilterBy(new AuthorsFilter(_viewModel.Authors));
+            _analyzer.Data.FilterBy(new FeaturesFilter(_viewModel.Tags.Where(t => t.Selected).Select(t => t.Name)));
+            _analyzer.Data.FilterBy(new CategoriesFilter(_viewModel.Categories.Where(c => c.Selected).Select(c => c.Name)));
+            _analyzer.Data.FilterBy(new AuthorsFilter(_viewModel.Authors.Where(a => a.Selected).Select(a => a.Name)));
 
             if (_viewModel.FilterOnlyDisabledTests)
             {
@@ -34,7 +33,7 @@ namespace Unicorn.Toolbox.Commands
                 _analyzer.Data.FilterBy(new OnlyEnabledFilter());
             }
 
-            _viewModel.ApplyFilteredData(false);
+            _viewModel.ApplyFilteredData();
         }
     }
 }

@@ -117,12 +117,10 @@ namespace Unicorn.Toolbox.ViewModels
 
         private void FilterExecutions()
         {
-            if (listCollectionView == null)
+            if (listCollectionView != null)
             {
-                return;
+                listCollectionView.Filter = (item) => ((Execution)item).Name.Contains(FilterGridBy);
             }
-
-            listCollectionView.Filter = (item) => { return ((Execution)item).Name.Contains(FilterGridBy); };
         }
 
         public void UpdateViewModel()

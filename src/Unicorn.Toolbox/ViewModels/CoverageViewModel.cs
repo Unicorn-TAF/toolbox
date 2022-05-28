@@ -15,7 +15,7 @@ namespace Unicorn.Toolbox.ViewModels
         private readonly StatsCollector _statsCollector;
         private readonly ObservableCollection<CoverageModuleViewModel> _modulesList;
         
-        private bool canGetCoverage;
+        private bool dataLoaded;
         private string runTags;
 
         public CoverageViewModel(StatsCollector statsCollector)
@@ -31,11 +31,11 @@ namespace Unicorn.Toolbox.ViewModels
 
         public bool DataLoaded
         {
-            get => canGetCoverage;
+            get => dataLoaded;
 
             set
             {
-                canGetCoverage = value;
+                dataLoaded = value;
                 OnPropertyChanged(nameof(DataLoaded));
             }
         }

@@ -17,7 +17,7 @@ namespace Unicorn.Toolbox.Commands
         public override void Execute(object parameter)
         {
             _analyzer.Data.ClearFilters();
-            _viewModel.ApplyFilteredData(true);
+            _viewModel.ApplyFilteredData();
         }
     }
 }

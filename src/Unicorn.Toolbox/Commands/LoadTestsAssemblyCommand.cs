@@ -32,6 +32,7 @@ namespace Unicorn.Toolbox.Commands
             }
 
             _statsCollector.GetTestsStatistics(assemblyFile, _viewModel.ConsiderTestData);
+            _viewModel.DataLoaded = true;
             _viewModel.UpdateViewModel();
         }
     }
