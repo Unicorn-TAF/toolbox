@@ -11,7 +11,6 @@ namespace Unicorn.Toolbox.ViewModels
     public class StatsViewModel : ViewModelBase
     {
         private readonly StatsCollector _statsCollector;
-        private readonly MainWindow _window;
         private bool considerTestData;
         private bool filterOnlyDisabledTests;
         private bool filterOnlyEnabledTests; 
@@ -19,15 +18,19 @@ namespace Unicorn.Toolbox.ViewModels
         private string currentFilterText;
         private bool dataLoaded;
 
+        private bool tagsFilterActive;
+        private bool categoriesFilterActive;
+        private bool authorsFilterActive;
+
         public StatsViewModel(StatsCollector statsCollector)
         {
-            _window = App.Current.MainWindow as MainWindow;
             _statsCollector = statsCollector;
             LoadTestsAssemblyCommand = new LoadTestsAssemblyCommand(this, _statsCollector);
             ApplyFilterCommand = new ApplyFilterCommand(this, _statsCollector);
             ExportStatisticsCommand = new ExportStatisticsCommand(_statsCollector);
             OpenSuiteDetailsCommand = new OpenSuiteDetailsCommand(this, _statsCollector);
             DataLoaded = false;
+            TagsFilterActive = true;
         }
 
         public bool DataLoaded
@@ -96,24 +99,7 @@ namespace Unicorn.Toolbox.ViewModels
             }
         }
 
-        public FilterType CurrentFilter
-        {
-            get
-            {
-                if (_window.StatsView.tabFeaures.IsSelected)
-                {
-                    return FilterType.Tag;
-                }
-                else if (_window.StatsView.tabCategories.IsSelected)
-                {
-                    return FilterType.Category;
-                }
-                else
-                {
-                    return FilterType.Author;
-                }
-            }
-        }
+        public FilterType CurrentFilter { get; private set; }
 
         public string CurrentFilterText
         {
@@ -127,6 +113,54 @@ namespace Unicorn.Toolbox.ViewModels
         }
 
         public string Status { get; set; } = string.Empty;
+
+        public bool TagsFilterActive
+        {
+            get => tagsFilterActive;
+
+            set
+            {
+                tagsFilterActive = value;
+                OnPropertyChanged(nameof(TagsFilterActive));
+
+                if (value)
+                {
+                    CurrentFilter = FilterType.Tag;
+                }
+            }
+        }
+
+        public bool CategoriesFilterActive
+        {
+            get => categoriesFilterActive;
+
+            set
+            {
+                categoriesFilterActive = value;
+                OnPropertyChanged(nameof(CategoriesFilterActive));
+
+                if (value)
+                {
+                    CurrentFilter = FilterType.Category;
+                }
+            }
+        }
+
+        public bool AuthorsFilterActive
+        {
+            get => authorsFilterActive;
+
+            set
+            {
+                authorsFilterActive = value;
+                OnPropertyChanged(nameof(AuthorsFilterActive));
+
+                if (value)
+                {
+                    CurrentFilter = FilterType.Author;
+                }
+            }
+        }
 
         public IEnumerable<FilterItemViewModel> Tags { get; set; }
         
@@ -146,10 +180,7 @@ namespace Unicorn.Toolbox.ViewModels
 
         public void UpdateViewModel()
         {
-            //groupBoxVisualizationStateTemp = true;
-
             Status = $"Assembly: {_statsCollector.AssemblyFile} ({_statsCollector.AssemblyName})    |    {_statsCollector.Data}";
-            _window.statusBarText.Text = Status;
 
             FillFiltersFrom(_statsCollector.Data);
 
@@ -182,9 +213,15 @@ namespace Unicorn.Toolbox.ViewModels
 
         private void FillFiltersFrom(AutomationData data)
         {
-            Tags = new List<FilterItemViewModel>(data.UniqueFeatures.OrderBy(f => f).Select(f => new FilterItemViewModel(f)));
-            Categories = new List<FilterItemViewModel>(data.UniqueCategories.OrderBy(c => c).Select(c => new FilterItemViewModel(c)));
-            Authors = new List<FilterItemViewModel>(data.UniqueAuthors.OrderBy(a => a).Select(a => new FilterItemViewModel(a)));
+            Tags = new List<FilterItemViewModel>(data.UniqueFeatures.Select(f => new FilterItemViewModel(f)))
+                .OrderBy(f => f.Name);
+
+            Categories = new List<FilterItemViewModel>(data.UniqueCategories.Select(c => new FilterItemViewModel(c)))
+                .OrderBy(c => c.Name);
+
+            Authors = new List<FilterItemViewModel>(data.UniqueAuthors.Select(a => new FilterItemViewModel(a)))
+                .OrderBy(a => a.Name);
+
             OnPropertyChanged(nameof(Tags));
             OnPropertyChanged(nameof(Categories));
             OnPropertyChanged(nameof(Authors));
@@ -194,11 +231,11 @@ namespace Unicorn.Toolbox.ViewModels
         {
             IEnumerable<FilterItemViewModel> list;
 
-            if (_window.StatsView.tabFeaures.IsSelected)
+            if (TagsFilterActive)
             {
                 list = Tags;
             }
-            else if (_window.StatsView.tabCategories.IsSelected)
+            else if (CategoriesFilterActive)
             {
                 list = Categories;
             }

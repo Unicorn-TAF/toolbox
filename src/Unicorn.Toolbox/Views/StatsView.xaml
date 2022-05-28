@@ -41,7 +41,7 @@
         </DataGrid>
         <Grid x:Name="gridFilters" Margin="10,70,0,100" HorizontalAlignment="Left" Width="220" IsEnabled="{Binding DataLoaded}">
             <TabControl x:Name="tabControlFilters" >
-                <TabItem x:Name="tabFeaures" Header="Tags" Width="72">
+                <TabItem x:Name="tabFeaures" Header="Tags" Width="72" IsSelected="{Binding TagsFilterActive}">
                     <ListBox ItemsSource="{Binding Tags}" ScrollViewer.VerticalScrollBarVisibility="Auto" Margin="0,70,0,0" >
                         <ListBox.ItemTemplate>
                             <DataTemplate>
@@ -50,7 +50,7 @@
                         </ListBox.ItemTemplate>
                     </ListBox>
                 </TabItem>
-                <TabItem x:Name="tabCategories" Header="Categories"  Width="72">
+                <TabItem x:Name="tabCategories" Header="Categories"  Width="72" IsSelected="{Binding CategoriesFilterActive}">
                     <ListBox ItemsSource="{Binding Categories}" ScrollViewer.VerticalScrollBarVisibility="Auto" Margin="0,70,0,0">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
@@ -59,7 +59,7 @@
                         </ListBox.ItemTemplate>
                     </ListBox>
                 </TabItem>
-                <TabItem x:Name="tabAuthors" Header="Authors" Width="72">
+                <TabItem x:Name="tabAuthors" Header="Authors" Width="72" IsSelected="{Binding AuthorsFilterActive}">
                     <ListBox ItemsSource="{Binding Authors}" ScrollViewer.VerticalScrollBarVisibility="Auto" Margin="0,70,0,0">
                         <ListBox.ItemTemplate>
                             <DataTemplate>

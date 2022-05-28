@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using Unicorn.Toolbox.Models.Launch;
 using Unicorn.Toolbox.ViewModels;
@@ -75,7 +76,7 @@ namespace Unicorn.Toolbox.Commands
         {
             var visualization = GetVisualizationWindow("Launch visualization");
 
-            new LaunchVisualizer(visualization.canvasVisualization, launchResults.ExecutionsList.SourceCollection as List<Execution>)
+            new LaunchVisualizer(visualization.canvasVisualization, launchResults.ExecutionsList.Cast<Execution>().ToList())
                 .Visualize();
         }
 

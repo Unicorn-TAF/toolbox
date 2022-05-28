@@ -7,12 +7,12 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="1125">
     <Grid Background="#FFE5E5E5">
-        <Button x:Name="buttonLoadSpecs" Content="Load Specs" Command="{Binding LoadSpecsCommand}" HorizontalAlignment="Left" Margin="10,25,0,0" VerticalAlignment="Top" Width="80" Height="22"/>
-        <Button x:Name="buttonGetCoverage" Content="Get coverage" Command="{Binding GetCoverageCommand}" HorizontalAlignment="Left" Margin="130,25,0,0" VerticalAlignment="Top" Width="80" Height="22"/>
+        <Button x:Name="buttonLoadSpecs" Content="Load specs" Command="{Binding LoadSpecsCommand}" HorizontalAlignment="Left" Margin="10,25,0,0" VerticalAlignment="Top" Width="80" Height="22"/>
+        <Button x:Name="buttonGetCoverage" Content="Get coverage" Command="{Binding GetCoverageCommand}" HorizontalAlignment="Left" Margin="150,25,0,0" VerticalAlignment="Top" Width="80" Height="22"/>
         <ListBox x:Name="listBox" ItemsSource="{Binding ModulesList}" ScrollViewer.VerticalScrollBarVisibility="Auto" Margin="10,70,0,100" HorizontalAlignment="Left" Width="220">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <CheckBox Content="{Binding Name}" Margin="0,5,5,0" IsChecked="{Binding Selected}"/>
+                    <CheckBox Content="{Binding Name}" IsChecked="{Binding Selected}"/>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
