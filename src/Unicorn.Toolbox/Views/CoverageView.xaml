@@ -9,7 +9,14 @@
     <Grid Background="#FFE5E5E5">
         <Button x:Name="buttonLoadSpecs" Content="Load Specs" Command="{Binding LoadSpecsCommand}" HorizontalAlignment="Left" Margin="10,25,0,0" VerticalAlignment="Top" Width="80" Height="22"/>
         <Button x:Name="buttonGetCoverage" Content="Get coverage" Command="{Binding GetCoverageCommand}" HorizontalAlignment="Left" Margin="130,25,0,0" VerticalAlignment="Top" Width="80" Height="22"/>
-        <DataGrid x:Name="gridCoverage" ItemsSource="{Binding ModulesList}" HorizontalScrollBarVisibility="Disabled" HeadersVisibility="All" Grid.Column="0" RowHeaderWidth="0" CanUserAddRows="False" AutoGenerateColumns="False"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="220,70,10,100">
+        <ListBox x:Name="listBox" ItemsSource="{Binding ModulesList}" ScrollViewer.VerticalScrollBarVisibility="Auto" Margin="10,70,0,100" HorizontalAlignment="Left" Width="220">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <CheckBox Content="{Binding Name}" Margin="0,5,5,0" IsChecked="{Binding Selected}"/>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <DataGrid x:Name="gridCoverage" ItemsSource="{Binding ModulesList}" HorizontalScrollBarVisibility="Disabled" HeadersVisibility="All" Grid.Column="0" RowHeaderWidth="0" CanUserAddRows="False" AutoGenerateColumns="False"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="240,70,10,100">
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="Module" Width="720">
                     <DataGridTemplateColumn.CellTemplate>
@@ -29,15 +36,6 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
-        <ScrollViewer Margin="10,70,0,100" VerticalScrollBarVisibility="Auto" HorizontalAlignment="Left" Width="200">
-                <ListBox x:Name="listBox" ItemsSource="{Binding ModulesList}">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <CheckBox Content="{Binding Name}" Margin="0,5,5,0" IsChecked="{Binding Selected}"/>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-        </ScrollViewer>
         <TextBox x:Name="textBoxRunTags" Text="{Binding RunTags}" Margin="10,0,10,10" FontSize="11" TextWrapping="Wrap" Height="80" VerticalAlignment="Bottom"/>
     </Grid>
 </UserControl>

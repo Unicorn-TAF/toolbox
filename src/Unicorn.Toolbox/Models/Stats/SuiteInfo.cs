@@ -7,7 +7,7 @@ namespace Unicorn.Toolbox.Models.Stats
     [Serializable]
     public struct SuiteInfo
     {
-        public const string NoFeature = "<FEATURE NOT SPECIFIED>";
+        public const string NoTag = "<NO TAG>";
 
         public SuiteInfo(string suiteName, IEnumerable<string> features, Dictionary<string, string> metadata)
         {
@@ -18,7 +18,7 @@ namespace Unicorn.Toolbox.Models.Stats
 
             if (!Tags.Any())
             {
-                Tags.Add(NoFeature);
+                Tags.Add(NoTag);
             }
         }
 

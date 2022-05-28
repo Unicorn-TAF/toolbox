@@ -7,7 +7,7 @@ namespace Unicorn.Toolbox.Models.Stats
     [Serializable]
     public struct TestInfo
     {
-        public const string NoCategory = "<CATEGORY NOT SPECIFIED>";
+        public const string NoCategory = "<NO CATEGORY>";
 
         public TestInfo(string testName, string author, bool disabled, IEnumerable<string> categories)
         {

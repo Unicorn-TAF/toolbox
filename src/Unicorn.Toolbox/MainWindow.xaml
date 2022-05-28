@@ -26,6 +26,6 @@
                 </StatusBarItem>
             </StatusBar>
         </DockPanel>
-        <views:VisualizationView x:Name="VisualizationView" DataContext="{Binding VisualizationViewModel}" Margin="222,30,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+        <views:VisualizationView x:Name="VisualizationView" DataContext="{Binding VisualizationViewModel}" Margin="240,30,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
     </Grid>
 </Window>

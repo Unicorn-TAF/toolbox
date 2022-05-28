@@ -3,11 +3,11 @@ using System.Linq;
 
 namespace Unicorn.Toolbox.Models.Stats.Filtering
 {
-    public class FeaturesFilter : ISuitesFilter
+    public class TagsFilter : ISuitesFilter
     {
         private readonly IEnumerable<string> _features;
 
-        public FeaturesFilter(IEnumerable<string> features)
+        public TagsFilter(IEnumerable<string> features)
         {
             _features = features;
         }

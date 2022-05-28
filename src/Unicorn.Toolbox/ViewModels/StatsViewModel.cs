@@ -26,7 +26,6 @@ namespace Unicorn.Toolbox.ViewModels
             LoadTestsAssemblyCommand = new LoadTestsAssemblyCommand(this, _statsCollector);
             ApplyFilterCommand = new ApplyFilterCommand(this, _statsCollector);
             ExportStatisticsCommand = new ExportStatisticsCommand(_statsCollector);
-            ShowAllStatisticsCommand = new ShowAllStatisticsCommand(this, _statsCollector);
             OpenSuiteDetailsCommand = new OpenSuiteDetailsCommand(this, _statsCollector);
             DataLoaded = false;
         }
@@ -143,8 +142,6 @@ namespace Unicorn.Toolbox.ViewModels
 
         public ICommand ExportStatisticsCommand { get; }
 
-        public ICommand ShowAllStatisticsCommand { get; }
-
         public ICommand OpenSuiteDetailsCommand { get; }
 
         public void UpdateViewModel()
@@ -155,7 +152,10 @@ namespace Unicorn.Toolbox.ViewModels
             _window.statusBarText.Text = Status;
 
             FillFiltersFrom(_statsCollector.Data);
-            ShowAllStatisticsCommand.Execute(null);
+
+            _statsCollector.Data.ClearFilters();
+            ApplyFilteredData();
+
             ShowHideAllCheckboxes = true;
         }
 

@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="500" d:DesignWidth="900">
     <Grid x:Name="gridStatistics" Background="#FFE5E5E5">
-        <DataGrid ItemsSource="{Binding FilteredInfo}" x:Name="gridResults" SelectionUnit="CellOrRowHeader" ClipboardCopyMode="IncludeHeader" HorizontalScrollBarVisibility="Disabled" HeadersVisibility="All" Grid.Column="0" RowHeaderWidth="0" CanUserAddRows="False" AutoGenerateColumns="False" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="220,70,10,100">
+        <DataGrid ItemsSource="{Binding FilteredInfo}" x:Name="gridResults" SelectionUnit="CellOrRowHeader" ClipboardCopyMode="IncludeHeader" HorizontalScrollBarVisibility="Disabled" HeadersVisibility="All" Grid.Column="0" RowHeaderWidth="0" CanUserAddRows="False" AutoGenerateColumns="False" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="240,70,10,100">
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="Test Suite" Width="350" ClipboardContentBinding="{Binding Name}">
                     <DataGridTemplateColumn.CellTemplate>
@@ -39,51 +39,44 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
-        <Grid x:Name="gridFilters" Margin="10,70,0,100" HorizontalAlignment="Left" Width="205" IsEnabled="{Binding DataLoaded}">
-            <TabControl x:Name="tabControlFilters" HorizontalAlignment="Center" Width="205">
-                <TabItem x:Name="tabFeaures" Header="Tags">
-                    <ScrollViewer Margin="0,95,0,0" VerticalScrollBarVisibility="Auto">
-                        <ListBox ItemsSource="{Binding Tags}" >
-                            <ListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <CheckBox Content="{Binding Name}" Margin="0,5,5,0" IsChecked="{Binding Selected}"/>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
-                    </ScrollViewer>
+        <Grid x:Name="gridFilters" Margin="10,70,0,100" HorizontalAlignment="Left" Width="220" IsEnabled="{Binding DataLoaded}">
+            <TabControl x:Name="tabControlFilters" >
+                <TabItem x:Name="tabFeaures" Header="Tags" Width="72">
+                    <ListBox ItemsSource="{Binding Tags}" ScrollViewer.VerticalScrollBarVisibility="Auto" Margin="0,70,0,0" >
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <CheckBox Content="{Binding Name}" IsChecked="{Binding Selected}"/>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
                 </TabItem>
-                <TabItem x:Name="tabCategories" Header="Categories">
-                    <ScrollViewer Margin="0,95,0,0" VerticalScrollBarVisibility="Auto">
-                        <ListBox ItemsSource="{Binding Categories}" >
-                            <ListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <CheckBox Content="{Binding Name}" Margin="0,5,5,0" IsChecked="{Binding Selected}"/>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
-                    </ScrollViewer>
+                <TabItem x:Name="tabCategories" Header="Categories"  Width="72">
+                    <ListBox ItemsSource="{Binding Categories}" ScrollViewer.VerticalScrollBarVisibility="Auto" Margin="0,70,0,0">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <CheckBox Content="{Binding Name}" IsChecked="{Binding Selected}"/>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
                 </TabItem>
-                <TabItem x:Name="tabAuthors" Header="Authors">
-                    <ScrollViewer Margin="0,95,0,0" VerticalScrollBarVisibility="Auto">
-                        <ListBox ItemsSource="{Binding Authors}" >
-                            <ListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <CheckBox Content="{Binding Name}" Margin="0,5,5,0" IsChecked="{Binding Selected}"/>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
-                    </ScrollViewer>
+                <TabItem x:Name="tabAuthors" Header="Authors" Width="72">
+                    <ListBox ItemsSource="{Binding Authors}" ScrollViewer.VerticalScrollBarVisibility="Auto" Margin="0,70,0,0">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <CheckBox Content="{Binding Name}" IsChecked="{Binding Selected}"/>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
                 </TabItem>
             </TabControl>
-            <Button x:Name="buttonShowAll" Command="{Binding ShowAllStatisticsCommand}" Content="Show all" HorizontalAlignment="Left" VerticalAlignment="Top" Width="80" Margin="24,30,0,0" Height="22"/>
-            <Button x:Name="buttonApplyFilter" Content="Apply Filter" Command="{Binding ApplyFilterCommand}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="80" Margin="118,30,0,0" Height="22"/>
-            <CheckBox x:Name="checkBoxShowHide" Content="Show/Hide all" IsChecked="{Binding ShowHideAllCheckboxes}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="24,60,0,0" RenderTransformOrigin="0.633,1.422"/>
-            <CheckBox x:Name="checkOnlyEnabledTests" Content="Only Enabled tests" IsChecked="{Binding FilterOnlyEnabledTests}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="24,100,0,0" RenderTransformOrigin="0.633,1.422"/>
-            <CheckBox x:Name="checkOnlyDisabledTests" Content="Only Disabled tests" IsChecked="{Binding FilterOnlyDisabledTests}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="24,80,0,0" RenderTransformOrigin="0.633,1.422"/>
+            <Button x:Name="buttonApplyFilter" Content="Filter" Command="{Binding ApplyFilterCommand}" VerticalAlignment="Top" Margin="0,32,10,0" Height="22" HorizontalAlignment="Right" Width="60"/>
+            <CheckBox x:Name="checkOnlyEnabledTests" Content="Only Enabled tests" IsChecked="{Binding FilterOnlyEnabledTests}" VerticalAlignment="Top" Margin="10,35,92,0"/>
+            <CheckBox x:Name="checkOnlyDisabledTests" Content="Only Disabled tests" IsChecked="{Binding FilterOnlyDisabledTests}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,55,0,0"/>
+            <CheckBox x:Name="checkBoxShowHide" Content="Show/Hide all" IsChecked="{Binding ShowHideAllCheckboxes}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,75,0,0"/>
         </Grid>
         <TextBox x:Name="textBoxCurrentFilter" Text="{Binding CurrentFilterText}" Margin="10,0,10,10" FontSize="11" Height="80" VerticalAlignment="Bottom" IsEnabled="True" IsReadOnly="True"/>
-        <Button x:Name="buttonLoadTestsAssembly" Command="{Binding LoadTestsAssemblyCommand}" Content="Load tests dll" VerticalAlignment="Top" Margin="10,25,0,0" HorizontalAlignment="Left" Width="80" Height="22"/>
+        <Button VerticalContentAlignment="Top" x:Name="buttonLoadTestsAssembly" Command="{Binding LoadTestsAssemblyCommand}" Content="Load tests assembly" VerticalAlignment="Top" Margin="57,15,0,0" HorizontalAlignment="Left" Width="117" Height="40"/>
+        <CheckBox x:Name="checkboxTestData" Content="consider test data" Margin="62,37,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" IsChecked="{Binding ConsiderTestData}" FontSize="10" />
         <Button x:Name="buttonExportStats" Command="{Binding ExportStatisticsCommand}" IsEnabled="{Binding DataLoaded}" Content="Export" Margin="0,25,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="80" Height="22"/>
-        <CheckBox x:Name="checkboxTestData" Content="consider parameterization" Margin="10,5,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" IsChecked="{Binding ConsiderTestData}" />
     </Grid>
 </UserControl>

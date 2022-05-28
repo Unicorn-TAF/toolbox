@@ -7,9 +7,9 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="1125">
     <Grid Background="#FFE5E5E5">
-        <Button x:Name="btnLoadTrx" Content="Load TRX files" Command="{Binding LoadTrxCommand}" VerticalAlignment="Top" Margin="10,25,0,0" HorizontalAlignment="Left" Width="80"/>
+        <Button x:Name="btnLoadTrx" Content="Load TRX files" Command="{Binding LoadTrxCommand}" VerticalAlignment="Top" Margin="10,25,0,0" HorizontalAlignment="Left" Width="80" Height="22"/>
         <DataGrid x:Name="gridTestResults" ItemsSource="{Binding ExecutionsList}" HorizontalScrollBarVisibility="Disabled" HeadersVisibility="All" RowHeaderWidth="0" CanUserAddRows="False" CanUserResizeColumns="False"
-                              CanUserSortColumns="True" AutoGenerateColumns="False" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="10,70,0,100" HorizontalAlignment="Left" Width="700">
+                              CanUserSortColumns="True" AutoGenerateColumns="False" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="10,70,415,100">
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="Execution" Width="*" ClipboardContentBinding="{Binding Name}">
                     <DataGridTemplateColumn.HeaderTemplate>
@@ -85,12 +85,12 @@
             </DataGrid.Columns>
         </DataGrid>
 
-        <TextBox x:Name="textBoxLaunchSummary" Text="{Binding LaunchSummary}" HorizontalAlignment="Left" Margin="10,0,0,10" TextWrapping="Wrap" Width="700" FontFamily="Consolas" Height="80" VerticalAlignment="Bottom"/>
-        <GroupBox Header="Find failed tests" Margin="720,0,10,10" VerticalAlignment="Bottom">
+        <TextBox x:Name="textBoxLaunchSummary" Text="{Binding LaunchSummary}" Margin="10,0,415,10" TextWrapping="Wrap" FontFamily="Consolas" Height="80" VerticalAlignment="Bottom"/>
+        <GroupBox Header="Find failed tests" Margin="0,0,10,10" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="395">
             <Grid Margin="5,5,5,5">
-                <TextBox x:Name="textBoxFailMessage" TextWrapping="Wrap" Text="{Binding FailSearchCriteria}" Height="20" VerticalAlignment="Top"/>
-                <ComboBox x:Name="comboFilterExecutedTestsBy" ItemsSource="{Binding FailsFilters}" Text="{Binding FilterFailsBy}" SelectedIndex="0" HorizontalAlignment="Left" VerticalContentAlignment="Top" HorizontalContentAlignment="Center" Margin="0,25,0,0" Width="150" Height="22" VerticalAlignment="Bottom"/>
-                <Button x:Name="buttonSearchByFailMessage" Content="Search" Command="{Binding SearchInExecutedTestsCommand}" Margin="160,25,0,0" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="80"/>
+                <TextBox x:Name="textBoxFailMessage" TextWrapping="Wrap" Text="{Binding FailSearchCriteria}" Height="22" VerticalAlignment="Top"/>
+                <ComboBox x:Name="comboFilterExecutedTestsBy" ItemsSource="{Binding FailsFilters}" Text="{Binding FilterFailsBy}" SelectedIndex="0" HorizontalAlignment="Left" VerticalContentAlignment="Top" HorizontalContentAlignment="Center" Margin="0,30,0,0" Width="150" Height="22" VerticalAlignment="Bottom"/>
+                <Button x:Name="buttonSearchByFailMessage" Content="Search" Command="{Binding SearchInExecutedTestsCommand}" Margin="160,30,0,0" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="80" Height="22"/>
                 <Label x:Name="labelFoundFailedTests" Content="{Binding FoundFailsCount}" Margin="0,20,10,0" Height="25" HorizontalContentAlignment="Right" VerticalAlignment="Bottom" FontWeight="Bold" Foreground="#FF3399FF" Cursor="Hand" HorizontalAlignment="Right">
                     <Label.InputBindings>
                         <MouseBinding
@@ -101,14 +101,14 @@
             </Grid>
         </GroupBox>
         <Label Content="Top 5 fail reasons" HorizontalAlignment="Right" Margin="0,0,160,0" VerticalAlignment="Top" FontWeight="Bold"/>
-            <ItemsControl x:Name="stackPanelFails" ItemsSource="{Binding TopFailsList}" Margin="720,30,10,100">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Border BorderBrush="#FF808080" Margin="0,0,0,0">
-                            <Grid>
-                                <Border Margin="5,5,5,20" Background="#FF303030">
-                                    <TextBox  x:Name="textErrorMessage" Margin="2,2,2,2" Text="{Binding ErrorMessage, Mode=OneWay}" IsReadOnly="True" Foreground="#FFEAEAEA" FontFamily="Consolas" TextWrapping="Wrap" FontSize="12" Background="{x:Null}"/>
-                                </Border>
+        <ItemsControl x:Name="stackPanelFails" ItemsSource="{Binding TopFailsList}" Margin="0,30,10,100" HorizontalAlignment="Right" Width="395">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border BorderBrush="#FF808080" Margin="0,0,0,0">
+                        <Grid>
+                            <Border Margin="5,5,5,20" Background="#FF303030">
+                                <TextBox  x:Name="textErrorMessage" Margin="2,2,2,2" Text="{Binding ErrorMessage, Mode=OneWay}" IsReadOnly="True" Foreground="#FFEAEAEA" FontFamily="Consolas" TextWrapping="Wrap" FontSize="12" Background="{x:Null}"/>
+                            </Border>
                             <TextBlock x:Name="labelFoundFailedTests" Text="{Binding Count}" HorizontalAlignment="Right" Margin="0,0,5,5" FontWeight="Bold" Foreground="#FF3399FF" Cursor="Hand" Height="15" VerticalAlignment="Bottom">
                                 <TextBlock.InputBindings>
                                     <MouseBinding MouseAction="LeftClick"
@@ -116,14 +116,14 @@
                                 </TextBlock.InputBindings>
                             </TextBlock>
                         </Grid>
-                        </Border>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <UniformGrid Rows="5"/>
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-            </ItemsControl>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Rows="5"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
     </Grid>
 </UserControl>
