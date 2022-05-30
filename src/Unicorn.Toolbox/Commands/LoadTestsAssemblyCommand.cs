@@ -1,5 +1,7 @@
 ﻿using Microsoft.Win32;
+using System.Linq;
 using Unicorn.Toolbox.Models.Stats;
+using Unicorn.Toolbox.Models.Stats.Filtering;
 using Unicorn.Toolbox.ViewModels;
 
 namespace Unicorn.Toolbox.Commands
@@ -22,18 +24,31 @@ namespace Unicorn.Toolbox.Commands
                 Filter = "Unicorn tests assemblies|*.dll"
             };
 
-            openFileDialog.ShowDialog();
-
-            var assemblyFile = openFileDialog.FileName;
-
-            if (string.IsNullOrEmpty(assemblyFile))
+            if (openFileDialog.ShowDialog().Value)
             {
-                return;
-            }
+                string assemblyFile = openFileDialog.FileName;
 
-            _statsCollector.GetTestsStatistics(assemblyFile, _viewModel.ConsiderTestData);
-            _viewModel.DataLoaded = true;
-            _viewModel.UpdateViewModel();
+                _statsCollector.GetTestsStatistics(assemblyFile, _viewModel.ConsiderTestData);
+                _statsCollector.Data.ClearFilters();
+
+                _viewModel.DataLoaded = true;
+
+                _viewModel.Filters.First(f => f.Filter == FilterType.Tag)
+                    .Populate(_statsCollector.Data.UniqueTags);
+                
+                _viewModel.Filters.First(f => f.Filter == FilterType.Category)
+                    .Populate(_statsCollector.Data.UniqueCategories);
+
+                _viewModel.Filters.First(f => f.Filter == FilterType.Author)
+                    .Populate(_statsCollector.Data.UniqueAuthors);
+
+                _viewModel.FilterAll = true;
+
+                _viewModel.Status = $"Assembly: {_statsCollector.AssemblyFile} " +
+                    $"({_statsCollector.AssemblyName})    |    {_statsCollector.Data}";
+
+                _viewModel.ApplyFilteredData();
+            }
         }
     }
 }

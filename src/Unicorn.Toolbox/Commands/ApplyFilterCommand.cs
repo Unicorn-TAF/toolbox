@@ -19,9 +19,9 @@ namespace Unicorn.Toolbox.Commands
         public override void Execute(object parameter)
         {
             _analyzer.Data.ClearFilters();
-            _analyzer.Data.FilterBy(new TagsFilter(_viewModel.Tags.Where(t => t.Selected).Select(t => t.Name)));
-            _analyzer.Data.FilterBy(new CategoriesFilter(_viewModel.Categories.Where(c => c.Selected).Select(c => c.Name)));
-            _analyzer.Data.FilterBy(new AuthorsFilter(_viewModel.Authors.Where(a => a.Selected).Select(a => a.Name)));
+            _analyzer.Data.FilterBy(new TagsFilter(_viewModel.Filters.First(f => f.Filter == FilterType.Tag).SelectedValues));
+            _analyzer.Data.FilterBy(new CategoriesFilter(_viewModel.Filters.First(f => f.Filter == FilterType.Category).SelectedValues));
+            _analyzer.Data.FilterBy(new AuthorsFilter(_viewModel.Filters.First(f => f.Filter == FilterType.Author).SelectedValues));
 
             if (_viewModel.FilterOnlyDisabledTests)
             {

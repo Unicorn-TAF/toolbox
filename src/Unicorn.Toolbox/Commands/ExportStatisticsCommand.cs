@@ -5,11 +5,11 @@ using Unicorn.Toolbox.Models.Stats;
 
 namespace Unicorn.Toolbox.Commands
 {
-    public class ExportStatisticsCommand : CommandBase
+    public class ExportStatsCommand : CommandBase
     {
         private readonly StatsCollector _analyzer;
 
-        public ExportStatisticsCommand(StatsCollector analyzer)
+        public ExportStatsCommand(StatsCollector analyzer)
         {
             _analyzer = analyzer;
         }

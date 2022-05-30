@@ -13,7 +13,7 @@ namespace Unicorn.Toolbox.Models.Stats
         public AutomationData()
         {
             SuitesInfos = new List<SuiteInfo>();
-            UniqueFeatures = new HashSet<string>();
+            UniqueTags = new HashSet<string>();
             UniqueCategories = new HashSet<string>();
             UniqueAuthors = new HashSet<string>();
             FilteredInfo = null;
@@ -23,7 +23,7 @@ namespace Unicorn.Toolbox.Models.Stats
 
         public List<SuiteInfo> FilteredInfo { get; set; }
 
-        public HashSet<string> UniqueFeatures { get; }
+        public HashSet<string> UniqueTags { get; }
 
         public HashSet<string> UniqueCategories { get; }
 
@@ -51,7 +51,7 @@ namespace Unicorn.Toolbox.Models.Stats
         public void AddSuiteData(SuiteInfo suiteData)
         {
             SuitesInfos.Add(suiteData);
-            UniqueFeatures.UnionWith(suiteData.Tags);
+            UniqueTags.UnionWith(suiteData.Tags);
 
             var authors = from TestInfo ti 
                           in suiteData.TestsInfos
@@ -71,7 +71,7 @@ namespace Unicorn.Toolbox.Models.Stats
 
             statistics.Append($"suites: {SuitesInfos.Count}    |    ")
                 .Append($"tests: {SuitesInfos.Sum(s => s.TestsInfos.Count)}    |    ")
-                .Append($"features: {UniqueFeatures.Count}    |    ")
+                .Append($"features: {UniqueTags.Count}    |    ")
                 .Append($"categories: {UniqueCategories.Count}    |    ")
                 .Append($"authors: {UniqueAuthors.Count}");
 

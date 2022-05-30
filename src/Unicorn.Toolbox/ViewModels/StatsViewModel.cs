@@ -12,25 +12,30 @@ namespace Unicorn.Toolbox.ViewModels
     {
         private readonly StatsCollector _statsCollector;
         private bool considerTestData;
-        private bool filterOnlyDisabledTests;
-        private bool filterOnlyEnabledTests; 
-        private bool showHideAllCheckboxes;
-        private string currentFilterText;
         private bool dataLoaded;
-
-        private bool tagsFilterActive;
-        private bool categoriesFilterActive;
-        private bool authorsFilterActive;
+        private bool filterDisabledTestsOnly;
+        private bool filterEnabledTestsOnly; 
+        private bool filterAll;
+        private string currentFilterQuery;
+        private StatsFilterViewModel currentFilter;
 
         public StatsViewModel(StatsCollector statsCollector)
         {
             _statsCollector = statsCollector;
             LoadTestsAssemblyCommand = new LoadTestsAssemblyCommand(this, _statsCollector);
             ApplyFilterCommand = new ApplyFilterCommand(this, _statsCollector);
-            ExportStatisticsCommand = new ExportStatisticsCommand(_statsCollector);
+            ExportStatsCommand = new ExportStatsCommand(_statsCollector);
             OpenSuiteDetailsCommand = new OpenSuiteDetailsCommand(this, _statsCollector);
             DataLoaded = false;
-            TagsFilterActive = true;
+
+            Filters = new List<StatsFilterViewModel>
+            {
+                new StatsFilterViewModel(FilterType.Tag),
+                new StatsFilterViewModel(FilterType.Category),
+                new StatsFilterViewModel(FilterType.Author)
+            };
+
+            CurrentFilter = Filters.ElementAt(0);
         }
 
         public bool DataLoaded
@@ -57,14 +62,14 @@ namespace Unicorn.Toolbox.ViewModels
 
         public bool FilterOnlyDisabledTests
         {
-            get =>  filterOnlyDisabledTests;
+            get =>  filterDisabledTestsOnly;
             
             set
             {
-                filterOnlyDisabledTests = value;
+                filterDisabledTestsOnly = value;
                 OnPropertyChanged(nameof(FilterOnlyDisabledTests));
 
-                if (filterOnlyDisabledTests)
+                if (filterDisabledTestsOnly)
                 {
                     FilterOnlyEnabledTests = false;
                 }
@@ -73,100 +78,57 @@ namespace Unicorn.Toolbox.ViewModels
 
         public bool FilterOnlyEnabledTests
         {
-            get => filterOnlyEnabledTests;
+            get => filterEnabledTestsOnly;
             
             set
             {
-                filterOnlyEnabledTests = value;
+                filterEnabledTestsOnly = value;
                 OnPropertyChanged(nameof(FilterOnlyEnabledTests));
 
-                if (filterOnlyEnabledTests)
+                if (filterEnabledTestsOnly)
                 {
                     FilterOnlyDisabledTests = false;
                 }
             }
         }
 
-        public bool ShowHideAllCheckboxes
+        public bool FilterAll
         {
-            get => showHideAllCheckboxes;
+            get => filterAll;
 
             set
             {
-                showHideAllCheckboxes = value;
-                OnPropertyChanged(nameof(ShowHideAllCheckboxes));
-                SetCheckboxesCheckedState(showHideAllCheckboxes);
+                filterAll = value;
+                OnPropertyChanged(nameof(FilterAll));
+                SetCheckboxesCheckedState(filterAll);
             }
         }
 
-        public FilterType CurrentFilter { get; private set; }
-
-        public string CurrentFilterText
+        public StatsFilterViewModel CurrentFilter
         {
-            get => currentFilterText;
+            get => currentFilter;
 
             set
             {
-                currentFilterText = value;
-                OnPropertyChanged(nameof(CurrentFilterText));
+                currentFilter = value;
+                OnPropertyChanged(nameof(CurrentFilter));
+            }
+        }
+
+        public string CurrentFilterQuery
+        {
+            get => currentFilterQuery;
+
+            set
+            {
+                currentFilterQuery = value;
+                OnPropertyChanged(nameof(CurrentFilterQuery));
             }
         }
 
         public string Status { get; set; } = string.Empty;
 
-        public bool TagsFilterActive
-        {
-            get => tagsFilterActive;
-
-            set
-            {
-                tagsFilterActive = value;
-                OnPropertyChanged(nameof(TagsFilterActive));
-
-                if (value)
-                {
-                    CurrentFilter = FilterType.Tag;
-                }
-            }
-        }
-
-        public bool CategoriesFilterActive
-        {
-            get => categoriesFilterActive;
-
-            set
-            {
-                categoriesFilterActive = value;
-                OnPropertyChanged(nameof(CategoriesFilterActive));
-
-                if (value)
-                {
-                    CurrentFilter = FilterType.Category;
-                }
-            }
-        }
-
-        public bool AuthorsFilterActive
-        {
-            get => authorsFilterActive;
-
-            set
-            {
-                authorsFilterActive = value;
-                OnPropertyChanged(nameof(AuthorsFilterActive));
-
-                if (value)
-                {
-                    CurrentFilter = FilterType.Author;
-                }
-            }
-        }
-
-        public IEnumerable<FilterItemViewModel> Tags { get; set; }
-        
-        public IEnumerable<FilterItemViewModel> Categories { get; set; }
-        
-        public IEnumerable<FilterItemViewModel> Authors { get; set; }
+        public IEnumerable<StatsFilterViewModel> Filters { get; set; }
 
         public IEnumerable<SuiteInfo> FilteredInfo => _statsCollector.Data?.FilteredInfo;
 
@@ -174,21 +136,9 @@ namespace Unicorn.Toolbox.ViewModels
 
         public ICommand ApplyFilterCommand { get; }
 
-        public ICommand ExportStatisticsCommand { get; }
+        public ICommand ExportStatsCommand { get; }
 
         public ICommand OpenSuiteDetailsCommand { get; }
-
-        public void UpdateViewModel()
-        {
-            Status = $"Assembly: {_statsCollector.AssemblyFile} ({_statsCollector.AssemblyName})    |    {_statsCollector.Data}";
-
-            FillFiltersFrom(_statsCollector.Data);
-
-            _statsCollector.Data.ClearFilters();
-            ApplyFilteredData();
-
-            ShowHideAllCheckboxes = true;
-        }
 
         public void ApplyFilteredData()
         {
@@ -202,49 +152,18 @@ namespace Unicorn.Toolbox.ViewModels
 
                 filterText = new StringBuilder()
                     .AppendFormat("Found {0} tests. Filters:\n", foundTestsCount)
-                    .AppendFormat("Tags: {0}\n", string.Join(", ", Tags.Where(t => t.Selected).Select(t => t.Name)))
-                    .AppendFormat("Categories: {0}\n", string.Join(", ", Categories.Where(c => c.Selected).Select(c => c.Name)))
-                    .AppendFormat("Authors: {0}", string.Join(", ", Authors.Where(a => a.Selected).Select(a => a.Name)))
-                    .ToString(); ;
+                    .AppendFormat("Tags: {0}\n", string.Join(", ", Filters.First(f => f.Filter == FilterType.Tag).SelectedValues))
+                    .AppendFormat("Categories: {0}\n", string.Join(", ", Filters.First(f => f.Filter == FilterType.Category).SelectedValues))
+                    .AppendFormat("Authors: {0}", string.Join(", ", Filters.First(f => f.Filter == FilterType.Author).SelectedValues))
+                    .ToString();
             }
 
-            CurrentFilterText = filterText;
-        }
-
-        private void FillFiltersFrom(AutomationData data)
-        {
-            Tags = new List<FilterItemViewModel>(data.UniqueFeatures.Select(f => new FilterItemViewModel(f)))
-                .OrderBy(f => f.Name);
-
-            Categories = new List<FilterItemViewModel>(data.UniqueCategories.Select(c => new FilterItemViewModel(c)))
-                .OrderBy(c => c.Name);
-
-            Authors = new List<FilterItemViewModel>(data.UniqueAuthors.Select(a => new FilterItemViewModel(a)))
-                .OrderBy(a => a.Name);
-
-            OnPropertyChanged(nameof(Tags));
-            OnPropertyChanged(nameof(Categories));
-            OnPropertyChanged(nameof(Authors));
+            CurrentFilterQuery = filterText;
         }
 
         private void SetCheckboxesCheckedState(bool isChecked)
         {
-            IEnumerable<FilterItemViewModel> list;
-
-            if (TagsFilterActive)
-            {
-                list = Tags;
-            }
-            else if (CategoriesFilterActive)
-            {
-                list = Categories;
-            }
-            else
-            {
-                list = Authors;
-            }
-
-            foreach (FilterItemViewModel item in list)
+            foreach (FilterItemViewModel item in CurrentFilter.Values)
             {
                 item.Selected = isChecked;
             }
@@ -252,52 +171,21 @@ namespace Unicorn.Toolbox.ViewModels
 
         public IOrderedEnumerable<KeyValuePair<string, int>> GetVisualizationData()
         {
-            var data = _statsCollector.Data;
-            var stats = new Dictionary<string, int>();
+            Dictionary<string, int> stats = new Dictionary<string, int>();
 
-            switch (CurrentFilter)
+            switch (CurrentFilter.Filter)
             {
                 case FilterType.Tag:
-                    {
-                        foreach (var feature in data.UniqueFeatures)
-                        {
-                            var suites = data.FilteredInfo.Where(s => s.Tags.Contains(feature));
-                            var tests = from SuiteInfo s
-                                        in suites
-                                        select s.TestsInfos;
-
-                            stats.Add(feature, tests.Sum(t => t.Count));
-                        }
-                        break;
-                    }
+                    stats = GetDataByTags();
+                    break;
 
                 case FilterType.Category:
-                    {
-                        foreach (var category in data.UniqueCategories)
-                        {
-                            var tests = from SuiteInfo s
-                                        in data.FilteredInfo
-                                        select s.TestsInfos.Where(ti => ti.Categories.Contains(category));
-
-                            stats.Add(category, tests.Sum(t => t.Count()));
-                        }
-
-                        break;
-                    }
+                    stats = GetDataByCategories();
+                    break;
 
                 case FilterType.Author:
-                    {
-                        foreach (var author in data.UniqueAuthors)
-                        {
-                            var tests = from SuiteInfo s
-                                        in data.FilteredInfo
-                                        select s.TestsInfos.Where(ti => ti.Author.Equals(author));
-
-                            stats.Add(author, tests.Sum(t => t.Count()));
-                        }
-
-                        break;
-                    }
+                    stats = GetDataByAuthors();
+                    break;
             }
 
             var items = from pair in stats
@@ -305,6 +193,55 @@ namespace Unicorn.Toolbox.ViewModels
                         select pair;
 
             return items;
+        }
+
+        private Dictionary<string, int> GetDataByTags()
+        {
+            Dictionary<string, int> stats = new Dictionary<string, int>();
+
+            foreach (string feature in _statsCollector.Data.UniqueTags)
+            {
+                var suites = _statsCollector.Data.FilteredInfo.Where(s => s.Tags.Contains(feature));
+                var tests = from SuiteInfo s
+                            in suites
+                            select s.TestsInfos;
+
+                stats.Add(feature, tests.Sum(t => t.Count));
+            }
+
+            return stats;
+        }
+
+        private Dictionary<string, int> GetDataByCategories()
+        {
+            Dictionary<string, int> stats = new Dictionary<string, int>();
+
+            foreach (string category in _statsCollector.Data.UniqueCategories)
+            {
+                var tests = from SuiteInfo s
+                            in _statsCollector.Data.FilteredInfo
+                            select s.TestsInfos.Where(ti => ti.Categories.Contains(category));
+
+                stats.Add(category, tests.Sum(t => t.Count()));
+            }
+
+            return stats;
+        }
+
+        private Dictionary<string, int> GetDataByAuthors()
+        {
+            Dictionary<string, int> stats = new Dictionary<string, int>();
+
+            foreach (string author in _statsCollector.Data.UniqueAuthors)
+            {
+                var tests = from SuiteInfo s
+                            in _statsCollector.Data.FilteredInfo
+                            select s.TestsInfos.Where(ti => ti.Author.Equals(author));
+
+                stats.Add(author, tests.Sum(t => t.Count()));
+            }
+
+            return stats;
         }
     }
 }
