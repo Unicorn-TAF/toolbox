@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using Unicorn.Toolbox.Models.Coverage;
 using Unicorn.Toolbox.ViewModels;
@@ -27,9 +28,9 @@ namespace Unicorn.Toolbox.Commands
 
             if (openFileDialog.ShowDialog().Value)
             {
-                string specFileName = openFileDialog.FileName;
+                string specsFile = openFileDialog.FileName;
 
-                _coverage.ReadSpecs(specFileName);
+                _coverage.ReadSpecs(specsFile);
                 _viewModel.DataLoaded = true;
                 _viewModel.GetCoverageCommand.Execute(null);
 
@@ -37,7 +38,11 @@ namespace Unicorn.Toolbox.Commands
                 {
                     module.PropertyChanged += new PropertyChangedEventHandler(OnCheckboxCheck);
                 }
+
+                _viewModel.Status = 
+                    $"specs {Path.GetFileName(specsFile)} were loaded >> {_coverage.Specs.Modules.Count} modules";
             }
+
         }
 
         private void OnCheckboxCheck(object sender, PropertyChangedEventArgs e)

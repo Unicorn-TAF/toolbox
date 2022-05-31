@@ -8,7 +8,7 @@
         mc:Ignorable="d"
         Title="Unicorn toolbox" Height="750" Width="1200" MinHeight="750" MinWidth="1200" WindowStartupLocation="CenterScreen" Icon="app.ico">
     <Grid>
-        <TabControl x:Name="tabControl" Margin="0,0,0,25" SelectionChanged="TabChanged">
+        <TabControl x:Name="tabControl" Margin="0,0,0,25" SelectedIndex="{Binding SelectedTab}">
             <TabItem x:Name="tabStatistics" Header="Tests statistics" Width="100">
                 <views:StatsView x:Name="StatsView" DataContext="{Binding StatsViewModel}"/>
             </TabItem>
@@ -22,7 +22,7 @@
         <DockPanel Height="25" VerticalAlignment="Bottom">
             <StatusBar DockPanel.Dock="Bottom">
                 <StatusBarItem Height="21" FontSize="11">
-                    <TextBlock Name="statusBarText" FontFamily="Consolas" />
+                    <TextBlock Name="statusBarText" FontFamily="Consolas" Text="{Binding Status}"/>
                 </StatusBarItem>
             </StatusBar>
         </DockPanel>

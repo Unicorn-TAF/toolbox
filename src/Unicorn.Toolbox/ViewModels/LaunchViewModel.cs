@@ -40,12 +40,6 @@ namespace Unicorn.Toolbox.ViewModels
 
         public string Status { get; set; } = string.Empty;
 
-        public ICommand LoadTrxCommand { get; }
-
-        public ICommand SearchInExecutedTestsCommand { get; }
-
-        public ICommand OpenFailsByMessageCommand { get; }
-
         public ListCollectionView ExecutionsList => listCollectionView;
 
         public string FilterGridBy
@@ -87,6 +81,12 @@ namespace Unicorn.Toolbox.ViewModels
         }
 
         public ExecutedTestsFilter Filter { get; set; }
+
+        public ICommand LoadTrxCommand { get; }
+
+        public ICommand SearchInExecutedTestsCommand { get; }
+
+        public ICommand OpenFailsByMessageCommand { get; }
 
         private void FilterExecutions()
         {

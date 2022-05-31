@@ -1,7 +1,4 @@
-﻿using System;
-using System.Windows;
-using System.Windows.Controls;
-using Unicorn.Toolbox.ViewModels;
+﻿using System.Windows;
 
 namespace Unicorn.Toolbox
 {
@@ -14,45 +11,5 @@ namespace Unicorn.Toolbox
         {
             InitializeComponent();
         }
-
-        private VisualizationViewModel Visualization => VisualizationView.DataContext as VisualizationViewModel;
-
-        private void TabChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (tabResultsAnalysis.IsSelected)
-            {
-                var launchResultsViewModel = LaunchView.DataContext as LaunchViewModel;
-                Visualization.CurrentViewModel = launchResultsViewModel;
-
-                Visualization.Available = launchResultsViewModel.TrxLoaded;
-                Visualization.CanCustomize = false;
-                statusBarText.Text = launchResultsViewModel.Status;
-            }
-            else if (tabCoverage.IsSelected)
-            {
-                var coverageViewModel = CoverageView.DataContext as CoverageViewModel;
-                Visualization.CurrentViewModel = coverageViewModel;
-
-                Visualization.Available = coverageViewModel.DataLoaded;
-                Visualization.CanCustomize = true;
-                statusBarText.Text = coverageViewModel.Status;
-            }
-            else if (tabStatistics.IsSelected)
-            {
-                var statsViewModel = StatsView.DataContext as StatsViewModel;
-                
-                if (statsViewModel != null)
-                {
-                    Visualization.CurrentViewModel = statsViewModel;
-                    statusBarText.Text = statsViewModel.Status;
-                    Visualization.CanCustomize = true;
-                }
-            }
-            else
-            {
-                throw new NotImplementedException($"Please update {nameof(statusBarText)} on tab change");
-            }
-        }
-
     }
 }
