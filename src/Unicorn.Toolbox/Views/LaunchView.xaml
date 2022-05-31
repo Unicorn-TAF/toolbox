@@ -9,7 +9,7 @@
     <Grid Background="#FFE5E5E5">
         <Button x:Name="btnLoadTrx" Content="Load TRX files" Command="{Binding LoadTrxCommand}" VerticalAlignment="Top" Margin="10,25,0,0" HorizontalAlignment="Left" Width="80" Height="22"/>
         <DataGrid x:Name="gridTestResults" ItemsSource="{Binding ExecutionsList}" HorizontalScrollBarVisibility="Disabled" HeadersVisibility="All" RowHeaderWidth="0" CanUserAddRows="False" CanUserResizeColumns="False"
-                              CanUserSortColumns="True" AutoGenerateColumns="False" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="10,70,415,100">
+                              CanUserSortColumns="True" AutoGenerateColumns="False" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="10,70,415,10">
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="Execution" Width="*" ClipboardContentBinding="{Binding Name}">
                     <DataGridTemplateColumn.HeaderTemplate>
@@ -85,19 +85,11 @@
             </DataGrid.Columns>
         </DataGrid>
 
-        <TextBox x:Name="textBoxLaunchSummary" Text="{Binding LaunchSummary}" Margin="10,0,415,10" TextWrapping="Wrap" FontFamily="Consolas" Height="80" VerticalAlignment="Bottom"/>
         <GroupBox Header="Find failed tests" Margin="0,0,10,10" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="395">
             <Grid Margin="5,5,5,5">
                 <TextBox x:Name="textBoxFailMessage" TextWrapping="Wrap" Text="{Binding FailSearchCriteria}" Height="22" VerticalAlignment="Top"/>
                 <ComboBox x:Name="comboFilterExecutedTestsBy" ItemsSource="{Binding FailsFilters}" Text="{Binding FilterFailsBy}" SelectedIndex="0" HorizontalAlignment="Left" VerticalContentAlignment="Top" HorizontalContentAlignment="Center" Margin="0,30,0,0" Width="150" Height="22" VerticalAlignment="Bottom"/>
-                <Button x:Name="buttonSearchByFailMessage" Content="Search" Command="{Binding SearchInExecutedTestsCommand}" Margin="160,30,0,0" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="80" Height="22"/>
-                <Label x:Name="labelFoundFailedTests" Content="{Binding FoundFailsCount}" Margin="0,20,10,0" Height="25" HorizontalContentAlignment="Right" VerticalAlignment="Bottom" FontWeight="Bold" Foreground="#FF3399FF" Cursor="Hand" HorizontalAlignment="Right">
-                    <Label.InputBindings>
-                        <MouseBinding
-                            MouseAction="LeftClick"
-                            Command="{Binding DataContext.OpenFilteredTestsCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
-                    </Label.InputBindings>
-                </Label>
+                <Button x:Name="buttonSearchByFailMessage" Content="Search" Command="{Binding SearchInExecutedTestsCommand}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="80" Height="22"/>
             </Grid>
         </GroupBox>
         <Label Content="Top 5 fail reasons" HorizontalAlignment="Right" Margin="0,0,160,0" VerticalAlignment="Top" FontWeight="Bold"/>

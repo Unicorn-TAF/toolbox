@@ -69,10 +69,10 @@ namespace Unicorn.Toolbox.Models.Stats
         {
             StringBuilder statistics = new StringBuilder();
 
-            statistics.Append($"suites: {SuitesInfos.Count}    |    ")
-                .Append($"tests: {SuitesInfos.Sum(s => s.TestsInfos.Count)}    |    ")
-                .Append($"features: {UniqueTags.Count}    |    ")
-                .Append($"categories: {UniqueCategories.Count}    |    ")
+            statistics.Append($"suites: {SuitesInfos.Count}  |  ")
+                .Append($"tests: {SuitesInfos.Sum(s => s.TestsInfos.Count)}  |  ")
+                .Append($"features: {UniqueTags.Count}  |  ")
+                .Append($"categories: {UniqueCategories.Count}  |  ")
                 .Append($"authors: {UniqueAuthors.Count}");
 
             return statistics.ToString();

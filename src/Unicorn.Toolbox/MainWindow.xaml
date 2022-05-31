@@ -21,8 +21,8 @@
         </TabControl>
         <DockPanel Height="25" VerticalAlignment="Bottom">
             <StatusBar DockPanel.Dock="Bottom">
-                <StatusBarItem Height="21">
-                    <TextBlock Name="statusBarText" />
+                <StatusBarItem Height="21" FontSize="11">
+                    <TextBlock Name="statusBarText" FontFamily="Consolas" />
                 </StatusBarItem>
             </StatusBar>
         </DockPanel>

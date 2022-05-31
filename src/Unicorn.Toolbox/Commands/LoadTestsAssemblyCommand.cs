@@ -44,8 +44,8 @@ namespace Unicorn.Toolbox.Commands
 
                 _viewModel.FilterAll = true;
 
-                _viewModel.Status = $"Assembly: {_statsCollector.AssemblyFile} " +
-                    $"({_statsCollector.AssemblyName})    |    {_statsCollector.Data}";
+                _viewModel.Status = $"assembly {_statsCollector.AssemblyFile} was loaded >> " +
+                    $"({_statsCollector.AssemblyProps})  |  {_statsCollector.Data}";
 
                 _viewModel.ApplyFilteredData();
             }

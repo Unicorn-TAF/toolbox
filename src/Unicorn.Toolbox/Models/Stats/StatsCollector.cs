@@ -24,14 +24,15 @@ namespace Unicorn.Toolbox.Models.Stats
 
         public string AssemblyFile { get; protected set; }
 
-        public string AssemblyName { get; protected set; }
+        public string AssemblyProps { get; protected set; }
 
         public void GetTestsStatistics(string fileName, bool considerParameterization)
         {
             _assemblyFile = fileName;
             _considerParameterization = considerParameterization;
             AssemblyFile = Path.GetFileName(fileName);
-            AssemblyName = System.Reflection.AssemblyName.GetAssemblyName(fileName).FullName;
+            AssemblyName aName = AssemblyName.GetAssemblyName(fileName);
+            AssemblyProps = $"{aName.Name} version={aName.Version}";
             Data = new AutomationData();
 
 

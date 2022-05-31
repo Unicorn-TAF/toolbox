@@ -70,13 +70,15 @@ namespace Unicorn.Toolbox.Models.Launch
             double durationHours = durationMinutes / 60;
             double executionSumHours = ExecutionsSumMinutes / 60;
 
-            return new StringBuilder()
-                .AppendFormat("Executed threads: {0}\n", Executions.Count)
-                .AppendFormat("Executed suites: {0}\n", ExecutedSuites)
-                .AppendFormat("Executed tests: {0} (Failed: {1}, Skipped: {2})\n", ExecutedTests, FailedTests, SkippedTests)
-                .AppendFormat("Launch duration: {0:F1} minutes ({1:F1} hrs.)\n", durationMinutes, durationHours)
-                .AppendFormat("Total execution time: {0:F1} minutes ({1:F1} hrs.)", ExecutionsSumMinutes, executionSumHours)
-                .ToString();
+            StringBuilder launch = new StringBuilder();
+
+            launch.Append($"threads: {Executions.Count}  |  ")
+                .Append($"suites: {ExecutedSuites}  |  ")
+                .Append($"tests: {ExecutedTests} ({FailedTests} failed, {SkippedTests} skipped)  |  ")
+                .Append($"launch duration: {durationMinutes:F1} min. ({durationHours:F1} hrs.)  |  ")
+                .Append($"total execution time: {ExecutionsSumMinutes:F1} min. ({executionSumHours:F1} hrs.)");
+
+            return launch.ToString();
         }
     }
 }

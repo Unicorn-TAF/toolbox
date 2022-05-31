@@ -24,9 +24,7 @@ namespace Unicorn.Toolbox.ViewModels
 
         private string filterGridBy;
         private string failMessage;
-        private string launchSummary;
         private FailsFilter filterFailsBy = FailsFilter.ErrorMessage;
-        private int foundFailsCount;
 
         public LaunchViewModel()
         {
@@ -35,9 +33,7 @@ namespace Unicorn.Toolbox.ViewModels
 
             LoadTrxCommand = new LoadTrxCommand(this, _launchResult);
             SearchInExecutedTestsCommand = new SearchInExecutedTestsCommand(this, _launchResult);
-            OpenFilteredTestsCommand = new OpenFilteredTestsCommand(this);
             OpenFailsByMessageCommand = new OpenFailsByMessageCommand();
-            LaunchSummary = "Summary . . .";
         }
 
         public bool TrxLoaded { get; set; } = false;
@@ -47,8 +43,6 @@ namespace Unicorn.Toolbox.ViewModels
         public ICommand LoadTrxCommand { get; }
 
         public ICommand SearchInExecutedTestsCommand { get; }
-
-        public ICommand OpenFilteredTestsCommand { get; }
 
         public ICommand OpenFailsByMessageCommand { get; }
 
@@ -63,17 +57,6 @@ namespace Unicorn.Toolbox.ViewModels
                 filterGridBy = value;
                 OnPropertyChanged(nameof(FilterGridBy));
                 FilterExecutions();
-            }
-        }
-
-        public int FoundFailsCount
-        {
-            get => foundFailsCount;
-
-            set
-            {
-                foundFailsCount = value;
-                OnPropertyChanged(nameof(FoundFailsCount));
             }
         }
 
@@ -105,16 +88,6 @@ namespace Unicorn.Toolbox.ViewModels
 
         public ExecutedTestsFilter Filter { get; set; }
 
-        public string LaunchSummary
-        { 
-            get => launchSummary;
-            set
-            {
-                launchSummary = value;
-                OnPropertyChanged(nameof(LaunchSummary));
-            }
-        }
-
         private void FilterExecutions()
         {
             if (listCollectionView != null)
@@ -139,8 +112,6 @@ namespace Unicorn.Toolbox.ViewModels
             }
 
             OnPropertyChanged(nameof(TopFailsList));
-
-            Status = $"{_launchResult.Executions.Count()} .trx files were loaded";
         }
     }
 }

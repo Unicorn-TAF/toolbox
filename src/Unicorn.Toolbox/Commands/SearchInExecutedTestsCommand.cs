@@ -37,7 +37,13 @@ namespace Unicorn.Toolbox.Commands
             }
 
             _viewModel.Filter = testsFilter;
-            _viewModel.FoundFailsCount = _viewModel.Filter.MatchingTestsCount;
+
+            var window = new DialogHost($"Failed tests by error message filter ({_viewModel.Filter.MatchingTestsCount})")
+            {
+                DataContext = new DialogHostViewModel(_viewModel.Filter.FilteredData)
+            };
+            //window.SetFailedTestsDataSource(failedTestsFilter.FilteredResults);
+            window.ShowDialog();
         }
     }
 }
