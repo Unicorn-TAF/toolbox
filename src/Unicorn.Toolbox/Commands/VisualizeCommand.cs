@@ -8,9 +8,9 @@ namespace Unicorn.Toolbox.Commands
 {
     public class VisualizeCommand : CommandBase
     {
-        private readonly VisualizationViewModel _viewModel;
+        private readonly MainViewModel _viewModel;
 
-        public VisualizeCommand(VisualizationViewModel viewModel)
+        public VisualizeCommand(MainViewModel viewModel)
         {
             _viewModel = viewModel;
         }
@@ -37,14 +37,14 @@ namespace Unicorn.Toolbox.Commands
 
             var data = stats.GetVisualizationData();
 
-            if (_viewModel.Circles)
+            if (_viewModel.CirclesVisualization)
             {
-                new VisualizerCircles(visualization.canvasVisualization, _viewModel.CurrentPalette)
+                new VisualizerCircles(visualization.canvasVisualization, _viewModel.CurrentVisualizationPalette)
                     .VisualizeData(data);
             }
             else
             {
-                new VisualizerBars(visualization.canvasVisualization, _viewModel.CurrentPalette)
+                new VisualizerBars(visualization.canvasVisualization, _viewModel.CurrentVisualizationPalette)
                     .VisualizeData(data);
 
                 visualization.InjectExportToVisualization();
@@ -57,14 +57,14 @@ namespace Unicorn.Toolbox.Commands
 
             var vizData = coverage.GetVisualizationData();
 
-            if (_viewModel.Circles)
+            if (_viewModel.CirclesVisualization)
             {
-                new VisualizerCircles(visualization.canvasVisualization, _viewModel.CurrentPalette)
+                new VisualizerCircles(visualization.canvasVisualization, _viewModel.CurrentVisualizationPalette)
                     .VisualizeData(vizData);
             }
             else
             {
-                new VisualizerBars(visualization.canvasVisualization, _viewModel.CurrentPalette)
+                new VisualizerBars(visualization.canvasVisualization, _viewModel.CurrentVisualizationPalette)
                     .VisualizeData(vizData);
 
                 visualization.InjectExportToVisualization();
@@ -86,7 +86,7 @@ namespace Unicorn.Toolbox.Commands
                 Title = title
             };
 
-            if (_viewModel.Fullscreen)
+            if (_viewModel.FullscreenVisualization)
             {
                 visualization.WindowState = WindowState.Maximized;
             }

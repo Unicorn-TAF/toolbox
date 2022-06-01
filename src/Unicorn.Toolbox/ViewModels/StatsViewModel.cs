@@ -16,6 +16,7 @@ namespace Unicorn.Toolbox.ViewModels
         private bool filterDisabledTestsOnly;
         private bool filterEnabledTestsOnly; 
         private bool filterAll;
+        private string foundTestsCount;
         private string currentFilterQuery;
         private StatsFilterViewModel currentFilter;
 
@@ -104,6 +105,17 @@ namespace Unicorn.Toolbox.ViewModels
             }
         }
 
+        public string FoundTestsCount
+        {
+            get => foundTestsCount;
+
+            set
+            {
+                foundTestsCount = value;
+                OnPropertyChanged(nameof(FoundTestsCount));
+            }
+        }
+
         public StatsFilterViewModel CurrentFilter
         {
             get => currentFilter;
@@ -149,11 +161,11 @@ namespace Unicorn.Toolbox.ViewModels
             if (_statsCollector.Data.FilteredInfo.Count() != _statsCollector.Data.SuitesInfos.Count())
             {
                 var foundTestsCount = _statsCollector.Data.FilteredInfo.SelectMany(si => si.TestsInfos).Count();
+                FoundTestsCount = $"Found {foundTestsCount} tests";
 
                 filterText = new StringBuilder()
-                    .AppendFormat("Found {0} tests. Filters:\n", foundTestsCount)
-                    .AppendFormat("Tags: {0}\n", string.Join(", ", Filters.First(f => f.Filter == FilterType.Tag).SelectedValues))
                     .AppendFormat("Categories: {0}\n", string.Join(", ", Filters.First(f => f.Filter == FilterType.Category).SelectedValues))
+                    .AppendFormat("Tags: {0}\n", string.Join(", ", Filters.First(f => f.Filter == FilterType.Tag).SelectedValues))
                     .AppendFormat("Authors: {0}", string.Join(", ", Filters.First(f => f.Filter == FilterType.Author).SelectedValues))
                     .ToString();
             }

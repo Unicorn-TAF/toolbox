@@ -7,16 +7,21 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="1125">
     <Grid Background="#FFE5E5E5">
-        <Button x:Name="buttonLoadSpecs" Content="Load specs" Command="{Binding LoadSpecsCommand}" HorizontalAlignment="Left" Margin="10,25,0,0" VerticalAlignment="Top" Width="80" Height="22"/>
-        <Button x:Name="buttonGetCoverage" Content="Get coverage" Command="{Binding GetCoverageCommand}" HorizontalAlignment="Left" Margin="150,25,0,0" VerticalAlignment="Top" Width="80" Height="22"/>
-        <ListBox x:Name="listBox" ItemsSource="{Binding ModulesList}" ScrollViewer.VerticalScrollBarVisibility="Auto" Margin="10,70,0,100" HorizontalAlignment="Left" Width="220">
+        <GroupBox HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Width="220" Height="60" BorderBrush="#FF44728E" Background="#FFA1AAAF">
+            <Grid Margin="0,5,0,0">
+                <Button x:Name="buttonLoadSpecs" Content="Load specs" Command="{Binding LoadSpecsCommand}" HorizontalAlignment="Left" Margin="5,0,0,0" VerticalAlignment="Center" Width="80" Height="22"/>
+                <Button x:Name="buttonGetCoverage" Content="Get coverage" Command="{Binding GetCoverageCommand}" HorizontalAlignment="Right" Margin="0,0,5,0" VerticalAlignment="Center" Width="80" Height="22"/>
+            </Grid>
+        </GroupBox>
+        
+        <ListBox x:Name="listBox" ItemsSource="{Binding ModulesList}" ScrollViewer.VerticalScrollBarVisibility="Auto" Margin="10,75,0,70" HorizontalAlignment="Left" Width="220">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <CheckBox Content="{Binding Name}" IsChecked="{Binding Selected}"/>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <DataGrid x:Name="gridCoverage" ItemsSource="{Binding ModulesList}" HorizontalScrollBarVisibility="Disabled" HeadersVisibility="All" Grid.Column="0" RowHeaderWidth="0" CanUserAddRows="False" AutoGenerateColumns="False"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="240,70,10,100">
+        <DataGrid x:Name="gridCoverage" ItemsSource="{Binding ModulesList}" HorizontalScrollBarVisibility="Disabled" HeadersVisibility="All" Grid.Column="0" RowHeaderWidth="0" CanUserAddRows="False" AutoGenerateColumns="False"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="240,10,10,70">
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="Module" Width="720">
                     <DataGridTemplateColumn.CellTemplate>
@@ -36,6 +41,6 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
-        <TextBox x:Name="textBoxRunTags" Text="{Binding RunTags}" Margin="10,0,10,10" FontSize="11" TextWrapping="Wrap" Height="80" VerticalAlignment="Bottom"/>
+        <TextBox x:Name="textBoxRunTags" Text="{Binding RunTags}" Margin="10,0,10,10" FontSize="11" TextWrapping="Wrap" Height="50" VerticalAlignment="Bottom"/>
     </Grid>
 </UserControl>

@@ -22,6 +22,7 @@ namespace Unicorn.Toolbox.ViewModels
         private readonly ObservableCollection<FailedTestsGroup> _topFailsList;
         private ListCollectionView listCollectionView;
 
+        private bool dataLoaded;
         private string filterGridBy;
         private string failMessage;
         private FailsFilter filterFailsBy = FailsFilter.ErrorMessage;
@@ -36,7 +37,16 @@ namespace Unicorn.Toolbox.ViewModels
             OpenFailsByMessageCommand = new OpenFailsByMessageCommand();
         }
 
-        public bool DataLoaded { get; set; } = false;
+        public bool DataLoaded
+        {
+            get => dataLoaded;
+
+            set
+            {
+                dataLoaded = value;
+                OnPropertyChanged(nameof(DataLoaded));
+            }
+        }
 
         public string Status { get; set; } = string.Empty;
 

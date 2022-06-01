@@ -7,9 +7,17 @@
              mc:Ignorable="d" 
              d:DesignHeight="500" d:DesignWidth="900">
     <Grid x:Name="gridStatistics" Background="#FFE5E5E5">
-        <DataGrid ItemsSource="{Binding FilteredInfo}" x:Name="gridResults" SelectionUnit="CellOrRowHeader" ClipboardCopyMode="IncludeHeader" HorizontalScrollBarVisibility="Disabled" HeadersVisibility="All" Grid.Column="0" RowHeaderWidth="0" CanUserAddRows="False" AutoGenerateColumns="False" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="240,70,10,100">
+        <GroupBox HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Width="220" Height="60" BorderBrush="#FF44728E" Background="#FFA1AAAF">
+            <Grid Margin="0,5,0,0">
+                <Button VerticalContentAlignment="Top" x:Name="buttonLoadTestsAssembly" Command="{Binding LoadTestsAssemblyCommand}" Content="Load test assembly" VerticalAlignment="Center" Margin="5,0,0,0" HorizontalAlignment="Left" Width="110" Height="40"/>
+                <CheckBox x:Name="checkboxTestData" Content="consider test data" Margin="10,25,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" IsChecked="{Binding ConsiderTestData}" FontSize="10" />
+                <Button x:Name="buttonExportStats" Command="{Binding ExportStatsCommand}" IsEnabled="{Binding DataLoaded}" Content="Export" Margin="0,0,5,0" VerticalAlignment="Center" Height="22" HorizontalAlignment="Right" Width="80"/>
+            </Grid>
+        </GroupBox>
+
+        <DataGrid ItemsSource="{Binding FilteredInfo}" x:Name="gridResults" SelectionUnit="CellOrRowHeader" ClipboardCopyMode="IncludeHeader" HorizontalScrollBarVisibility="Disabled" HeadersVisibility="All" Grid.Column="0" RowHeaderWidth="0" CanUserAddRows="False" AutoGenerateColumns="False" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="240,10,10,70">
             <DataGrid.Columns>
-                <DataGridTemplateColumn Header="Test Suite" Width="350" ClipboardContentBinding="{Binding Name}">
+                <DataGridTemplateColumn Header="Test Suite" Width="2*" ClipboardContentBinding="{Binding Name}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <DataGridCell Content="{Binding Name}">
@@ -23,14 +31,14 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Tags" Width="150" ClipboardContentBinding="{Binding FeaturesString}">
+                <DataGridTemplateColumn Header="Tags" Width="*" ClipboardContentBinding="{Binding FeaturesString}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding FeaturesString}" TextWrapping="Wrap"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Metadata" Width="*" ClipboardContentBinding="{Binding MetadataString}">
+                <DataGridTemplateColumn Header="Metadata" Width="2*" ClipboardContentBinding="{Binding MetadataString}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <DataGridCell Content="{Binding MetadataString}" />
@@ -39,7 +47,7 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
-        <Grid x:Name="gridFilters" Margin="10,70,0,100" HorizontalAlignment="Left" Width="220" IsEnabled="{Binding DataLoaded}">
+        <Grid x:Name="gridFilters" Margin="10,75,0,70" HorizontalAlignment="Left" Width="220" IsEnabled="{Binding DataLoaded}">
             <TabControl x:Name="tabControlFilters" ItemsSource="{Binding Filters}" SelectedItem="{Binding CurrentFilter}">
                 <TabControl.ItemTemplate>
                     <DataTemplate>
@@ -58,14 +66,12 @@
                     </DataTemplate>
                 </TabControl.ContentTemplate>
             </TabControl>
+            <Label Content="{Binding FoundTestsCount}" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,75,5,0" FontSize="10" />
             <Button x:Name="buttonApplyFilter" Content="Filter" Command="{Binding ApplyFilterCommand}" VerticalAlignment="Top" Margin="0,32,10,0" Height="22" HorizontalAlignment="Right" Width="60"/>
             <CheckBox x:Name="checkOnlyEnabledTests" Content="Only Enabled tests" IsChecked="{Binding FilterOnlyEnabledTests}" VerticalAlignment="Top" Margin="10,35,92,0"/>
             <CheckBox x:Name="checkOnlyDisabledTests" Content="Only Disabled tests" IsChecked="{Binding FilterOnlyDisabledTests}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,55,0,0"/>
             <CheckBox x:Name="checkBoxShowHide" Content="Show/Hide all" IsChecked="{Binding FilterAll}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,75,0,0"/>
         </Grid>
-        <TextBox x:Name="textBoxCurrentFilter" Text="{Binding CurrentFilterQuery}" Margin="10,0,10,10" FontSize="11" Height="80" VerticalAlignment="Bottom" IsEnabled="True" IsReadOnly="True"/>
-        <Button VerticalContentAlignment="Top" x:Name="buttonLoadTestsAssembly" Command="{Binding LoadTestsAssemblyCommand}" Content="Load tests assembly" VerticalAlignment="Top" Margin="57,15,0,0" HorizontalAlignment="Left" Width="117" Height="40"/>
-        <CheckBox x:Name="checkboxTestData" Content="consider test data" Margin="62,37,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" IsChecked="{Binding ConsiderTestData}" FontSize="10" />
-        <Button x:Name="buttonExportStats" Command="{Binding ExportStatsCommand}" IsEnabled="{Binding DataLoaded}" Content="Export" Margin="0,25,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="80" Height="22"/>
+        <TextBox x:Name="textBoxCurrentFilter" Text="{Binding CurrentFilterQuery}" Margin="10,0,10,10" FontSize="11" Height="50" VerticalAlignment="Bottom" IsEnabled="True" IsReadOnly="True"/>
     </Grid>
 </UserControl>

@@ -9,7 +9,7 @@
         Title="Unicorn toolbox" Height="750" Width="1200" MinHeight="750" MinWidth="1200" WindowStartupLocation="CenterScreen" Icon="app.ico">
     <Grid>
         <TabControl x:Name="tabControl" Margin="0,0,0,25" SelectedIndex="{Binding SelectedTab}">
-            <TabItem x:Name="tabStatistics" Header="Tests statistics" Width="100">
+            <TabItem x:Name="tabStatistics" Header="Tests statistics" Width="100" Height="55">
                 <views:StatsView x:Name="StatsView" DataContext="{Binding StatsViewModel}"/>
             </TabItem>
             <TabItem x:Name="tabCoverage" Header="Coverage" Width="100">
@@ -19,6 +19,22 @@
                 <views:LaunchView x:Name="LaunchView" DataContext="{Binding LaunchViewModel}"/>
             </TabItem>
         </TabControl>
+        <GroupBox x:Name="groupBoxVisualization" Header="Visualization" IsEnabled="{Binding VisualizationAvailable}" VerticalAlignment="Top" HorizontalAlignment="Right">
+            <UniformGrid Columns="4" Rows="1" Margin="5,5,5,5">
+                <ComboBox x:Name="comboBoxPalette" HorizontalAlignment="Left" Width="100" Height="22" FontSize="12" 
+                          VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="0,0,0,0"
+                          ItemsSource="{Binding VisualizationPalettes}" SelectedItem="{Binding CurrentVisualizationPalette}" IsEnabled="{Binding CanCustomizeVisualization}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <ListViewItem Content="{Binding Name}" Foreground="{Binding MainColor}"/>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <CheckBox x:Name="checkBoxModern" Content="Circles" IsChecked="{Binding CirclesVisualization}" IsEnabled="{Binding CanCustomizeVisualization}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <CheckBox x:Name="checkBoxFullscreen" Content="Fullscreen" IsChecked="{Binding FullscreenVisualization}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <Button x:Name="buttonVisualize" Content="Visualize" Width="80" Height="22" Command="{Binding VisualizeCommand}" HorizontalAlignment="Right"/>
+            </UniformGrid>
+        </GroupBox>
         <DockPanel Height="25" VerticalAlignment="Bottom">
             <StatusBar DockPanel.Dock="Bottom">
                 <StatusBarItem Height="21" FontSize="11">
@@ -26,6 +42,5 @@
                 </StatusBarItem>
             </StatusBar>
         </DockPanel>
-        <views:VisualizationView x:Name="VisualizationView" DataContext="{Binding VisualizationViewModel}" Margin="240,30,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
     </Grid>
 </Window>

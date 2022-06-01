@@ -6,10 +6,18 @@
              xmlns:local="clr-namespace:Unicorn.Toolbox.Views"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="1125">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </UserControl.Resources>
     <Grid Background="#FFE5E5E5">
-        <Button x:Name="btnLoadTrx" Content="Load TRX files" Command="{Binding LoadTrxCommand}" VerticalAlignment="Top" Margin="10,25,0,0" HorizontalAlignment="Left" Width="80" Height="22"/>
+        <GroupBox HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Width="220" Height="60" BorderBrush="#FF44728E" Background="#FFA1AAAF">
+            <Grid Margin="0,5,0,0">
+                <Button x:Name="btnLoadTrx" Content="Load TRX files" Command="{Binding LoadTrxCommand}" VerticalAlignment="Center" Margin="0,0,0,0" HorizontalAlignment="Center" Width="80" Height="22"/>
+            </Grid>
+        </GroupBox>
+        
         <DataGrid x:Name="gridTestResults" ItemsSource="{Binding ExecutionsList}" HorizontalScrollBarVisibility="Disabled" HeadersVisibility="All" RowHeaderWidth="0" CanUserAddRows="False" CanUserResizeColumns="False"
-                              CanUserSortColumns="True" AutoGenerateColumns="False" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="10,70,415,10">
+                              CanUserSortColumns="True" AutoGenerateColumns="False" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="410,10,10,70">
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="Execution" Width="*" ClipboardContentBinding="{Binding Name}">
                     <DataGridTemplateColumn.HeaderTemplate>
@@ -85,15 +93,20 @@
             </DataGrid.Columns>
         </DataGrid>
 
-        <GroupBox Header="Find failed tests" Margin="0,0,10,10" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="395">
+        <GroupBox Header="Find failed tests" Margin="410,0,10,10" VerticalAlignment="Bottom">
             <Grid Margin="5,5,5,5">
-                <TextBox x:Name="textBoxFailMessage" TextWrapping="Wrap" Text="{Binding FailSearchCriteria}" Height="22" VerticalAlignment="Top"/>
-                <ComboBox x:Name="comboFilterExecutedTestsBy" ItemsSource="{Binding FailsFilters}" Text="{Binding FilterFailsBy}" SelectedIndex="0" HorizontalAlignment="Left" VerticalContentAlignment="Top" HorizontalContentAlignment="Center" Margin="0,30,0,0" Width="150" Height="22" VerticalAlignment="Bottom"/>
-                <Button x:Name="buttonSearchByFailMessage" Content="Search" Command="{Binding SearchInExecutedTestsCommand}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="80" Height="22"/>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="80"/>
+                </Grid.ColumnDefinitions>
+                <ComboBox x:Name="comboFilterExecutedTestsBy" Grid.Column="0" ItemsSource="{Binding FailsFilters}" Text="{Binding FilterFailsBy}" SelectedIndex="0" HorizontalAlignment="Left" VerticalContentAlignment="Top" HorizontalContentAlignment="Center" Width="150" Height="22"/>
+                <TextBox x:Name="textBoxFailMessage" Grid.Column="1" TextWrapping="Wrap" Text="{Binding FailSearchCriteria}" Height="22" Margin="10,0,10,0"/>
+                <Button x:Name="buttonSearchByFailMessage" Grid.Column="2" Content="Search" Command="{Binding SearchInExecutedTestsCommand}" Width="80" Height="22"/>
             </Grid>
         </GroupBox>
-        <Label Content="Top 5 fail reasons" HorizontalAlignment="Right" Margin="0,0,160,0" VerticalAlignment="Top" FontWeight="Bold"/>
-        <ItemsControl x:Name="stackPanelFails" ItemsSource="{Binding TopFailsList}" Margin="0,30,10,100" HorizontalAlignment="Right" Width="395">
+        <Label Content="Top 5 fail reasons" HorizontalAlignment="Left" Margin="290,45,0,0" VerticalAlignment="Top" FontWeight="Bold" Visibility="{Binding DataLoaded, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+        <ItemsControl x:Name="stackPanelFails" ItemsSource="{Binding TopFailsList}" Margin="10,75,10,10" HorizontalAlignment="Left" Width="390">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Border BorderBrush="#FF808080" Margin="0,0,0,0">
