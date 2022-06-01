@@ -50,7 +50,7 @@ namespace Unicorn.Toolbox.Commands
                 }
             }
 
-            _viewModel.TrxLoaded = true;
+            _viewModel.DataLoaded = true;
             _viewModel.Status = $"{_launchResult.Executions.Count()} .trx files were loaded >> {_launchResult}";
 
             _viewModel.UpdateViewModel();

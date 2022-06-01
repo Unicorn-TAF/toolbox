@@ -25,7 +25,7 @@ namespace Unicorn.Toolbox.ViewModels
             LoadTestsAssemblyCommand = new LoadTestsAssemblyCommand(this, _statsCollector);
             ApplyFilterCommand = new ApplyFilterCommand(this, _statsCollector);
             ExportStatsCommand = new ExportStatsCommand(_statsCollector);
-            OpenSuiteDetailsCommand = new OpenSuiteDetailsCommand(this, _statsCollector);
+            OpenSuiteDetailsCommand = new OpenSuiteDetailsCommand(_statsCollector);
             DataLoaded = false;
 
             Filters = new List<StatsFilterViewModel>

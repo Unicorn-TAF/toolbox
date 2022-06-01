@@ -5,11 +5,6 @@ namespace Unicorn.Toolbox.ViewModels
 {
     public class FailedTestsViewModel : ViewModelBase
     {
-        public Dictionary<string, IEnumerable<TestResult>> FailedTests { get; private set; }
-
-        public FailedTestsViewModel(Dictionary<string, IEnumerable<TestResult>> data)
-        {
-            FailedTests = data;
-        }
+        public Dictionary<string, IEnumerable<TestResult>> FailedTests { get; set; }
     }
 }

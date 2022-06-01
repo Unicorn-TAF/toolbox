@@ -8,12 +8,16 @@ namespace Unicorn.Toolbox.Commands
     {
         public override void Execute(object parameter)
         {
-            var window = new DialogHost("Failed tests by error message filter")
+            ViewModelBase failedTestsVm = new FailedTestsViewModel
             {
-                DataContext = new DialogHostViewModel(parameter as Dictionary<string, IEnumerable<TestResult>>)
+                FailedTests = parameter as Dictionary<string, IEnumerable<TestResult>>
             };
 
-            //window.SetDataSource(FailedResults);
+            DialogHost window = new DialogHost("Failed tests by error message filter")
+            {
+                DataContext = new DialogHostViewModel(failedTestsVm)
+            };
+
             window.ShowDialog();
         }
     }

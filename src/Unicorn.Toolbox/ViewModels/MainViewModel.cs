@@ -66,7 +66,7 @@ namespace Unicorn.Toolbox.ViewModels
                 case 2:
                     Status = LaunchViewModel.Status;
                     VisualizationViewModel.CurrentViewModel = LaunchViewModel;
-                    VisualizationViewModel.Available = LaunchViewModel.TrxLoaded;
+                    VisualizationViewModel.Available = LaunchViewModel.DataLoaded;
                     VisualizationViewModel.CanCustomize = false;
                     break;
                 default:

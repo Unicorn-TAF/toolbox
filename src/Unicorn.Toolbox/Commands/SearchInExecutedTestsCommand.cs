@@ -38,11 +38,16 @@ namespace Unicorn.Toolbox.Commands
 
             _viewModel.Filter = testsFilter;
 
-            var window = new DialogHost($"Failed tests by error message filter ({_viewModel.Filter.MatchingTestsCount})")
+            ViewModelBase failedTestsVm = new FailedTestsViewModel
             {
-                DataContext = new DialogHostViewModel(_viewModel.Filter.FilteredData)
+                FailedTests = _viewModel.Filter.FilteredData
             };
-            //window.SetFailedTestsDataSource(failedTestsFilter.FilteredResults);
+
+            DialogHost window = new DialogHost($"Failed tests by error message filter ({_viewModel.Filter.MatchingTestsCount})")
+            {
+                DataContext = new DialogHostViewModel(failedTestsVm)
+            };
+
             window.ShowDialog();
         }
     }

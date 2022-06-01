@@ -5,11 +5,6 @@ namespace Unicorn.Toolbox.ViewModels
 {
     public class SuiteDetailsViewModel : ViewModelBase
     {
-        public List<TestInfo> TestInfos { get; private set; }
-
-        public SuiteDetailsViewModel(List<TestInfo> data)
-        {
-            TestInfos = data;
-        }
+        public List<TestInfo> TestInfos { get; set; }
     }
 }

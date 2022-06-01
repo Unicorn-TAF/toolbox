@@ -36,7 +36,7 @@ namespace Unicorn.Toolbox.ViewModels
             OpenFailsByMessageCommand = new OpenFailsByMessageCommand();
         }
 
-        public bool TrxLoaded { get; set; } = false;
+        public bool DataLoaded { get; set; } = false;
 
         public string Status { get; set; } = string.Empty;
 

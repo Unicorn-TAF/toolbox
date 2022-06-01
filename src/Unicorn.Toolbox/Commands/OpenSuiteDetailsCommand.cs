@@ -6,12 +6,10 @@ namespace Unicorn.Toolbox.Commands
 {
     public class OpenSuiteDetailsCommand : CommandBase
     {
-        private readonly StatsViewModel _viewModel;
         private readonly StatsCollector _analyzer;
 
-        public OpenSuiteDetailsCommand(StatsViewModel viewModel, StatsCollector analyzer)
+        public OpenSuiteDetailsCommand(StatsCollector analyzer)
         {
-            _viewModel = viewModel;
             _analyzer = analyzer;
         }
 
@@ -19,15 +17,18 @@ namespace Unicorn.Toolbox.Commands
         {
             string testSuiteName = parameter.ToString();
 
-            var window = new DialogHost("Suite preview: " + testSuiteName)
+            ViewModelBase suiteDetailsVm = new SuiteDetailsViewModel
             {
-                DataContext = new DialogHostViewModel(
-                    _analyzer.Data.FilteredInfo.First(s => s.Name.Equals(testSuiteName)).TestsInfos),
+                TestInfos = _analyzer.Data.FilteredInfo.First(s => s.Name.Equals(testSuiteName)).TestsInfos
+            };
+
+            DialogHost window = new DialogHost("Suite preview: " + testSuiteName)
+            {
+                DataContext = new DialogHostViewModel(suiteDetailsVm),
                 ShowActivated = false
             };
 
-            //window.SetDataSource(FailedResults);
-            window.Show();
+            window.ShowDialog();
         }
     }
 }
