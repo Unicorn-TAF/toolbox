@@ -43,7 +43,7 @@ namespace Unicorn.Toolbox.Commands
                 _viewModel.FilterAll = true;
 
                 _viewModel.Status = $"assembly {_statsCollector.AssemblyFile} was loaded >> " +
-                    $"({_statsCollector.AssemblyProps})  |  {_statsCollector.Data}";
+                    $"{_statsCollector.AssemblyProps}  |  {_statsCollector.Data}";
 
                 _viewModel.DataLoaded = true;
 

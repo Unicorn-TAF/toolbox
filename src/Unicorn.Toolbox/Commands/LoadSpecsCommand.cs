@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Text;
 using Unicorn.Toolbox.Models.Coverage;
 using Unicorn.Toolbox.ViewModels;
 
@@ -38,9 +39,13 @@ namespace Unicorn.Toolbox.Commands
                     module.PropertyChanged += new PropertyChangedEventHandler(OnCheckboxCheck);
                 }
 
-                _viewModel.Status = 
-                    $"specs {Path.GetFileName(specsFile)} were loaded >> {_coverage.Specs.Modules.Count} modules";
+                StringBuilder status = new StringBuilder();
 
+                status.AppendFormat("specs {0} were loaded >> ", Path.GetFileName(specsFile))
+                    .AppendFormat("name: {0}  |  ", _coverage.Specs.Name)
+                    .AppendFormat("modules: {0}", _coverage.Specs.Modules.Count);
+
+                _viewModel.Status = status.ToString();
                 _viewModel.DataLoaded = true;
             }
 

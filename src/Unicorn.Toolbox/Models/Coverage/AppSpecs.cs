@@ -7,9 +7,7 @@ namespace Unicorn.Toolbox.Models.Coverage
     public class AppSpecs
     {
         [DataMember(Name = "name")]
-        private string name;
-
-        public string Name => name.ToUpper();
+        public string Name { get; set; }
 
         [DataMember(Name = "modules")]
         public List<CoverageModule> Modules { get; set; }

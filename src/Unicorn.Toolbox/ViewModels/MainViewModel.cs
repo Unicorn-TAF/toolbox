@@ -11,14 +11,10 @@ namespace Unicorn.Toolbox.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
-        private string status;
         private int selectedTab;
-
         private IPalette currentPalette;
         private bool fullscreen;
         private bool circles;
-        private bool available;
-        private bool canCustomize;
 
         public MainViewModel(StatsCollector statsCollector)
         {
@@ -44,17 +40,6 @@ namespace Unicorn.Toolbox.ViewModels
 
         public FunctionalityViewModelBase CurrentViewModel { get; set; }
 
-        public string Status
-        {
-            get => status;
-
-            set
-            {
-                status = value;
-                OnPropertyChanged(nameof(Status));
-            }
-        }
-
         public int SelectedTab
         {
             get => selectedTab;
@@ -64,26 +49,6 @@ namespace Unicorn.Toolbox.ViewModels
                 selectedTab = value;
                 OnPropertyChanged(nameof(SelectedTab));
                 TabChanged(selectedTab);
-            }
-        }
-
-        public bool VisualizationAvailable
-        {
-            get => available;
-            set
-            {
-                available = value;
-                OnPropertyChanged(nameof(VisualizationAvailable));
-            }
-        }
-
-        public bool CanCustomizeVisualization
-        {
-            get => canCustomize;
-            set
-            {
-                canCustomize = value;
-                OnPropertyChanged(nameof(CanCustomizeVisualization));
             }
         }
 
@@ -135,18 +100,14 @@ namespace Unicorn.Toolbox.ViewModels
                     CurrentViewModel = LaunchViewModel;
                     break;
                 default:
-                    throw new NotImplementedException($"Please update {nameof(Status)} on tab change");
+                    throw new NotImplementedException($"Unknown tab index {selectedTab}");
             }
 
             UpdateProperties();
         }
 
-        public void UpdateProperties()
-        {
-            Status = CurrentViewModel.Status;
-            VisualizationAvailable = CurrentViewModel.DataLoaded;
-            CanCustomizeVisualization = CurrentViewModel.CanCustomizeVisualization;
-        }
+        public void UpdateProperties() =>
+            OnPropertyChanged(nameof(CurrentViewModel));
 
         private void OnDataLoadedPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
