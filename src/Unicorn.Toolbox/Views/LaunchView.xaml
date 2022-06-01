@@ -12,7 +12,7 @@
     <Grid Background="#FFE5E5E5">
         <GroupBox HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Width="220" Height="60" BorderBrush="#FF44728E" Background="#FFA1AAAF">
             <Grid Margin="0,5,0,0">
-                <Button x:Name="btnLoadTrx" Content="Load TRX files" Command="{Binding LoadTrxCommand}" VerticalAlignment="Center" Margin="0,0,0,0" HorizontalAlignment="Center" Width="80" Height="22"/>
+                <Button x:Name="btnLoadTrx" Content="Load TRX files" Command="{Binding LoadTrxCommand}" VerticalAlignment="Center" Margin="5,0,0,0" HorizontalAlignment="Left" Width="80" Height="22"/>
             </Grid>
         </GroupBox>
         

@@ -8,8 +8,8 @@
         mc:Ignorable="d"
         Title="Unicorn toolbox" Height="750" Width="1200" MinHeight="750" MinWidth="1200" WindowStartupLocation="CenterScreen" Icon="app.ico">
     <Grid>
-        <TabControl x:Name="tabControl" Margin="0,0,0,25" SelectedIndex="{Binding SelectedTab}">
-            <TabItem x:Name="tabStatistics" Header="Tests statistics" Width="100" Height="55">
+        <TabControl x:Name="tabControl" Margin="0,35,0,25" SelectedIndex="{Binding SelectedTab}">
+            <TabItem x:Name="tabStatistics" Header="Tests statistics" Width="100">
                 <views:StatsView x:Name="StatsView" DataContext="{Binding StatsViewModel}"/>
             </TabItem>
             <TabItem x:Name="tabCoverage" Header="Coverage" Width="100">

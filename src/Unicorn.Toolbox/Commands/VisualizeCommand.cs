@@ -1,5 +1,8 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
 using Unicorn.Toolbox.Models.Launch;
 using Unicorn.Toolbox.ViewModels;
 using Unicorn.Toolbox.Visualization;
@@ -33,59 +36,61 @@ namespace Unicorn.Toolbox.Commands
 
         private void VisualizeStatistics(StatsViewModel stats)
         {
-            WindowVisualization visualization = GetVisualizationWindow($"Overall tests statistics: {stats.CurrentFilter}");
-
             var data = stats.GetVisualizationData();
+
+            DialogHost visualization = GetVisualizationDialog(
+                $"Overall tests statistics: {stats.CurrentFilter}", !_viewModel.CirclesVisualization);
 
             if (_viewModel.CirclesVisualization)
             {
-                new VisualizerCircles(visualization.canvasVisualization, _viewModel.CurrentVisualizationPalette)
+                new VisualizerCircles(GetCanvasFrom(visualization), _viewModel.CurrentVisualizationPalette)
                     .VisualizeData(data);
             }
             else
             {
-                new VisualizerBars(visualization.canvasVisualization, _viewModel.CurrentVisualizationPalette)
+                new VisualizerBars(GetCanvasFrom(visualization), _viewModel.CurrentVisualizationPalette)
                     .VisualizeData(data);
-
-                visualization.InjectExportToVisualization();
             }
         }
 
         private void VisualizeCoverage(CoverageViewModel coverage)
         {
-            WindowVisualization visualization = GetVisualizationWindow("Modules coverage by tests");
-
             var vizData = coverage.GetVisualizationData();
+            DialogHost visualization = GetVisualizationDialog("Modules coverage by tests", !_viewModel.CirclesVisualization);
 
             if (_viewModel.CirclesVisualization)
             {
-                new VisualizerCircles(visualization.canvasVisualization, _viewModel.CurrentVisualizationPalette)
+                new VisualizerCircles(GetCanvasFrom(visualization), _viewModel.CurrentVisualizationPalette)
                     .VisualizeData(vizData);
             }
             else
             {
-                new VisualizerBars(visualization.canvasVisualization, _viewModel.CurrentVisualizationPalette)
+                new VisualizerBars(GetCanvasFrom(visualization), _viewModel.CurrentVisualizationPalette)
                     .VisualizeData(vizData);
-
-                visualization.InjectExportToVisualization();
             }
         }
 
         private void VisualizeResults(LaunchViewModel launchResults)
         {
-            var visualization = GetVisualizationWindow("Launch visualization");
+            DialogHost visualization = GetVisualizationDialog("Launch visualization", false);
+            List<Execution> executions = launchResults.ExecutionsList.Cast<Execution>().ToList();
 
-            new LaunchVisualizer(visualization.canvasVisualization, launchResults.ExecutionsList.Cast<Execution>().ToList())
+            new LaunchVisualizer(GetCanvasFrom(visualization), executions)
                 .Visualize();
         }
 
-        private WindowVisualization GetVisualizationWindow(string title)
+        private DialogHost GetVisualizationDialog(string title, bool exportable)
         {
-            var visualization = new WindowVisualization
+            VisualizationViewModel visualizationVm = new VisualizationViewModel
             {
-                Title = title
+                Exportable = exportable
             };
 
+            var visualization = new DialogHost(title)
+            {
+                DataContext = new DialogHostViewModel(visualizationVm),
+            };
+            
             if (_viewModel.FullscreenVisualization)
             {
                 visualization.WindowState = WindowState.Maximized;
@@ -98,6 +103,29 @@ namespace Unicorn.Toolbox.Commands
             visualization.Show();
 
             return visualization;
+        }
+
+        public Canvas GetCanvasFrom(DependencyObject depObj)
+        {
+            if (depObj == null)
+            {
+                return null;
+            }
+
+            int childrenCount = VisualTreeHelper.GetChildrenCount(depObj);
+
+            for (int i = 0; i < childrenCount; i++)
+            {
+                var child = VisualTreeHelper.GetChild(depObj, i);
+
+                var result = (child as Canvas) ?? GetCanvasFrom(child);
+
+                if (result != null)
+                {
+                    return result;
+                }
+            }
+            return null;
         }
     }
 }

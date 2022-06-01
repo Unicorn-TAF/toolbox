@@ -16,6 +16,9 @@
             <DataTemplate DataType="{x:Type vms:SuiteDetailsViewModel}">
                 <views:SuiteDetailsView />
             </DataTemplate>
+            <DataTemplate DataType="{x:Type vms:VisualizationViewModel}">
+                <views:VisualizationView />
+            </DataTemplate>
         </Grid.Resources>
 
         <ContentControl x:Name="Content" Content="{Binding CurrentViewModel}" />
