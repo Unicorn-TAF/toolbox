@@ -30,10 +30,6 @@ namespace Unicorn.Toolbox.Models.Stats
 
         public Dictionary<string, string> Metadata { get; }
 
-        public string FeaturesString => "#" + string.Join(" #", Tags).ToLowerInvariant();
-
-        public string MetadataString => string.Join("\n", Metadata.Select(m => m.Key + ": " + m.Value));
-
         public void SetTestInfo(List<TestInfo> newInfos) =>
             TestsInfos = newInfos;
     }

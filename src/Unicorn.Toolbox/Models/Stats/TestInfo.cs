@@ -29,8 +29,5 @@ namespace Unicorn.Toolbox.Models.Stats
         public bool Disabled { get; }
 
         public List<string> Categories { get; }
-
-        public string CategoriesString => string.Join(", ", Categories).ToLowerInvariant();
-
     }
 }
