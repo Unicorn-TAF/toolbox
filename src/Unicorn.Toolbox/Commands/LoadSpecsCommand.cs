@@ -31,7 +31,6 @@ namespace Unicorn.Toolbox.Commands
                 string specsFile = openFileDialog.FileName;
 
                 _coverage.ReadSpecs(specsFile);
-                _viewModel.DataLoaded = true;
                 _viewModel.GetCoverageCommand.Execute(null);
 
                 foreach (CoverageModuleViewModel module in _viewModel.ModulesList)
@@ -41,6 +40,8 @@ namespace Unicorn.Toolbox.Commands
 
                 _viewModel.Status = 
                     $"specs {Path.GetFileName(specsFile)} were loaded >> {_coverage.Specs.Modules.Count} modules";
+
+                _viewModel.DataLoaded = true;
             }
 
         }

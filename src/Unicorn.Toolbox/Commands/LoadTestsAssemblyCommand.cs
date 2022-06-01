@@ -31,8 +31,6 @@ namespace Unicorn.Toolbox.Commands
                 _statsCollector.GetTestsStatistics(assemblyFile, _viewModel.ConsiderTestData);
                 _statsCollector.Data.ClearFilters();
 
-                _viewModel.DataLoaded = true;
-
                 _viewModel.Filters.First(f => f.Filter == FilterType.Tag)
                     .Populate(_statsCollector.Data.UniqueTags);
                 
@@ -46,6 +44,8 @@ namespace Unicorn.Toolbox.Commands
 
                 _viewModel.Status = $"assembly {_statsCollector.AssemblyFile} was loaded >> " +
                     $"({_statsCollector.AssemblyProps})  |  {_statsCollector.Data}";
+
+                _viewModel.DataLoaded = true;
 
                 _viewModel.ApplyFilteredData();
             }

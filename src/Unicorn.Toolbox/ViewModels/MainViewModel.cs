@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Windows.Input;
 using Unicorn.Toolbox.Commands;
 using Unicorn.Toolbox.Models.Stats;
@@ -29,15 +30,19 @@ namespace Unicorn.Toolbox.ViewModels
             VisualizationPalettes = new List<IPalette>() { CurrentVisualizationPalette, new Orange(), new DeepPurple() };
             VisualizeCommand = new VisualizeCommand(this);
             CurrentViewModel = StatsViewModel;
+
+            StatsViewModel.PropertyChanged += OnDataLoadedPropertyChanged;
+            CoverageViewModel.PropertyChanged += OnDataLoadedPropertyChanged;
+            LaunchViewModel.PropertyChanged += OnDataLoadedPropertyChanged;
         }
 
-        public StatsViewModel StatsViewModel { get; }
+        public FunctionalityViewModelBase StatsViewModel { get; }
 
-        public CoverageViewModel CoverageViewModel { get; }
+        public FunctionalityViewModelBase CoverageViewModel { get; }
 
-        public LaunchViewModel LaunchViewModel { get; }
+        public FunctionalityViewModelBase LaunchViewModel { get; }
 
-        public ViewModelBase CurrentViewModel { get; set; }
+        public FunctionalityViewModelBase CurrentViewModel { get; set; }
 
         public string Status
         {
@@ -118,28 +123,36 @@ namespace Unicorn.Toolbox.ViewModels
 
         private void TabChanged(int selectedTab)
         {
-            switch(selectedTab)
+            switch (selectedTab)
             {
                 case 0:
-                    Status = StatsViewModel.Status;
                     CurrentViewModel = StatsViewModel;
-                    VisualizationAvailable = StatsViewModel.DataLoaded;
-                    CanCustomizeVisualization = true;
                     break;
                 case 1:
-                    Status = CoverageViewModel.Status;
                     CurrentViewModel = CoverageViewModel;
-                    VisualizationAvailable = CoverageViewModel.DataLoaded;
-                    CanCustomizeVisualization = true;
                     break;
                 case 2:
-                    Status = LaunchViewModel.Status;
                     CurrentViewModel = LaunchViewModel;
-                    VisualizationAvailable = LaunchViewModel.DataLoaded;
-                    CanCustomizeVisualization = false;
                     break;
                 default:
                     throw new NotImplementedException($"Please update {nameof(Status)} on tab change");
+            }
+
+            UpdateProperties();
+        }
+
+        public void UpdateProperties()
+        {
+            Status = CurrentViewModel.Status;
+            VisualizationAvailable = CurrentViewModel.DataLoaded;
+            CanCustomizeVisualization = CurrentViewModel.CanCustomizeVisualization;
+        }
+
+        private void OnDataLoadedPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(FunctionalityViewModelBase.DataLoaded))
+            {
+                UpdateProperties();
             }
         }
     }

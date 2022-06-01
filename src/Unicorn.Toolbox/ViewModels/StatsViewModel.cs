@@ -8,11 +8,10 @@ using Unicorn.Toolbox.Models.Stats.Filtering;
 
 namespace Unicorn.Toolbox.ViewModels
 {
-    public class StatsViewModel : ViewModelBase
+    public class StatsViewModel : FunctionalityViewModelBase
     {
         private readonly StatsCollector _statsCollector;
         private bool considerTestData;
-        private bool dataLoaded;
         private bool filterDisabledTestsOnly;
         private bool filterEnabledTestsOnly; 
         private bool filterAll;
@@ -37,17 +36,6 @@ namespace Unicorn.Toolbox.ViewModels
             };
 
             CurrentFilter = Filters.ElementAt(0);
-        }
-
-        public bool DataLoaded
-        {
-            get => dataLoaded;
-
-            set
-            {
-                dataLoaded = value;
-                OnPropertyChanged(nameof(DataLoaded));
-            }
         }
 
         public bool ConsiderTestData
@@ -138,7 +126,7 @@ namespace Unicorn.Toolbox.ViewModels
             }
         }
 
-        public string Status { get; set; } = string.Empty;
+        public override bool CanCustomizeVisualization { get; } = true;
 
         public IEnumerable<StatsFilterViewModel> Filters { get; set; }
 

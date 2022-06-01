@@ -9,13 +9,12 @@ using Unicorn.Toolbox.Models.Stats;
 
 namespace Unicorn.Toolbox.ViewModels
 {
-    public class CoverageViewModel : ViewModelBase
+    public class CoverageViewModel : FunctionalityViewModelBase
     {
         private readonly SpecsCoverage _coverage;
         private readonly StatsCollector _statsCollector;
         private readonly ObservableCollection<CoverageModuleViewModel> _modulesList;
         
-        private bool dataLoaded;
         private string runTags;
 
         public CoverageViewModel(StatsCollector statsCollector)
@@ -27,17 +26,6 @@ namespace Unicorn.Toolbox.ViewModels
 
             LoadSpecsCommand = new LoadSpecsCommand(this, _coverage);
             GetCoverageCommand = new GetCoverageCommand(this, _coverage, _statsCollector);
-        }
-
-        public bool DataLoaded
-        {
-            get => dataLoaded;
-
-            set
-            {
-                dataLoaded = value;
-                OnPropertyChanged(nameof(DataLoaded));
-            }
         }
 
         public ObservableCollection<CoverageModuleViewModel> ModulesList => _modulesList;
@@ -53,7 +41,7 @@ namespace Unicorn.Toolbox.ViewModels
             }
         }
 
-        public string Status { get; set; } = string.Empty;
+        public override bool CanCustomizeVisualization { get; } = true;
 
         public ICommand GetCoverageCommand { get; }
 

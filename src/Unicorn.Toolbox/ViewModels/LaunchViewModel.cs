@@ -16,13 +16,12 @@ namespace Unicorn.Toolbox.ViewModels
         ErrorMessageRegex
     }
 
-    public class LaunchViewModel : ViewModelBase
+    public class LaunchViewModel : FunctionalityViewModelBase
     {
         private readonly LaunchResult _launchResult;
         private readonly ObservableCollection<FailedTestsGroup> _topFailsList;
         private ListCollectionView listCollectionView;
 
-        private bool dataLoaded;
         private string filterGridBy;
         private string failMessage;
         private FailsFilter filterFailsBy = FailsFilter.ErrorMessage;
@@ -36,19 +35,6 @@ namespace Unicorn.Toolbox.ViewModels
             SearchInExecutedTestsCommand = new SearchInExecutedTestsCommand(this, _launchResult);
             OpenFailsByMessageCommand = new OpenFailsByMessageCommand();
         }
-
-        public bool DataLoaded
-        {
-            get => dataLoaded;
-
-            set
-            {
-                dataLoaded = value;
-                OnPropertyChanged(nameof(DataLoaded));
-            }
-        }
-
-        public string Status { get; set; } = string.Empty;
 
         public ListCollectionView ExecutionsList => listCollectionView;
 
@@ -91,6 +77,8 @@ namespace Unicorn.Toolbox.ViewModels
         }
 
         public ExecutedTestsFilter Filter { get; set; }
+
+        public override bool CanCustomizeVisualization { get; } = false;
 
         public ICommand LoadTrxCommand { get; }
 
