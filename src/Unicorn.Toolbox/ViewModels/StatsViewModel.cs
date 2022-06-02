@@ -11,7 +11,6 @@ namespace Unicorn.Toolbox.ViewModels
     public class StatsViewModel : FunctionalityViewModelBase
     {
         private readonly StatsCollector _statsCollector;
-        private bool considerTestData;
         private bool filterDisabledTestsOnly;
         private bool filterEnabledTestsOnly; 
         private bool filterAll;
@@ -22,7 +21,7 @@ namespace Unicorn.Toolbox.ViewModels
         public StatsViewModel(StatsCollector statsCollector)
         {
             _statsCollector = statsCollector;
-            LoadTestsAssemblyCommand = new LoadTestsAssemblyCommand(this, _statsCollector);
+            LoadAssemblyCommand = new LoadAssemblyCommand(this, _statsCollector);
             ApplyFilterCommand = new ApplyFilterCommand(this, _statsCollector);
             ExportStatsCommand = new ExportStatsCommand(_statsCollector);
             OpenSuiteDetailsCommand = new OpenSuiteDetailsCommand(_statsCollector);
@@ -36,17 +35,6 @@ namespace Unicorn.Toolbox.ViewModels
             };
 
             CurrentFilter = Filters.ElementAt(0);
-        }
-
-        public bool ConsiderTestData
-        {
-            get => considerTestData;
-            
-            set
-            {
-                considerTestData = value;
-                OnPropertyChanged(nameof(ConsiderTestData));
-            }
         }
 
         public bool FilterOnlyDisabledTests
@@ -132,7 +120,7 @@ namespace Unicorn.Toolbox.ViewModels
 
         public IEnumerable<SuiteInfo> FilteredInfo => _statsCollector.Data?.FilteredInfo;
 
-        public ICommand LoadTestsAssemblyCommand { get; }
+        public ICommand LoadAssemblyCommand { get; }
 
         public ICommand ApplyFilterCommand { get; }
 

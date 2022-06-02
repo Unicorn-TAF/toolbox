@@ -6,12 +6,12 @@ using Unicorn.Toolbox.ViewModels;
 
 namespace Unicorn.Toolbox.Commands
 {
-    public class LoadTestsAssemblyCommand : CommandBase
+    public class LoadAssemblyCommand : CommandBase
     {
         private readonly StatsViewModel _viewModel;
         private readonly StatsCollector _statsCollector;
 
-        public LoadTestsAssemblyCommand(StatsViewModel viewModel, StatsCollector statsCollector)
+        public LoadAssemblyCommand(StatsViewModel viewModel, StatsCollector statsCollector)
         {
             _viewModel = viewModel;
             _statsCollector = statsCollector;
@@ -19,6 +19,8 @@ namespace Unicorn.Toolbox.Commands
 
         public override void Execute(object parameter)
         {
+            bool considerData = (bool)parameter;
+
             var openFileDialog = new OpenFileDialog
             {
                 Filter = "Unicorn tests assemblies|*.dll"
@@ -28,7 +30,7 @@ namespace Unicorn.Toolbox.Commands
             {
                 string assemblyFile = openFileDialog.FileName;
 
-                _statsCollector.GetTestsStatistics(assemblyFile, _viewModel.ConsiderTestData);
+                _statsCollector.GetTestsStatistics(assemblyFile, considerData);
                 _statsCollector.Data.ClearFilters();
 
                 _viewModel.Filters.First(f => f.Filter == FilterType.Tag)

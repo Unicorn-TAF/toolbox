@@ -4,18 +4,30 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Unicorn.Toolbox.Views"
+             xmlns:s="clr-namespace:System;assembly=mscorlib"
              xmlns:converters="clr-namespace:Unicorn.Toolbox.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="500" d:DesignWidth="900">
     <UserControl.Resources>
         <converters:ArrayToStringConverter x:Key="ArrayToStringConverter" />
         <converters:DictionaryToStringConverter x:Key="DictionaryToStringConverter" />
-    </UserControl.Resources>
+        <s:Boolean x:Key="BoolTrue">True</s:Boolean>
+        <s:Boolean x:Key="BoolFalse">False</s:Boolean>
+</UserControl.Resources>
     <Grid x:Name="gridStatistics" Background="#FFE5E5E5">
-        <GroupBox HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Width="220" Height="60" BorderBrush="#FF44728E" Background="#FFA1AAAF">
+        <GroupBox HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Width="220" Height="40" BorderBrush="#FF44728E" Background="#FFA1AAAF">
             <Grid Margin="0,5,0,0">
-                <Button VerticalContentAlignment="Top" x:Name="buttonLoadTestsAssembly" Command="{Binding LoadTestsAssemblyCommand}" Content="Load test assembly" VerticalAlignment="Center" Margin="5,0,0,0" HorizontalAlignment="Left" Width="110" Height="40"/>
-                <CheckBox x:Name="checkboxTestData" Content="consider test data" Margin="10,25,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" IsChecked="{Binding ConsiderTestData}" FontSize="10" />
+                <ComboBox Width="110" Height="22" HorizontalAlignment="Left" Margin="5,0,0,0">
+                    <ComboBoxItem Content="Consider test data" Background="{Binding Background, ElementName=buttonLoadTestsAssembly}">
+                        <ComboBoxItem.InputBindings>
+                            <MouseBinding
+                                        MouseAction="LeftClick"
+                                        Command="{Binding DataContext.LoadAssemblyCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{StaticResource BoolTrue}"/>
+                        </ComboBoxItem.InputBindings>
+                    </ComboBoxItem>
+                </ComboBox>
+                <Button x:Name="buttonLoadTestsAssembly" VerticalContentAlignment="Center" Command="{Binding LoadAssemblyCommand}" CommandParameter="{StaticResource BoolFalse}" Content="Load tests dll" VerticalAlignment="Center" Margin="5,0,0,0" HorizontalAlignment="Left" Width="90" Height="22"/>
                 <Button x:Name="buttonExportStats" Command="{Binding ExportStatsCommand}" IsEnabled="{Binding DataLoaded}" Content="Export" Margin="0,0,5,0" VerticalAlignment="Center" Height="22" HorizontalAlignment="Right" Width="80"/>
             </Grid>
         </GroupBox>
@@ -52,7 +64,7 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
-        <Grid x:Name="gridFilters" Margin="10,75,0,70" HorizontalAlignment="Left" Width="220" IsEnabled="{Binding DataLoaded}">
+        <Grid x:Name="gridFilters" Margin="10,60,0,70" HorizontalAlignment="Left" Width="220" IsEnabled="{Binding DataLoaded}">
             <TabControl x:Name="tabControlFilters" ItemsSource="{Binding Filters}" SelectedItem="{Binding CurrentFilter}">
                 <TabControl.ItemTemplate>
                     <DataTemplate>
