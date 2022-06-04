@@ -39,7 +39,7 @@ namespace Unicorn.Toolbox.Commands
             var data = stats.GetVisualizationData();
 
             DialogHost visualization = GetVisualizationDialog(
-                $"Overall tests statistics: {stats.CurrentFilter}", !_viewModel.CirclesVisualization);
+                $"Overall tests statistics: {stats.CurrentFilter.FilterName}", !_viewModel.CirclesVisualization);
 
             if (_viewModel.CirclesVisualization)
             {

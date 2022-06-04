@@ -7,14 +7,12 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <DataGrid ItemsSource="{Binding FailedTests}" x:Name="gridResults" SelectionUnit="CellOrRowHeader" ClipboardCopyMode="IncludeHeader" HeadersVisibility="All" Grid.Column="0" RowHeaderWidth="0" CanUserAddRows="False" AutoGenerateColumns="False"  VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="10">
+        <DataGrid ItemsSource="{Binding FailedTests}" x:Name="gridResults" SelectionUnit="CellOrRowHeader" ClipboardCopyMode="IncludeHeader" HeadersVisibility="All" Grid.Column="0" RowHeaderWidth="0" CanUserAddRows="False" AutoGenerateColumns="False" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="10">
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="Suite" Width="*" ClipboardContentBinding="{Binding Key}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Grid>
-                                <TextBlock VerticalAlignment="Center" Text="{Binding Key}"/>
-                            </Grid>
+                            <DataGridCell VerticalAlignment="Stretch" VerticalContentAlignment="Center" Content="{Binding Key}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -26,7 +24,7 @@
                                     <DataGridTemplateColumn Width="*" ClipboardContentBinding="{Binding Name}">
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
-                                                <TextBlock Text="{Binding Name}" ToolTip="{Binding ErrorMessage}"/>
+                                                <DataGridCell Content="{Binding Name}" ToolTip="{Binding ErrorMessage}"/>
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>

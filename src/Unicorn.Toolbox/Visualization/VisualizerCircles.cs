@@ -97,17 +97,18 @@ namespace Unicorn.Toolbox.Visualization
             Canvas.SetLeft(ellipse, x - radius);
             Canvas.SetTop(ellipse, y - radius);
 
-            AddLabel(x, y, radius, name);
+            double fontSize = featuresCount < 20 ? 15 : 13;
+            AddLabel(x, y, radius, name, fontSize);
         }
 
-        private void AddLabel(double x, double y, double yOffset, string labelText)
+        private void AddLabel(double x, double y, double yOffset, string labelText, double fontSize)
         {
             var label = new TextBlock
             {
                 Text = CamelCase(labelText),
                 TextAlignment = TextAlignment.Center,
                 FontFamily = new FontFamily("Calibri"),
-                FontSize = 15,
+                FontSize = fontSize,
                 Foreground = Palette.DataFontColor
             };
 
