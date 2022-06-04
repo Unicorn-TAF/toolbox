@@ -20,6 +20,10 @@ namespace Unicorn.Toolbox.Visualization
             };
         }
 
+        public Brush MainColor => DataColors[0];
+
+        public string Name { get; } = "Deep purple";
+
         public Brush BackColor { get; } = Brushes.Black; ////new SolidColorBrush((Color)ColorConverter.ConvertFromString("#EDE7F6"));
 
         public List<Brush> DataColors { get; protected set; }

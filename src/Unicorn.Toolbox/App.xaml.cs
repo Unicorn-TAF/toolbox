@@ -1,4 +1,6 @@
 ﻿using System.Windows;
+using Unicorn.Toolbox.Models.Stats;
+using Unicorn.Toolbox.ViewModels;
 
 namespace Unicorn.Toolbox
 {
@@ -7,5 +9,16 @@ namespace Unicorn.Toolbox
     /// </summary>
     public partial class App : Application
     {
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            MainWindow = new MainWindow()
+            {
+                DataContext = new MainViewModel(new StatsCollector())
+            };
+
+            MainWindow.Show();
+
+            base.OnStartup(e);
+        }
     }
 }

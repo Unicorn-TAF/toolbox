@@ -7,9 +7,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using Unicorn.Toolbox.Analysis;
-using Unicorn.Toolbox.Analysis.Filtering;
-using Unicorn.Toolbox.Coverage;
 using Unicorn.Toolbox.Visualization.Palettes;
 
 namespace Unicorn.Toolbox.Visualization
@@ -30,60 +27,20 @@ namespace Unicorn.Toolbox.Visualization
 #pragma warning restore S2245 // Using pseudorandom number generators (PRNGs) is security-sensitive
         }
 
-        public override void VisualizeAutomationData(AutomationData data, FilterType filterType)
+        public override void VisualizeData(IOrderedEnumerable<KeyValuePair<string, int>> data)
         {
             PrepareCanvas();
 
             _rects.Clear();
 
-            var stats = GetAutomationStatistics(data, filterType);
-
-            int max = stats.Values.Max();
-            int featuresCount = stats.Values.Count;
-
-            var items = from pair in stats
-                        orderby pair.Value descending
-                        select pair;
-
             int currentIndex = 0;
+            int maxValue = data.Max(p => p.Value);
+            int itemsCount = data.Count();
 
-            foreach (KeyValuePair<string, int> pair in items)
+            foreach (KeyValuePair<string, int> pair in data)
             {
-                int radius = CalculateRadius(pair.Value, max, featuresCount, (int)Canvas.RenderSize.Width);
-                DrawFeature(pair.Key, pair.Value, radius, currentIndex++, featuresCount, Canvas);
-            }
-        }
-
-        public override void VisualizeCoverage(AppSpecs specs)
-        {
-            PrepareCanvas();
-
-            _rects.Clear();
-
-            var featuresStats = new Dictionary<string, int>();
-
-            foreach (var module in specs.Modules)
-            {
-                var tests = from SuiteInfo s
-                            in module.Suites
-                            select s.TestsInfos;
-
-                featuresStats.Add(module.Name, tests.Sum(t => t.Count));
-            }
-
-            int max = featuresStats.Values.Max();
-            int featuresCount = featuresStats.Values.Count;
-
-            var items = from pair in featuresStats
-                        orderby pair.Value descending
-                        select pair;
-
-            int currentIndex = 0;
-
-            foreach (KeyValuePair<string, int> pair in items)
-            {
-                int radius = CalculateRadius(pair.Value, max, featuresCount, (int)Canvas.RenderSize.Width);
-                DrawFeature(pair.Key, pair.Value, radius, currentIndex++, featuresCount, Canvas);
+                int radius = CalculateRadius(pair.Value, maxValue, itemsCount, (int)Canvas.RenderSize.Width);
+                DrawFeature(pair.Key, pair.Value, radius, currentIndex++, itemsCount, Canvas);
             }
         }
 
@@ -140,17 +97,18 @@ namespace Unicorn.Toolbox.Visualization
             Canvas.SetLeft(ellipse, x - radius);
             Canvas.SetTop(ellipse, y - radius);
 
-            AddLabel(x, y, radius, name);
+            double fontSize = featuresCount < 20 ? 15 : 13;
+            AddLabel(x, y, radius, name, fontSize);
         }
 
-        private void AddLabel(double x, double y, double yOffset, string labelText)
+        private void AddLabel(double x, double y, double yOffset, string labelText, double fontSize)
         {
             var label = new TextBlock
             {
                 Text = CamelCase(labelText),
                 TextAlignment = TextAlignment.Center,
                 FontFamily = new FontFamily("Calibri"),
-                FontSize = 15,
+                FontSize = fontSize,
                 Foreground = Palette.DataFontColor
             };
 

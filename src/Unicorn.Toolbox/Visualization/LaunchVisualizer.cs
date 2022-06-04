@@ -7,7 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using Unicorn.Toolbox.LaunchAnalysis;
+using Unicorn.Toolbox.Models.Launch;
 
 namespace Unicorn.Toolbox.Visualization
 {
@@ -117,17 +117,17 @@ namespace Unicorn.Toolbox.Visualization
             SetRandomColor();
             int currentIndex = 0;
 
-            var listId = _resultsList[0].TestResults[0].TestListId;
+            var listId = _resultsList[0].TestResults[0].SuiteId;
             _newSuite = true;
 
             foreach (var execution in _resultsList)
             {
                 foreach (var result in execution.TestResults)
                 {
-                    if (!result.TestListId.Equals(listId, StringComparison.InvariantCultureIgnoreCase))
+                    if (!result.SuiteId.Equals(listId, StringComparison.InvariantCultureIgnoreCase))
                     {
                         SetRandomColor();
-                        listId = result.TestListId;
+                        listId = result.SuiteId;
                         _newSuite = true;
                     }
 
@@ -173,7 +173,7 @@ namespace Unicorn.Toolbox.Visualization
                     Fill = brush,
                     Width = width,
                     Height = height,
-                    ToolTip = result.TestListName,
+                    ToolTip = result.SuiteName,
                 };
 
                 Canvas.SetLeft(_currentSuite, x);

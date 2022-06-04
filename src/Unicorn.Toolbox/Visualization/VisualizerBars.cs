@@ -6,9 +6,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using Unicorn.Toolbox.Analysis;
-using Unicorn.Toolbox.Analysis.Filtering;
-using Unicorn.Toolbox.Coverage;
 using Unicorn.Toolbox.Visualization.Palettes;
 
 namespace Unicorn.Toolbox.Visualization
@@ -22,61 +19,23 @@ namespace Unicorn.Toolbox.Visualization
         {
         }
 
-        public override void VisualizeAutomationData(AutomationData data, FilterType filterType)
+        public override void VisualizeData(IOrderedEnumerable<KeyValuePair<string, int>> data)
         {
             PrepareCanvas();
 
-            var stats = GetAutomationStatistics(data, filterType);
-
-            int max = stats.Values.Max();
-            int featuresCount = stats.Values.Count;
-
-            var items = from pair in stats
-                        orderby pair.Value descending
-                        select pair;
-
-            var expectedHeight = (MinBarHeight + Margin) * items.Count() + Margin;
+            int currentIndex = 0;
+            int maxValue = data.Max(p => p.Value);
+            int itemsCount = data.Count();
+            int expectedHeight = (MinBarHeight + Margin) * itemsCount + Margin;
 
             if (Canvas.RenderSize.Height < expectedHeight)
             {
                 Canvas.Height = expectedHeight;
             }
 
-            int currentIndex = 0;
-
-            foreach (KeyValuePair<string, int> pair in items)
+            foreach (KeyValuePair<string, int> pair in data)
             {
-                DrawFeature(pair.Key, pair.Value, currentIndex++, max, featuresCount, Canvas);
-            }
-        }
-
-        public override void VisualizeCoverage(AppSpecs specs)
-        {
-            PrepareCanvas();
-
-            var featuresStats = new Dictionary<string, int>();
-
-            foreach (var module in specs.Modules)
-            {
-                var tests = from SuiteInfo s
-                            in module.Suites
-                            select s.TestsInfos;
-
-                featuresStats.Add(module.Name, tests.Sum(t => t.Count));
-            }
-
-            int max = featuresStats.Values.Max();
-            int featuresCount = featuresStats.Values.Count;
-
-            var items = from pair in featuresStats
-                        orderby pair.Value descending
-                        select pair;
-
-            int currentIndex = 0;
-
-            foreach (KeyValuePair<string, int> pair in items)
-            {
-                DrawFeature(pair.Key, pair.Value, currentIndex++, max, featuresCount, Canvas);
+                DrawFeature(pair.Key, pair.Value, currentIndex++, maxValue, itemsCount, Canvas);
             }
         }
 

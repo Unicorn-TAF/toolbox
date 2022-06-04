@@ -21,6 +21,10 @@ namespace Unicorn.Toolbox.Visualization
             };
         }
 
+        public Brush MainColor => DataColors[0];
+
+        public string Name { get; } = "Orange";
+
         public Brush BackColor { get; } = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFF3E0"));
 
         public List<Brush> DataColors { get; protected set; }

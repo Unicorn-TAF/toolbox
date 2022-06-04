@@ -3,13 +3,14 @@
 namespace Unicorn.Toolbox
 {
     /// <summary>
-    /// Interaction logic for MainWindow
+    /// Interaction logic for DialogHost.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class DialogHost : Window
     {
-        public MainWindow()
+        public DialogHost(string title)
         {
             InitializeComponent();
+            Title = title;
         }
     }
 }
