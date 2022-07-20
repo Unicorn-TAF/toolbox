@@ -3,6 +3,8 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFrameworks>net452;net5.0-windows</TargetFrameworks>
+    <Version>3.0.1</Version>
+    <FileVersion>3.0.1.0</FileVersion>
     <ApplicationIcon />
     <StartupObject />
   </PropertyGroup>

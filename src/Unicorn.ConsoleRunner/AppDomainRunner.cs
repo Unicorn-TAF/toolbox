@@ -19,7 +19,11 @@ namespace Unicorn.ConsoleRunner
         public LaunchOutcome RunTests(string assemblyPath, string configPath)
         {
             Assembly testAssembly = Assembly.LoadFrom(assemblyPath);
-            TestsRunner runner = new TestsRunner(testAssembly, configPath);
+
+            TestsRunner runner = string.IsNullOrEmpty(configPath) ?
+                new TestsRunner(testAssembly, false) :
+                new TestsRunner(testAssembly, configPath);
+
             runner.RunTests();
             return runner.Outcome;
         }

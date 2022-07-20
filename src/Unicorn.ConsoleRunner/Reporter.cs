@@ -35,11 +35,13 @@ namespace Unicorn.ConsoleRunner
                 passedTests += suiteOutcome.PassedTests;
             }
 
-            Console.ForegroundColor = ConsoleColor.DarkGreen;
+            Console.ForegroundColor = passedTests == 0 ? ConsoleColor.DarkGray : ConsoleColor.DarkGreen;
             Console.Write($"Passed tests: {passedTests}    ");
-            Console.ForegroundColor = ConsoleColor.DarkRed;
+
+            Console.ForegroundColor = failedTests == 0 ? ConsoleColor.DarkGray : ConsoleColor.DarkRed;
             Console.Write($"Failed tests: {failedTests}    ");
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
+
+            Console.ForegroundColor = skippedTests == 0 ? ConsoleColor.DarkGray : ConsoleColor.DarkYellow;
             Console.WriteLine($"Skipped tests: {skippedTests}");
 
             Console.ForegroundColor = ConsoleColor.White;
