@@ -20,12 +20,16 @@ namespace Unicorn.ConsoleRunner
         {
             ArgsParser parser = new ArgsParser();
             parser.ParseArguments(args);
-            new Program().Run(parser.AssemblyPath, parser.PropertiesPath, parser.TrxFileName);
+            new Program().Run(parser.AssemblyPath, parser.ConfigPath, parser.TrxFileName);
         }
 
         private void Run(string assemblyPath, string propertiesPath, string trxFileName)
         {
-            Config.FillFromFile(propertiesPath);
+            if (!string.IsNullOrEmpty(propertiesPath))
+            {
+                Config.FillFromFile(propertiesPath);
+            }
+
             Reporter.ReportHeader(assemblyPath);
 
             try
@@ -84,7 +88,10 @@ namespace Unicorn.ConsoleRunner
                 .GetTypes()
                 .First(t => t.Name.Equals(typeof(TestsRunner).Name));
 
-            ITestRunner runner = Activator.CreateInstance(runnerType, testAssembly, propertiesPath) as ITestRunner;
+            ITestRunner runner = string.IsNullOrEmpty(propertiesPath) ?
+                Activator.CreateInstance(runnerType, testAssembly, false) as ITestRunner :
+                Activator.CreateInstance(runnerType, testAssembly, propertiesPath) as ITestRunner;
+
             IOutcome ioutcome = runner.RunTests();
 
             // Outcome transition between load contexts.

@@ -1,8 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>net452;net5.0-windows</TargetFrameworks>
+    <TargetFrameworks>net452;net5.0</TargetFrameworks>
+    <Version>3.0.1</Version>
+    <FileVersion>3.0.1.0</FileVersion>
     <ApplicationIcon />
     <StartupObject />
   </PropertyGroup>
