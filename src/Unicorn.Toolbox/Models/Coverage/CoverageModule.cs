@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using Unicorn.Toolbox.Models.Stats;
+using Unicorn.Toolbox.Stats;
 
 namespace Unicorn.Toolbox.Models.Coverage
 {

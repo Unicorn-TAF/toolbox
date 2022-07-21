@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Unicorn.Toolbox.Models.Stats.Filtering;
+using Unicorn.Toolbox.Stats.Filtering;
 
 namespace Unicorn.Toolbox.ViewModels
 {

@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using Unicorn.Toolbox.Models.Stats;
+using Unicorn.Toolbox.Stats;
 using Unicorn.Toolbox.ViewModels;
 
 namespace Unicorn.Toolbox.Commands

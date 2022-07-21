@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Unicorn.Toolbox.Models.Stats.Filtering
+namespace Unicorn.Toolbox.Stats.Filtering
 {
     public class TagsFilter : ISuitesFilter
     {

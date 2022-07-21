@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Unicorn.Toolbox.Models.Stats;
+using Unicorn.Toolbox.Stats;
 
 namespace Unicorn.Toolbox.ViewModels
 {
