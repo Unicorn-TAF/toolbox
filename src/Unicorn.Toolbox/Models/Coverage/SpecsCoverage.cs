@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Json;
-using Unicorn.Toolbox.Models.Stats;
+using Unicorn.Toolbox.Stats;
 
 namespace Unicorn.Toolbox.Models.Coverage
 {

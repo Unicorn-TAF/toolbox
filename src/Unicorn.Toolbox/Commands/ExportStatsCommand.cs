@@ -1,7 +1,7 @@
 ﻿using Microsoft.Win32;
 using System.IO;
 using System.Text;
-using Unicorn.Toolbox.Models.Stats;
+using Unicorn.Toolbox.Stats;
 
 namespace Unicorn.Toolbox.Commands
 {

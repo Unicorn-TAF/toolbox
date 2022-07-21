@@ -2,14 +2,15 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 #if NET || NETCOREAPP
-using System.Runtime.Loader;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Threading;
 using Unicorn.Taf.Api;
 #endif
 
-namespace Unicorn.Toolbox.Models.Stats
+namespace Unicorn.Toolbox.Stats
 {
     public class StatsCollector
     {
@@ -26,6 +27,7 @@ namespace Unicorn.Toolbox.Models.Stats
 
         public string AssemblyProps { get; protected set; }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public void GetTestsStatistics(string fileName, bool considerParameterization)
         {
             _assemblyFile = fileName;
@@ -59,9 +61,9 @@ namespace Unicorn.Toolbox.Models.Stats
 
             string contextDirectory = Path.GetDirectoryName(_assemblyFile);
 
-            UnicornAssemblyLoadContext collectorContext = new UnicornAssemblyLoadContext(contextDirectory);
+            StatsAssemblyLoadContext collectorContext = new StatsAssemblyLoadContext(contextDirectory);
             collectorContext.Initialize(typeof(ITestRunner));
-            collectorContext.LoadAssemblyFrom(Assembly.GetExecutingAssembly().Location);
+            collectorContext.LoadAssemblyFrom(typeof(LoadContextDataCollector).Assembly.Location);
             AssemblyName assemblyName = System.Reflection.AssemblyName.GetAssemblyName(_assemblyFile);
             Assembly testAssembly = collectorContext.GetAssembly(assemblyName);
 
@@ -69,12 +71,14 @@ namespace Unicorn.Toolbox.Models.Stats
                 .GetTypes()
                 .First(t => t.Name.Equals(typeof(LoadContextDataCollector).Name));
 
-            IDataCollector collector = Activator.CreateInstance(collectorType, new object[] {_considerParameterization }) as IDataCollector;
+            IDataCollector collector = Activator.CreateInstance(collectorType, new object[] { _considerParameterization }) as IDataCollector;
             IOutcome ioutcome = collector.CollectData(testAssembly);
 
             // Outcome transition between load contexts.
             byte[] bytes = SerializeOutcome(ioutcome);
             Data = DeserializeOutcome(bytes);
+
+            collectorContext.Unload();
 #endif
         }
 

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Windows.Input;
 using Unicorn.Toolbox.Commands;
 using Unicorn.Toolbox.Models.Coverage;
-using Unicorn.Toolbox.Models.Stats;
+using Unicorn.Toolbox.Stats;
 
 namespace Unicorn.Toolbox.ViewModels
 {

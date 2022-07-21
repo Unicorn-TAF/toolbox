@@ -1,4 +1,4 @@
-﻿namespace Unicorn.Toolbox.Models.Stats.Filtering
+﻿namespace Unicorn.Toolbox.Stats.Filtering
 {
     public enum FilterType
     {

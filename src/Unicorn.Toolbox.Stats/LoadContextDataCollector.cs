@@ -4,7 +4,7 @@ using Unicorn.Taf.Api;
 using Unicorn.Taf.Core.Engine;
 using Unicorn.Taf.Core.Testing;
 
-namespace Unicorn.Toolbox.Models.Stats
+namespace Unicorn.Toolbox.Stats
 {
     public class LoadContextDataCollector : IDataCollector
     {

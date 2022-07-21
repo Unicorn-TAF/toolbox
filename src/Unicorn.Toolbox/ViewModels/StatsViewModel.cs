@@ -3,8 +3,8 @@ using System.Linq;
 using System.Text;
 using System.Windows.Input;
 using Unicorn.Toolbox.Commands;
-using Unicorn.Toolbox.Models.Stats;
-using Unicorn.Toolbox.Models.Stats.Filtering;
+using Unicorn.Toolbox.Stats;
+using Unicorn.Toolbox.Stats.Filtering;
 
 namespace Unicorn.Toolbox.ViewModels
 {

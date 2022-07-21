@@ -5,11 +5,11 @@ using System.Reflection;
 using Unicorn.Taf.Core.Testing;
 using Unicorn.Taf.Core.Testing.Attributes;
 
-namespace Unicorn.Toolbox.Models.Stats
+namespace Unicorn.Toolbox.Stats
 {
-    internal static class CollectorUtilities
+    public static class CollectorUtilities
     {
-        internal static SuiteInfo GetSuiteInfo(object suiteInstance, bool considerParameterization)
+        public static SuiteInfo GetSuiteInfo(object suiteInstance, bool considerParameterization)
         {
             int inheritanceCounter = 0;
             var currentType = suiteInstance.GetType();

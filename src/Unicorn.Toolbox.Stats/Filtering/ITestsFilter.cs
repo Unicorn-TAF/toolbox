@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Unicorn.Toolbox.Models.Stats.Filtering
+namespace Unicorn.Toolbox.Stats.Filtering
 {
     public interface ITestsFilter
     {

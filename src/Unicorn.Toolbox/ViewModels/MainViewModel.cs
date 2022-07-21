@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Input;
 using Unicorn.Toolbox.Commands;
-using Unicorn.Toolbox.Models.Stats;
+using Unicorn.Toolbox.Stats;
 using Unicorn.Toolbox.Visualization;
 using Unicorn.Toolbox.Visualization.Palettes;
 

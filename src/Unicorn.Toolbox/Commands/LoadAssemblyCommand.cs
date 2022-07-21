@@ -1,7 +1,7 @@
 ﻿using Microsoft.Win32;
 using System.Linq;
-using Unicorn.Toolbox.Models.Stats;
-using Unicorn.Toolbox.Models.Stats.Filtering;
+using Unicorn.Toolbox.Stats;
+using Unicorn.Toolbox.Stats.Filtering;
 using Unicorn.Toolbox.ViewModels;
 
 namespace Unicorn.Toolbox.Commands
