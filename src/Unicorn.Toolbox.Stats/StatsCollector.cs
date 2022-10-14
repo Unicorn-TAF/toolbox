@@ -3,11 +3,10 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using Unicorn.Taf.Api;
 
 #if NET || NETCOREAPP
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Threading;
-using Unicorn.Taf.Api;
 #endif
 
 namespace Unicorn.Toolbox.Stats
@@ -37,23 +36,13 @@ namespace Unicorn.Toolbox.Stats
             AssemblyProps = $"{aName.Name} version={aName.Version}";
             Data = new AutomationData();
 
-
 #if NETFRAMEWORK
 
-            AppDomain unicornDomain = AppDomain.CreateDomain("Unicorn.ConsoleRunner AppDomain");
+            string assemblyDir = Path.GetDirectoryName(_assemblyFile);
 
-            try
+            using (var collector = new UnicornAppDomainIsolation<AppDomainCollector>(assemblyDir))
             {
-                string pathToDll = Assembly.GetExecutingAssembly().Location;
-
-                AppDomainDataCollector collector = (AppDomainDataCollector)unicornDomain
-                    .CreateInstanceFromAndUnwrap(pathToDll, typeof(AppDomainDataCollector).FullName);
-
-                Data = collector.GetTestsStatistics(_assemblyFile, _considerParameterization);
-            }
-            finally
-            {
-                AppDomain.Unload(unicornDomain);
+                Data = collector.Instance.GetTestsStatistics(_assemblyFile, _considerParameterization);
             }
 #endif
 
@@ -61,17 +50,18 @@ namespace Unicorn.Toolbox.Stats
 
             string contextDirectory = Path.GetDirectoryName(_assemblyFile);
 
-            StatsAssemblyLoadContext collectorContext = new StatsAssemblyLoadContext(contextDirectory);
+            UnicornAssemblyLoadContext collectorContext = new UnicornAssemblyLoadContext(contextDirectory);
             collectorContext.Initialize(typeof(ITestRunner));
-            collectorContext.LoadAssemblyFrom(typeof(LoadContextDataCollector).Assembly.Location);
-            AssemblyName assemblyName = System.Reflection.AssemblyName.GetAssemblyName(_assemblyFile);
+            collectorContext.LoadAssemblyFrom(typeof(LoadContextCollector).Assembly.Location);
+            AssemblyName assemblyName = AssemblyName.GetAssemblyName(_assemblyFile);
             Assembly testAssembly = collectorContext.GetAssembly(assemblyName);
 
-            Type collectorType = collectorContext.GetAssemblyContainingType(typeof(LoadContextDataCollector))
+            Type collectorType = collectorContext.GetAssemblyContainingType(typeof(LoadContextCollector))
                 .GetTypes()
-                .First(t => t.Name.Equals(typeof(LoadContextDataCollector).Name));
+                .First(t => t.Name.Equals(typeof(LoadContextCollector).Name));
 
-            IDataCollector collector = Activator.CreateInstance(collectorType, new object[] { _considerParameterization }) as IDataCollector;
+            IDataCollector collector = Activator
+                .CreateInstance(collectorType, new object[] { _considerParameterization }) as IDataCollector;
             IOutcome ioutcome = collector.CollectData(testAssembly);
 
             // Outcome transition between load contexts.

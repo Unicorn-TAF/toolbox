@@ -24,7 +24,7 @@ namespace Unicorn.Toolbox.Models.Coverage
         {
             foreach (CoverageModule module in Specs.Modules)
             {
-                module.Suites = suites.Where(s => s.Tags.Intersect(module.Features).Any());
+                module.Suites = suites.Where(s => s.Tags.Intersect(module.Features).Any()).ToList();
             }
         }
     }

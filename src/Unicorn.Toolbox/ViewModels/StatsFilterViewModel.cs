@@ -17,7 +17,7 @@ namespace Unicorn.Toolbox.ViewModels
 
         public IEnumerable<FilterItemViewModel> Values { get; set; }
 
-        public IEnumerable<string> SelectedValues => Values.Where(t => t.Selected).Select(t => t.Name);
+        public IEnumerable<string> SelectedValues => Values.Where(t => t.Selected).Select(t => t.Name).ToList();
 
         public void Populate(IEnumerable<string> data)
         {

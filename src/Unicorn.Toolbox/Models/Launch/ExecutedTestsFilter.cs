@@ -17,8 +17,9 @@ namespace Unicorn.Toolbox.Models.Launch
             MatchingTestsCount = 0;
             FilteredData.Clear();
 
-            IEnumerable<TestResult> results = 
-                testResults.Where(r => r.Status.Equals(Status.Failed) && ErrorMatch(r.ErrorMessage));
+            List<TestResult> results = testResults
+                .Where(r => r.Status.Equals(Status.Failed) && ErrorMatch(r.ErrorMessage))
+                .ToList();
 
             IEnumerable<string> uniqueSuites = results.Select(r => r.SuiteName).Distinct();
 
@@ -36,7 +37,10 @@ namespace Unicorn.Toolbox.Models.Launch
         public void FilterByTime(IEnumerable<TestResult> testResults, string dateTimeString)
         {
             DateTime time = Convert.ToDateTime(dateTimeString);
-            IEnumerable<TestResult> results = testResults.Where(r => r.StartTime < time && r.EndTime > time);
+
+            List<TestResult> results = testResults
+                .Where(r => r.StartTime < time && r.EndTime > time)
+                .ToList();
 
             MatchingTestsCount = results.Count();
             FilteredData.Clear();

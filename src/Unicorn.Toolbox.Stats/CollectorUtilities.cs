@@ -84,7 +84,8 @@ namespace Unicorn.Toolbox.Stats
             var categories = testMethod
                 .GetCustomAttributes<CategoryAttribute>()
                 .Select(c => c.Category.ToUpper().Trim())
-                .Where(c => !string.IsNullOrEmpty(c));
+                .Where(c => !string.IsNullOrEmpty(c))
+                .ToList();
 
             var datasetsAttribute = testMethod.GetCustomAttribute<TestDataAttribute>();
             var dataSets = suiteInstance
