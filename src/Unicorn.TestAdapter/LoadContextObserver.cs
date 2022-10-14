@@ -1,6 +1,10 @@
 ﻿#if NET || NETCOREAPP
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using Unicorn.Taf.Api;
 using Unicorn.Taf.Core.Engine;
 using Unicorn.Taf.Core.Testing.Attributes;
@@ -30,6 +34,38 @@ namespace Unicorn.TestAdapter
             }
 
             return outcome;
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        internal static List<TestInfo> GetTestsInfoInIsolation(string source)
+        {
+            UnicornAssemblyLoadContext observerContext = new UnicornAssemblyLoadContext(Path.GetDirectoryName(source));
+
+            observerContext.Initialize(typeof(IDataCollector));
+
+            try
+            {
+                Type observerType = observerContext.GetAssemblyContainingType(typeof(LoadContextObserver))
+                    .GetTypes()
+                    .First(t => t.Name.Equals(typeof(LoadContextObserver).Name));
+
+                IDataCollector observer = Activator.CreateInstance(observerType) as IDataCollector;
+
+                AssemblyName assemblyName = AssemblyName.GetAssemblyName(source);
+                Assembly testAssembly = observerContext.GetAssembly(assemblyName);
+
+                IOutcome iTestInfo = observer.CollectData(testAssembly);
+
+                //Outcome transition between load contexts.
+                byte[] bytes = LoadContextSerealization.Serialize(iTestInfo);
+                ObserverOutcome outcome = LoadContextSerealization.Deserialize<ObserverOutcome>(bytes);
+
+                return outcome.TestInfoList;
+            }
+            finally
+            {
+                observerContext.Unload();
+            }
         }
     }
 }

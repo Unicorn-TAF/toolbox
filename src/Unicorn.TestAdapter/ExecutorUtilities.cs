@@ -13,17 +13,16 @@ namespace Unicorn.TestAdapter
     {
         internal static string PrepareRunDirectory(string baseDir)
         {
-            var runDir = Path.Combine(baseDir, "TestResults", $"{Environment.MachineName}_{DateTime.Now.ToString("MM-dd-yyyy_hh-mm")}");
+            string outDir = $"{Environment.MachineName}_{DateTime.Now:MM-dd-yyyy_hh-mm}";
+            string runDir = Path.Combine(baseDir, "TestResults", outDir);
             Directory.CreateDirectory(runDir);
             return runDir;
         }
 
         internal static void CopySourceFilesToRunDir(string sourceDir, string targetDir)
         {
-            foreach (var source in Directory.GetFiles(sourceDir))
-            {
-                File.Copy(source, source.Replace(sourceDir, targetDir), true);
-            }
+            Array.ForEach(Directory.GetFiles(sourceDir), s =>
+                File.Copy(s, s.Replace(sourceDir, targetDir), true));
         }
 
         internal static void CopyDeploymentItems(IRunContext runContext, string runDir, IFrameworkHandle frameworkHandle)
@@ -116,8 +115,8 @@ namespace Unicorn.TestAdapter
                     break;
                 case UnicornTest.Status.Failed:
                     testResult.Outcome = TestOutcome.Failed;
-                    testResult.ErrorMessage = outcome.Exception.Message;
-                    testResult.ErrorStackTrace = outcome.Exception.StackTrace;
+                    testResult.ErrorMessage = outcome.FailMessage;
+                    testResult.ErrorStackTrace = outcome.FailStackTrace;
                     testResult.Duration = outcome.ExecutionTime;
                     break;
                 case UnicornTest.Status.Skipped:
