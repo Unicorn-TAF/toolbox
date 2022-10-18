@@ -12,63 +12,51 @@ namespace Unicorn.ConsoleRunner
 {
     public class Program
     {
-        private Program()
-        {
-        }
-
         public static void Main(string[] args)
         {
-            ArgsParser parser = new ArgsParser();
-            parser.ParseArguments(args);
-            new Program().Run(parser.AssemblyPath, parser.ConfigPath, parser.TrxFileName);
+            ArgsParser parser = new ArgsParser(args);
+            new Program().Run(parser.AssemblyPath, parser.ConfigPath, parser.TrxFileName, parser.NoLogo);
         }
 
-        private void Run(string assemblyPath, string propertiesPath, string trxFileName)
+        private void Run(string assemblyPath, string propertiesPath, string trxFileName, bool hideLogo)
         {
             if (!string.IsNullOrEmpty(propertiesPath))
             {
                 Config.FillFromFile(propertiesPath);
             }
 
-            Reporter.ReportHeader(assemblyPath);
+            Reporter.ReportHeader(assemblyPath, hideLogo);
 
             try
             {
                 LaunchOutcome outcome = ExecuteTests(assemblyPath, propertiesPath);
 
-                if (outcome != null)
+                if (outcome == null)
                 {
-                    if (!string.IsNullOrEmpty(trxFileName))
-                    {
-                        new TrxCreator().GenerateTrxFile(outcome, trxFileName);
-                    }
-
-                    Reporter.ReportResults(outcome);
+                    return;
                 }
+
+                if (!string.IsNullOrEmpty(trxFileName))
+                {
+                    new TrxCreator().GenerateTrxFile(outcome, trxFileName);
+                }
+
+                Reporter.ReportResults(outcome);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error running tests ({ex.Message})");
+                Console.WriteLine("Error running tests: {0}", ex);
             }
         }
 
 #if NETFRAMEWORK
         private static LaunchOutcome ExecuteTests(string assemblyPath, string propertiesPath)
         {
-            AppDomain unicornDomain = AppDomain.CreateDomain("Unicorn.ConsoleRunner AppDomain");
+            string assemblyDir = Path.GetDirectoryName(assemblyPath);
 
-            try
+            using (var runner = new UnicornAppDomainIsolation<AppDomainRunner>(assemblyDir))
             {
-                string pathToDll = Assembly.GetExecutingAssembly().Location;
-
-                AppDomainRunner runner = (AppDomainRunner)unicornDomain
-                    .CreateInstanceFromAndUnwrap(pathToDll, typeof(AppDomainRunner).FullName);
-
-                return runner.RunTests(assemblyPath, propertiesPath);
-            }
-            finally
-            {
-                AppDomain.Unload(unicornDomain);
+                return runner.Instance.RunTests(assemblyPath, propertiesPath);
             }
         }
 #endif
@@ -94,9 +82,16 @@ namespace Unicorn.ConsoleRunner
 
             IOutcome ioutcome = runner.RunTests();
 
-            // Outcome transition between load contexts.
-            byte[] bytes = SerializeOutcome(ioutcome);
-            return DeserializeOutcome(bytes);
+            try
+            {
+                // Outcome transition between load contexts.
+                byte[] bytes = SerializeOutcome(ioutcome);
+                return DeserializeOutcome(bytes);
+            }
+            finally
+            {
+                runnerContext.Unload();
+            }
         }
 
 #pragma warning disable SYSLIB0011 // Type or member is obsolete
