@@ -82,74 +82,13 @@ namespace Unicorn.TestAdapter
             }
         }
 
-#if NETFRAMEWORK
         private static List<TestInfo> GetTestsInfo(string source)
         {
-            AppDomain unicornDomain = AppDomain.CreateDomain("Unicorn.TestAdapter AppDomain");
-
-            try
-            {
-                string pathToDll = Assembly.GetExecutingAssembly().Location;
-
-                AppDomainObserver observer = (AppDomainObserver)unicornDomain
-                    .CreateInstanceFromAndUnwrap(pathToDll, typeof(AppDomainObserver).FullName);
-
-                return observer.GetTests(source);
-            }
-            finally
-            {
-                AppDomain.Unload(unicornDomain);
-            }
-        }
+#if NET || NETCOREAPP
+            return LoadContextObserver.GetTestsInfoInIsolation(source);
+#else
+            return AppDomainObserver.GetTestsInfoInIsolation(source);
 #endif
-
-#if NETCOREAPP || NET
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        private static List<TestInfo> GetTestsInfo(string source)
-        {
-            UnicornAssemblyLoadContext observerContext = new UnicornAssemblyLoadContext(Path.GetDirectoryName(source));
-
-            observerContext.Initialize(typeof(IDataCollector));
-
-            Type observerType = observerContext.GetAssemblyContainingType(typeof(LoadContextObserver))
-                .GetTypes()
-                .First(t => t.Name.Equals(typeof(LoadContextObserver).Name));
-
-            IDataCollector observer = Activator.CreateInstance(observerType) as IDataCollector;
-
-            AssemblyName assemblyName = AssemblyName.GetAssemblyName(source);
-            Assembly testAssembly = observerContext.GetAssembly(assemblyName);
-
-            IOutcome iTestInfo = observer.CollectData(testAssembly);
-
-            //Outcome transition between load contexts.
-            byte[] bytes = SerializeInfo(iTestInfo);
-            ObserverOutcome outcome = DeserializeInfo(bytes);
-
-            return outcome.TestInfoList;
         }
-
-#pragma warning disable SYSLIB0011 // Type or member is obsolete
-        private static byte[] SerializeInfo(IOutcome outcome)
-        {
-            using (MemoryStream ms = new MemoryStream())
-            {
-                new BinaryFormatter().Serialize(ms, outcome);
-                return ms.ToArray();
-            }
-        }
-
-        private static ObserverOutcome DeserializeInfo(byte[] bytes)
-        {
-            using (MemoryStream memStream = new MemoryStream())
-            {
-                memStream.Write(bytes, 0, bytes.Length);
-                memStream.Seek(0, SeekOrigin.Begin);
-                return new BinaryFormatter().Deserialize(memStream) as ObserverOutcome;
-            }
-        }
-#pragma warning restore SYSLIB0011 // Type or member is obsolete
-
-#endif
     }
 }

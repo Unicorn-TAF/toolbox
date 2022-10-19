@@ -12,12 +12,31 @@ namespace Unicorn.TestAdapter
     /// </summary>
     public class AppDomainObserver : MarshalByRefObject
     {
+        internal static List<TestInfo> GetTestsInfoInIsolation(string source)
+        {
+            AppDomain unicornDomain = AppDomain.CreateDomain("Unicorn.TestAdapter Observer AppDomain");
+
+            try
+            {
+                string pathToDll = Assembly.GetExecutingAssembly().Location;
+
+                AppDomainObserver observer = (AppDomainObserver)unicornDomain
+                    .CreateInstanceFromAndUnwrap(pathToDll, typeof(AppDomainObserver).FullName);
+
+                return observer.GetTests(source);
+            }
+            finally
+            {
+                AppDomain.Unload(unicornDomain);
+            }
+        }
+
         /// <summary>
         /// Gets list of <see cref="ITestInfo"/> from specified assembly in separate AppDomain.
         /// </summary>
         /// <param name="assembly">test assembly file</param>
         /// <returns>test info list</returns>
-        public List<TestInfo> GetTests(string assembly)
+        private List<TestInfo> GetTests(string assembly)
         {
             var testsAssembly = Assembly.LoadFrom(assembly);
             var tests = TestsObserver.ObserveTests(testsAssembly);

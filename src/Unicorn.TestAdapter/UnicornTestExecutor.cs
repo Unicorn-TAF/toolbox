@@ -2,14 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Xml.Linq;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
-using Unicorn.Taf.Api;
 using Unicorn.Taf.Core.Engine;
-using System.Reflection;
-using System.Runtime.Serialization.Formatters.Binary;
-using UnicornTest = Unicorn.Taf.Core.Testing;
 
 namespace Unicorn.TestAdapter
 {
@@ -48,7 +45,7 @@ namespace Unicorn.TestAdapter
                 try
                 {
                     var newSource = source.Replace(Path.GetDirectoryName(source), runDir);
-                    RunTests(newSource, new string[0]);
+                    RunTests(newSource, new string[0], runContext, frameworkHandle);
                 }
                 catch (Exception ex)
                 {
@@ -83,7 +80,7 @@ namespace Unicorn.TestAdapter
                 try
                 {
                     var newSource = source.Replace(Path.GetDirectoryName(source), runDir);
-                    LaunchOutcome outcome = RunTests(newSource, masks);
+                    LaunchOutcome outcome = RunTests(newSource, masks, runContext, frameworkHandle);
                     ProcessLaunchOutcome(outcome, tests, frameworkHandle);
                 }
                 catch (Exception ex)
@@ -142,70 +139,28 @@ namespace Unicorn.TestAdapter
         { 
         }
 
-#if NETFRAMEWORK
-        private LaunchOutcome RunTests(string assemblyPath, string[] testsMasks)
+        private LaunchOutcome RunTests(
+            string assemblyPath, string[] testsMasks, IRunContext runContext, IFrameworkHandle frameworkHandle)
         {
-            AppDomain unicornDomain = AppDomain.CreateDomain("Unicorn.TestAdapter AppDomain");
+            string unicornConfig = XDocument.Parse(runContext.RunSettings.SettingsXml)
+                .Element("RunSettings")
+                .Element("TestRunParameters")?
+                .Elements("Parameter")
+                .FirstOrDefault(e => e.Attribute("name").Value.Equals("unicornConfig"))?
+                .Attribute("value").Value;
 
-            try
+            if (!string.IsNullOrEmpty(unicornConfig))
             {
-                string pathToDll = Assembly.GetExecutingAssembly().Location;
-
-                AppDomainRunner runner = (AppDomainRunner)unicornDomain
-                    .CreateInstanceFromAndUnwrap(pathToDll, typeof(AppDomainRunner).FullName);
-
-                return runner.RunTests(assemblyPath, testsMasks);
+                frameworkHandle.SendMessage(
+                    TestMessageLevel.Informational,
+                    "Loading unicorn configuration file: " + unicornConfig);
             }
-            finally
-            {
-                AppDomain.Unload(unicornDomain);
-            }
-        }
-#endif
 
 #if NET || NETCOREAPP
-        private LaunchOutcome RunTests(string assemblyPath, string[] testsMasks)
-        {
-            string contextDirectory = Path.GetDirectoryName(assemblyPath);
-            UnicornAssemblyLoadContext runnerContext = new UnicornAssemblyLoadContext(contextDirectory);
-            runnerContext.Initialize(typeof(ITestRunner));
-
-            AssemblyName assemblyName = AssemblyName.GetAssemblyName(assemblyPath);
-            Assembly testAssembly = runnerContext.GetAssembly(assemblyName);
-
-            Type runnerType = runnerContext.GetAssemblyContainingType(typeof(LoadContextRunner))
-                .GetTypes()
-                .First(t => t.Name.Equals(typeof(LoadContextRunner).Name));
-
-            ITestRunner runner = Activator.CreateInstance(runnerType, testAssembly, testsMasks) as ITestRunner;
-            IOutcome ioutcome = runner.RunTests();
-
-            // Outcome transition between load contexts.
-            byte[] bytes = SerializeOutcome(ioutcome);
-            return DeserializeOutcome(bytes);
-        }
-
-#pragma warning disable SYSLIB0011 // Type or member is obsolete
-        private byte[] SerializeOutcome(IOutcome outcome)
-        {
-            using (MemoryStream ms = new MemoryStream())
-            {
-                new BinaryFormatter().Serialize(ms, outcome);
-                return ms.ToArray();
-            }
-        }
-
-        private LaunchOutcome DeserializeOutcome(byte[] bytes)
-        {
-            using (MemoryStream memStream = new MemoryStream())
-            {
-                memStream.Write(bytes, 0, bytes.Length);
-                memStream.Seek(0, SeekOrigin.Begin);
-                return new BinaryFormatter().Deserialize(memStream) as LaunchOutcome;
-            }
-        }
-#pragma warning restore SYSLIB0011 // Type or member is obsolete
-
+            return LoadContextRunner.RunTestsInIsolation(assemblyPath, testsMasks, unicornConfig);
+#else
+            return AppDomainRunner.RunTestsInIsolation(assemblyPath, testsMasks, unicornConfig);
 #endif
+        }
     }
 }
