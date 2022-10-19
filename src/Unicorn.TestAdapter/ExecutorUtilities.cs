@@ -121,7 +121,7 @@ namespace Unicorn.TestAdapter
                     break;
                 case UnicornTest.Status.Skipped:
                     testResult.Outcome = TestOutcome.Skipped;
-                    testResult.ErrorMessage = "Suite initialization failed.";
+                    testResult.ErrorMessage = "Check for fails in: BeforeSuite, BeforeTest or test specified in DependsOn attribute.";
                     break;
                 default:
                     testResult.Outcome = TestOutcome.None;

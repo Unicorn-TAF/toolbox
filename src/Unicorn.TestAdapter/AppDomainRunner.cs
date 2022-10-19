@@ -24,7 +24,7 @@ namespace Unicorn.TestAdapter
             };
 
             AppDomain unicornDomain = AppDomain.CreateDomain(
-                "Unicorn.TestAdapter runner AppDomain",
+                "Unicorn.TestAdapter Runner AppDomain",
                 AppDomain.CurrentDomain.Evidence,
                 domainSetup);
 

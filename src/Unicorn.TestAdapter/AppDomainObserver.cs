@@ -14,7 +14,7 @@ namespace Unicorn.TestAdapter
     {
         internal static List<TestInfo> GetTestsInfoInIsolation(string source)
         {
-            AppDomain unicornDomain = AppDomain.CreateDomain("Unicorn.TestAdapter AppDomain");
+            AppDomain unicornDomain = AppDomain.CreateDomain("Unicorn.TestAdapter Observer AppDomain");
 
             try
             {
