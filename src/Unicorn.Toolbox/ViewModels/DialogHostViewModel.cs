@@ -1,18 +1,12 @@
-﻿namespace Unicorn.Toolbox.ViewModels
+﻿namespace Unicorn.Toolbox.ViewModels;
+
+public class DialogHostViewModel
 {
-    public class DialogHostViewModel : ViewModelBase
+    public DialogHostViewModel(ViewModelBase viewModel)
     {
-        public DialogHostViewModel(ViewModelBase viewModel)
-        {
-            CurrentViewModel = viewModel;
-            OnCurrentViewModelChanged();
-        }
-
-        public ViewModelBase CurrentViewModel { get; set; }
-
-        private void OnCurrentViewModelChanged()
-        {
-            OnPropertyChanged(nameof(CurrentViewModel));
-        }
+        CurrentViewModel = viewModel;
     }
+
+    [Notify]
+    public ViewModelBase CurrentViewModel { get; set; }
 }

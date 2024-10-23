@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Input;
 using Unicorn.Toolbox.Commands;
+using Unicorn.Toolbox.Roi;
 using Unicorn.Toolbox.Stats;
 using Unicorn.Toolbox.Visualization;
 using Unicorn.Toolbox.Visualization.Palettes;
@@ -11,6 +12,7 @@ namespace Unicorn.Toolbox.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
+        private readonly RoiInputs _roiInputs;
         private int selectedTab;
         private IPalette currentPalette;
         private bool fullscreen;
@@ -18,9 +20,11 @@ namespace Unicorn.Toolbox.ViewModels
 
         public MainViewModel(StatsCollector statsCollector)
         {
+            _roiInputs = new RoiInputs();
             StatsViewModel = new StatsViewModel(statsCollector);
             CoverageViewModel = new CoverageViewModel(statsCollector);
             LaunchViewModel = new LaunchViewModel();
+            RoiConfigurationViewModel = new RoiConfigurationViewModel(_roiInputs);
 
             CurrentVisualizationPalette = new LightGreen();
             VisualizationPalettes = new List<IPalette>() { CurrentVisualizationPalette, new Orange(), new DeepPurple() };
@@ -37,6 +41,8 @@ namespace Unicorn.Toolbox.ViewModels
         public FunctionalityViewModelBase CoverageViewModel { get; }
 
         public FunctionalityViewModelBase LaunchViewModel { get; }
+
+        public FunctionalityViewModelBase RoiConfigurationViewModel { get; set; }
 
         public FunctionalityViewModelBase CurrentViewModel { get; set; }
 
@@ -98,6 +104,9 @@ namespace Unicorn.Toolbox.ViewModels
                     break;
                 case 2:
                     CurrentViewModel = LaunchViewModel;
+                    break;
+                case 3:
+                    CurrentViewModel = RoiConfigurationViewModel;
                     break;
                 default:
                     throw new NotImplementedException($"Unknown tab index {selectedTab}");

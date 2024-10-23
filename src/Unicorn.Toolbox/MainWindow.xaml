@@ -18,6 +18,9 @@
             <TabItem x:Name="tabResultsAnalysis" Header="Results Analysis" Width="100">
                 <views:LaunchView x:Name="LaunchView" DataContext="{Binding LaunchViewModel}"/>
             </TabItem>
+            <TabItem x:Name="tabAtEfficiency" Header="AT efficiency" Width="100">
+                <views:RoiConfigurationView x:Name="RoiConfigurationView" DataContext="{Binding RoiConfigurationViewModel}"/>
+            </TabItem>
         </TabControl>
         <GroupBox x:Name="groupBoxVisualization" Header="Visualization" IsEnabled="{Binding CurrentViewModel.DataLoaded}" VerticalAlignment="Top" HorizontalAlignment="Right">
             <UniformGrid Columns="4" Rows="1" Margin="5,5,5,5">

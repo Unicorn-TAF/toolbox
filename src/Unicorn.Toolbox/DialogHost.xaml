@@ -19,6 +19,9 @@
             <DataTemplate DataType="{x:Type vms:VisualizationViewModel}">
                 <views:VisualizationView />
             </DataTemplate>
+            <DataTemplate DataType="{x:Type vms:RoiForecastViewModel}">
+                <views:RoiForecastView />
+            </DataTemplate>
         </Grid.Resources>
 
         <ContentControl x:Name="Content" Content="{Binding CurrentViewModel}" />
