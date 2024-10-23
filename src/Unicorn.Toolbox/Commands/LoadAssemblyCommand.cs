@@ -1,5 +1,8 @@
 ﻿using Microsoft.Win32;
+using System;
 using System.Linq;
+using System.Reflection;
+using System.Windows;
 using Unicorn.Toolbox.Stats;
 using Unicorn.Toolbox.Stats.Filtering;
 using Unicorn.Toolbox.ViewModels;
@@ -30,26 +33,37 @@ namespace Unicorn.Toolbox.Commands
             {
                 string assemblyFile = openFileDialog.FileName;
 
-                _statsCollector.GetTestsStatistics(assemblyFile, considerData);
-                _statsCollector.Data.ClearFilters();
+                try
+                {
+                    _statsCollector.GetTestsStatistics(assemblyFile, considerData);
+                    _statsCollector.Data.ClearFilters();
 
-                _viewModel.Filters.First(f => f.Filter == FilterType.Tag)
-                    .Populate(_statsCollector.Data.UniqueTags);
+                    _viewModel.Filters.First(f => f.Filter == FilterType.Tag)
+                        .Populate(_statsCollector.Data.UniqueTags);
                 
-                _viewModel.Filters.First(f => f.Filter == FilterType.Category)
-                    .Populate(_statsCollector.Data.UniqueCategories);
+                    _viewModel.Filters.First(f => f.Filter == FilterType.Category)
+                        .Populate(_statsCollector.Data.UniqueCategories);
 
-                _viewModel.Filters.First(f => f.Filter == FilterType.Author)
-                    .Populate(_statsCollector.Data.UniqueAuthors);
+                    _viewModel.Filters.First(f => f.Filter == FilterType.Author)
+                        .Populate(_statsCollector.Data.UniqueAuthors);
 
-                _viewModel.FilterAll = true;
+                    _viewModel.FilterAll = true;
 
-                _viewModel.Status = $"assembly {_statsCollector.AssemblyFile} was loaded >> " +
-                    $"{_statsCollector.AssemblyProps}  |  {_statsCollector.Data}";
+                    _viewModel.Status = $"assembly {_statsCollector.AssemblyFile} was loaded >> " +
+                        $"{_statsCollector.AssemblyProps}  |  {_statsCollector.Data}";
 
-                _viewModel.DataLoaded = true;
+                    _viewModel.DataLoaded = true;
 
-                _viewModel.ApplyFilteredData();
+                    _viewModel.ApplyFilteredData();
+                }
+                catch (TargetInvocationException ex)
+                {
+                    MessageBox.Show(
+                        ex.InnerException.ToString(), 
+                        "Error loading assembly", 
+                        MessageBoxButton.OK, 
+                        MessageBoxImage.Error);
+                }
             }
         }
     }
