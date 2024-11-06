@@ -2,33 +2,32 @@
 using Unicorn.Toolbox.Stats;
 using Unicorn.Toolbox.ViewModels;
 
-namespace Unicorn.Toolbox.Commands
+namespace Unicorn.Toolbox.Commands;
+
+public class OpenSuiteDetailsCommand : CommandBase
 {
-    public class OpenSuiteDetailsCommand : CommandBase
+    private readonly StatsCollector _analyzer;
+
+    public OpenSuiteDetailsCommand(StatsCollector analyzer)
     {
-        private readonly StatsCollector _analyzer;
+        _analyzer = analyzer;
+    }
 
-        public OpenSuiteDetailsCommand(StatsCollector analyzer)
+    public override void Execute(object parameter)
+    {
+        string testSuiteName = parameter.ToString();
+
+        IDialogViewModel suiteDetailsVm = new SuiteDetailsViewModel
         {
-            _analyzer = analyzer;
-        }
+            TestInfos = _analyzer.Data.FilteredInfo.First(s => s.Name.Equals(testSuiteName)).TestsInfos
+        };
 
-        public override void Execute(object parameter)
+        DialogHost window = new DialogHost("Suite preview :: " + testSuiteName)
         {
-            string testSuiteName = parameter.ToString();
+            DataContext = new DialogHostViewModel(suiteDetailsVm),
+            ShowActivated = false
+        };
 
-            ViewModelBase suiteDetailsVm = new SuiteDetailsViewModel
-            {
-                TestInfos = _analyzer.Data.FilteredInfo.First(s => s.Name.Equals(testSuiteName)).TestsInfos
-            };
-
-            DialogHost window = new DialogHost("Suite preview: " + testSuiteName)
-            {
-                DataContext = new DialogHostViewModel(suiteDetailsVm),
-                ShowActivated = false
-            };
-
-            window.ShowDialog();
-        }
+        window.ShowDialog();
     }
 }

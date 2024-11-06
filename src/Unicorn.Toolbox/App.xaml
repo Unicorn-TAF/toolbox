@@ -29,10 +29,13 @@
                 </Style.Triggers>
             </Style>
             <Style x:Key="WrappedColumnHeaderStyle" TargetType="{x:Type DataGridColumnHeader}">
+                <Setter Property="HorizontalAlignment" Value="Center" />
+                <Setter Property="BorderBrush" Value="Transparent" />
+                <Setter Property="Margin" Value="0,0,0,0" />
                 <Setter Property="ContentTemplate">
                     <Setter.Value>
                         <DataTemplate>
-                            <TextBlock TextWrapping="Wrap" Text="{Binding}"></TextBlock>
+                            <TextBlock TextWrapping="Wrap" TextAlignment="Center" Text="{Binding}"/>
                         </DataTemplate>
                     </Setter.Value>
                 </Setter>

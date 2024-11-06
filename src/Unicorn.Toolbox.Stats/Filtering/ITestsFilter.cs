@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace Unicorn.Toolbox.Stats.Filtering
+namespace Unicorn.Toolbox.Stats.Filtering;
+
+public interface ITestsFilter
 {
-    public interface ITestsFilter
-    {
-        List<TestInfo> FilterTests(List<TestInfo> testInfos);
-    }
+    List<TestInfo> FilterTests(List<TestInfo> testInfos);
 }

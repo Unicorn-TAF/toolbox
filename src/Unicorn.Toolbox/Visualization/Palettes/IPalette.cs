@@ -1,16 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Media;
 
-namespace Unicorn.Toolbox.Visualization.Palettes
+namespace Unicorn.Toolbox.Visualization.Palettes;
+
+public interface IPalette
 {
-    public interface IPalette
-    {
-        Brush BackColor { get; }
+    Brush BackColor { get; }
 
-        Brush FontColor { get; }
+    Brush FontColor { get; }
 
-        List<Brush> DataColors { get; }
+    List<Brush> DataColors { get; }
 
-        Brush DataFontColor { get; }
-    }
+    Brush DataFontColor { get; }
 }

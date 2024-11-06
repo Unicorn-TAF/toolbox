@@ -1,26 +1,25 @@
-﻿namespace Unicorn.Toolbox.ViewModels
+﻿namespace Unicorn.Toolbox.ViewModels;
+
+public class FilterItemViewModel : ViewModelBase
 {
-    public class FilterItemViewModel : ViewModelBase
+    private bool selected;
+
+    public FilterItemViewModel(string name)
     {
-        private bool selected;
+        Name = name;
+        selected = true;
+    }
 
-        public FilterItemViewModel(string name)
+    public string Name { get; }
+
+    public bool Selected
+    {
+        get => selected;
+
+        set
         {
-            Name = name;
-            selected = true;
-        }
-
-        public string Name { get; }
-
-        public bool Selected
-        {
-            get => selected;
-
-            set
-            {
-                selected = value;
-                OnPropertyChanged(nameof(Selected));
-            }
+            selected = value;
+            OnPropertyChanged(nameof(Selected));
         }
     }
 }

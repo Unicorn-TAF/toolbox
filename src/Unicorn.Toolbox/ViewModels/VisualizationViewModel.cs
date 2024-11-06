@@ -1,28 +1,17 @@
 ﻿using System.Windows.Input;
 using Unicorn.Toolbox.Commands;
 
-namespace Unicorn.Toolbox.ViewModels
+namespace Unicorn.Toolbox.ViewModels;
+
+public class VisualizationViewModel : IDialogViewModel
 {
-    public class VisualizationViewModel : ViewModelBase
+    public VisualizationViewModel()
     {
-        private bool exportable;
-
-        public VisualizationViewModel()
-        {
-            ExportVisualizationCommand = new ExportVisualizationCommand();
-        }
-
-        public bool Exportable
-        {
-            get => exportable;
-
-            set
-            {
-                exportable = value;
-                OnPropertyChanged(nameof(Exportable));
-            }
-        }
-
-        public ICommand ExportVisualizationCommand { get; }
+        ExportVisualizationCommand = new ExportVisualizationCommand();
     }
+
+    [Notify]
+    public bool Exportable { get; set; }
+
+    public ICommand ExportVisualizationCommand { get; }
 }

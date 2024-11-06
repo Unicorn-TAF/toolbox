@@ -2,11 +2,11 @@
 
 public class DialogHostViewModel
 {
-    public DialogHostViewModel(ViewModelBase viewModel)
+    public DialogHostViewModel(IDialogViewModel viewModel)
     {
         CurrentViewModel = viewModel;
     }
 
     [Notify]
-    public ViewModelBase CurrentViewModel { get; set; }
+    public IDialogViewModel CurrentViewModel { get; set; }
 }

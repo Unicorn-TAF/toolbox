@@ -19,7 +19,7 @@
                 <views:LaunchView x:Name="LaunchView" DataContext="{Binding LaunchViewModel}"/>
             </TabItem>
             <TabItem x:Name="tabAtEfficiency" Header="AT efficiency" Width="100">
-                <views:RoiConfigurationView x:Name="RoiConfigurationView" DataContext="{Binding RoiConfigurationViewModel}"/>
+                <views:RoiConfigurationView x:Name="RoiConfigurationView" DataContext="{Binding RoiConfigurationViewModel}" VerticalAlignment="Center"/>
             </TabItem>
         </TabControl>
         <GroupBox x:Name="groupBoxVisualization" Header="Visualization" IsEnabled="{Binding CurrentViewModel.DataLoaded}" VerticalAlignment="Top" HorizontalAlignment="Right">

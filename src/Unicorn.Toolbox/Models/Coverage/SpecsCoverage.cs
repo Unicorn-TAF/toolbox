@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Json;
@@ -24,7 +25,7 @@ namespace Unicorn.Toolbox.Models.Coverage
         {
             foreach (CoverageModule module in Specs.Modules)
             {
-                module.Suites = suites.Where(s => s.Tags.Intersect(module.Features).Any());
+                module.Suites = suites.Where(s => s.Tags.Intersect(module.Features, StringComparer.InvariantCultureIgnoreCase).Any());
             }
         }
     }

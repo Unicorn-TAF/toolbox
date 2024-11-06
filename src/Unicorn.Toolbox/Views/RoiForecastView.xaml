@@ -63,7 +63,7 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Width="80" HeaderStyle="{StaticResource WrappedColumnHeaderStyle}" Header="АТ total spend time" ClipboardContentBinding="{Binding AtManDaysTotal}">
+                    <DataGridTemplateColumn Width="80" HeaderStyle="{StaticResource WrappedColumnHeaderStyle}" Header="АТ total spent time" ClipboardContentBinding="{Binding AtManDaysTotal}">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Grid>

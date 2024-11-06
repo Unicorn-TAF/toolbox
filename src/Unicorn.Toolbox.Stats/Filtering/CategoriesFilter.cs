@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Unicorn.Toolbox.Stats.Filtering
@@ -14,12 +15,12 @@ namespace Unicorn.Toolbox.Stats.Filtering
 
         public List<SuiteInfo> FilterSuites(List<SuiteInfo> suitesInfos) =>
             suitesInfos
-            .Where(s => s.TestsInfos.Any(t => _categories.Intersect(t.Categories).Any()))
+            .Where(s => s.TestsInfos.Any(t => _categories.Intersect(t.Categories, StringComparer.InvariantCultureIgnoreCase).Any()))
             .ToList();
 
         public List<TestInfo> FilterTests(List<TestInfo> testInfos) =>
             testInfos
-            .Where(t => _categories.Intersect(t.Categories).Any())
+            .Where(t => _categories.Intersect(t.Categories, StringComparer.InvariantCultureIgnoreCase).Any())
             .ToList();
     }
 }

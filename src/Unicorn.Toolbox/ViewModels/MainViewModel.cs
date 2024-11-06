@@ -8,55 +8,55 @@ using Unicorn.Toolbox.Stats;
 using Unicorn.Toolbox.Visualization;
 using Unicorn.Toolbox.Visualization.Palettes;
 
-namespace Unicorn.Toolbox.ViewModels
+namespace Unicorn.Toolbox.ViewModels;
+
+public class MainViewModel : ViewModelBase
 {
-    public class MainViewModel : ViewModelBase
-    {
-        private readonly RoiInputs _roiInputs;
-        private int selectedTab;
+    private readonly RoiInputs _roiInputs;
+    private int selectedTab;
         private IPalette currentPalette;
         private bool fullscreen;
         private bool circles;
 
-        public MainViewModel(StatsCollector statsCollector)
+    public MainViewModel(StatsCollector statsCollector)
+    {
+        _roiInputs = new RoiInputs();
+        StatsViewModel = new StatsViewModel(statsCollector);
+        CoverageViewModel = new CoverageViewModel(statsCollector);
+        LaunchViewModel = new LaunchViewModel();
+        RoiConfigurationViewModel = new RoiConfigurationViewModel(_roiInputs);
+
+        CurrentVisualizationPalette = new LightGreen();
+        VisualizationPalettes = new List<IPalette>() { CurrentVisualizationPalette, new Orange(), new DeepPurple() };
+        VisualizeCommand = new VisualizeCommand(this);
+        CurrentViewModel = StatsViewModel;
+
+        StatsViewModel.PropertyChanged += OnDataLoadedPropertyChanged;
+        CoverageViewModel.PropertyChanged += OnDataLoadedPropertyChanged;
+        LaunchViewModel.PropertyChanged += OnDataLoadedPropertyChanged;
+    }
+
+    public FunctionalityViewModelBase StatsViewModel { get; }
+
+    public FunctionalityViewModelBase CoverageViewModel { get; }
+
+    public FunctionalityViewModelBase LaunchViewModel { get; }
+
+    public FunctionalityViewModelBase RoiConfigurationViewModel { get; set; }
+
+    public FunctionalityViewModelBase CurrentViewModel { get; set; }
+
+    public int SelectedTab
+    {
+        get => selectedTab;
+
+        set
         {
-            _roiInputs = new RoiInputs();
-            StatsViewModel = new StatsViewModel(statsCollector);
-            CoverageViewModel = new CoverageViewModel(statsCollector);
-            LaunchViewModel = new LaunchViewModel();
-            RoiConfigurationViewModel = new RoiConfigurationViewModel(_roiInputs);
-
-            CurrentVisualizationPalette = new LightGreen();
-            VisualizationPalettes = new List<IPalette>() { CurrentVisualizationPalette, new Orange(), new DeepPurple() };
-            VisualizeCommand = new VisualizeCommand(this);
-            CurrentViewModel = StatsViewModel;
-
-            StatsViewModel.PropertyChanged += OnDataLoadedPropertyChanged;
-            CoverageViewModel.PropertyChanged += OnDataLoadedPropertyChanged;
-            LaunchViewModel.PropertyChanged += OnDataLoadedPropertyChanged;
+            selectedTab = value;
+            OnPropertyChanged(nameof(SelectedTab));
+            TabChanged(selectedTab);
         }
-
-        public FunctionalityViewModelBase StatsViewModel { get; }
-
-        public FunctionalityViewModelBase CoverageViewModel { get; }
-
-        public FunctionalityViewModelBase LaunchViewModel { get; }
-
-        public FunctionalityViewModelBase RoiConfigurationViewModel { get; set; }
-
-        public FunctionalityViewModelBase CurrentViewModel { get; set; }
-
-        public int SelectedTab
-        {
-            get => selectedTab;
-
-            set
-            {
-                selectedTab = value;
-                OnPropertyChanged(nameof(SelectedTab));
-                TabChanged(selectedTab);
-            }
-        }
+    }
 
         public bool FullscreenVisualization
         {
@@ -78,7 +78,7 @@ namespace Unicorn.Toolbox.ViewModels
             }
         }
 
-        public IEnumerable<IPalette> VisualizationPalettes { get; }
+    public IEnumerable<IPalette> VisualizationPalettes { get; }
 
         public IPalette CurrentVisualizationPalette
         {
@@ -90,40 +90,39 @@ namespace Unicorn.Toolbox.ViewModels
             }
         }
 
-        public ICommand VisualizeCommand { get; }
+    public ICommand VisualizeCommand { get; }
 
-        private void TabChanged(int selectedTab)
+    private void TabChanged(int selectedTab)
+    {
+        switch (selectedTab)
         {
-            switch (selectedTab)
-            {
-                case 0:
-                    CurrentViewModel = StatsViewModel;
-                    break;
-                case 1:
-                    CurrentViewModel = CoverageViewModel;
-                    break;
-                case 2:
-                    CurrentViewModel = LaunchViewModel;
-                    break;
-                case 3:
-                    CurrentViewModel = RoiConfigurationViewModel;
-                    break;
-                default:
-                    throw new NotImplementedException($"Unknown tab index {selectedTab}");
-            }
-
-            UpdateProperties();
+            case 0:
+                CurrentViewModel = StatsViewModel;
+                break;
+            case 1:
+                CurrentViewModel = CoverageViewModel;
+                break;
+            case 2:
+                CurrentViewModel = LaunchViewModel;
+                break;
+            case 3:
+                CurrentViewModel = RoiConfigurationViewModel;
+                break;
+            default:
+                throw new NotImplementedException($"Unknown tab index {selectedTab}");
         }
 
-        public void UpdateProperties() =>
-            OnPropertyChanged(nameof(CurrentViewModel));
+        UpdateProperties();
+    }
 
-        private void OnDataLoadedPropertyChanged(object sender, PropertyChangedEventArgs e)
+    public void UpdateProperties() =>
+        OnPropertyChanged(nameof(CurrentViewModel));
+
+    private void OnDataLoadedPropertyChanged(object sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(FunctionalityViewModelBase.DataLoaded))
         {
-            if (e.PropertyName == nameof(FunctionalityViewModelBase.DataLoaded))
-            {
-                UpdateProperties();
-            }
+            UpdateProperties();
         }
     }
 }

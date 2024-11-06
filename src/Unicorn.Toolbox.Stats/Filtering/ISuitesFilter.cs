@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace Unicorn.Toolbox.Stats.Filtering
+namespace Unicorn.Toolbox.Stats.Filtering;
+
+public interface ISuitesFilter
 {
-    public interface ISuitesFilter
-    {
-        List<SuiteInfo> FilterSuites(List<SuiteInfo> suitesInfos);
-    }
+    List<SuiteInfo> FilterSuites(List<SuiteInfo> suitesInfos);
 }

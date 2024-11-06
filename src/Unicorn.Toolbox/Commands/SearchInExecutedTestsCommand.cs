@@ -3,52 +3,51 @@ using System.Linq;
 using Unicorn.Toolbox.Models.Launch;
 using Unicorn.Toolbox.ViewModels;
 
-namespace Unicorn.Toolbox.Commands
+namespace Unicorn.Toolbox.Commands;
+
+public class SearchInExecutedTestsCommand : CommandBase
 {
-    public class SearchInExecutedTestsCommand : CommandBase
+    private readonly LaunchViewModel _viewModel;
+    private readonly LaunchResult _launchResult;
+
+    public SearchInExecutedTestsCommand(
+        LaunchViewModel viewModel, 
+        LaunchResult launchResult)
     {
-        private readonly LaunchViewModel _viewModel;
-        private readonly LaunchResult _launchResult;
+        _viewModel = viewModel;
+        _launchResult = launchResult;
+    }
 
-        public SearchInExecutedTestsCommand(
-            LaunchViewModel viewModel, 
-            LaunchResult launchResult)
+    public override void Execute(object parameter)
+    {
+        ExecutedTestsFilter testsFilter = new ExecutedTestsFilter();
+        IEnumerable<TestResult> results = _launchResult.Executions.SelectMany(exec => exec.TestResults);
+
+        switch (_viewModel.FilterFailsBy)
         {
-            _viewModel = viewModel;
-            _launchResult = launchResult;
+            case FailsFilter.ErrorMessage:
+                testsFilter.FilterByFailMessage(results, _viewModel.FailSearchCriteria, false);
+                break;
+            case FailsFilter.ErrorMessageRegex:
+                testsFilter.FilterByFailMessage(results, _viewModel.FailSearchCriteria, true);
+                break;
+            case FailsFilter.Time:
+                testsFilter.FilterByTime(results, _viewModel.FailSearchCriteria);
+                break;
         }
 
-        public override void Execute(object parameter)
+        _viewModel.Filter = testsFilter;
+
+        IDialogViewModel failedTestsVm = new FailedTestsViewModel
         {
-            ExecutedTestsFilter testsFilter = new ExecutedTestsFilter();
-            IEnumerable<TestResult> results = _launchResult.Executions.SelectMany(exec => exec.TestResults);
+            FailedTests = _viewModel.Filter.FilteredData
+        };
 
-            switch (_viewModel.FilterFailsBy)
-            {
-                case FailsFilter.ErrorMessage:
-                    testsFilter.FilterByFailMessage(results, _viewModel.FailSearchCriteria, false);
-                    break;
-                case FailsFilter.ErrorMessageRegex:
-                    testsFilter.FilterByFailMessage(results, _viewModel.FailSearchCriteria, true);
-                    break;
-                case FailsFilter.Time:
-                    testsFilter.FilterByTime(results, _viewModel.FailSearchCriteria);
-                    break;
-            }
+        DialogHost window = new DialogHost($"Failed tests by error message filter ({_viewModel.Filter.MatchingTestsCount})")
+        {
+            DataContext = new DialogHostViewModel(failedTestsVm)
+        };
 
-            _viewModel.Filter = testsFilter;
-
-            ViewModelBase failedTestsVm = new FailedTestsViewModel
-            {
-                FailedTests = _viewModel.Filter.FilteredData
-            };
-
-            DialogHost window = new DialogHost($"Failed tests by error message filter ({_viewModel.Filter.MatchingTestsCount})")
-            {
-                DataContext = new DialogHostViewModel(failedTestsVm)
-            };
-
-            window.ShowDialog();
-        }
+        window.ShowDialog();
     }
 }

@@ -19,7 +19,7 @@ public class CalculateRoiCommand : CommandBase
 
         RoiForecastViewModel roiForecastVm = new(forecast, _inputs);
 
-        DialogHost window = new DialogHost("ROI forecast: " + _inputs.ToString())
+        DialogHost window = new DialogHost("ROI forecast :: " + _inputs.ToString())
         {
             DataContext = new DialogHostViewModel(roiForecastVm),
             ShowActivated = true

@@ -3,30 +3,29 @@ using System.Linq;
 using System.Runtime.Serialization;
 using Unicorn.Toolbox.Stats;
 
-namespace Unicorn.Toolbox.Models.Coverage
+namespace Unicorn.Toolbox.Models.Coverage;
+
+[DataContract]
+public class CoverageModule : IEqualityComparer<CoverageModule>
 {
-    [DataContract]
-    public class CoverageModule : IEqualityComparer<CoverageModule>
-    {
-        [DataMember(Name = "name")]
-        private string name;
+    [DataMember(Name = "name")]
+    private string name;
 
-        [DataMember(Name = "features")]
-        private List<string> features;
+    [DataMember(Name = "features")]
+    private List<string> features;
 
-        public string Name => name.ToLowerInvariant();
+    public string Name => name.ToLowerInvariant();
 
-        public IEnumerable<string> Features => features.Select(f => f.ToUpperInvariant());
+    public IEnumerable<string> Features => features.Select(f => f.ToUpperInvariant());
 
-        public IEnumerable<SuiteInfo> Suites { get; set; }
+    public IEnumerable<SuiteInfo> Suites { get; set; }
 
-        public bool Equals(CoverageModule x, CoverageModule y) =>
-            x.Name == y.Name;
+    public bool Equals(CoverageModule x, CoverageModule y) =>
+        x.Name == y.Name;
 
-        public int GetHashCode(CoverageModule obj) =>
-            obj.Name.GetHashCode();
+    public int GetHashCode(CoverageModule obj) =>
+        obj.Name.GetHashCode();
 
-        public override string ToString() =>
-            $"Module '{Name}'";
-    }
+    public override string ToString() =>
+        $"Module '{Name}'";
 }

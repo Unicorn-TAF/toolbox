@@ -7,28 +7,28 @@ using Unicorn.Toolbox.Commands;
 using Unicorn.Toolbox.Models.Coverage;
 using Unicorn.Toolbox.Stats;
 
-namespace Unicorn.Toolbox.ViewModels
+namespace Unicorn.Toolbox.ViewModels;
+
+public class CoverageViewModel : FunctionalityViewModelBase
 {
-    public class CoverageViewModel : FunctionalityViewModelBase
-    {
-        private readonly SpecsCoverage _coverage;
-        private readonly StatsCollector _statsCollector;
-        private readonly ObservableCollection<CoverageModuleViewModel> _modulesList;
-        
+    private readonly SpecsCoverage _coverage;
+    private readonly StatsCollector _statsCollector;
+    private readonly ObservableCollection<CoverageModuleViewModel> _modulesList;
+    
         private string runTags;
 
-        public CoverageViewModel(StatsCollector statsCollector)
-        {
-            _coverage = new SpecsCoverage();
-            _statsCollector = statsCollector;
-            _modulesList = new ObservableCollection<CoverageModuleViewModel>();
-            _modulesList.CollectionChanged += OnCollectionChange;
+    public CoverageViewModel(StatsCollector statsCollector)
+    {
+        _coverage = new SpecsCoverage();
+        _statsCollector = statsCollector;
+        _modulesList = new ObservableCollection<CoverageModuleViewModel>();
+        _modulesList.CollectionChanged += OnCollectionChange;
 
-            LoadSpecsCommand = new LoadSpecsCommand(this, _coverage);
-            GetCoverageCommand = new GetCoverageCommand(this, _coverage, _statsCollector);
-        }
+        LoadSpecsCommand = new LoadSpecsCommand(this, _coverage);
+        GetCoverageCommand = new GetCoverageCommand(this, _coverage, _statsCollector);
+    }
 
-        public ObservableCollection<CoverageModuleViewModel> ModulesList => _modulesList;
+    public ObservableCollection<CoverageModuleViewModel> ModulesList => _modulesList;
 
         public string RunTags
         {
@@ -41,35 +41,34 @@ namespace Unicorn.Toolbox.ViewModels
             }
         }
 
-        public override bool CanCustomizeVisualization { get; } = true;
+    public override bool CanCustomizeVisualization { get; } = true;
 
-        public ICommand GetCoverageCommand { get; }
+    public ICommand GetCoverageCommand { get; }
 
-        public ICommand LoadSpecsCommand { get; }
+    public ICommand LoadSpecsCommand { get; }
 
-        public IOrderedEnumerable<KeyValuePair<string, int>> GetVisualizationData()
+    public IOrderedEnumerable<KeyValuePair<string, int>> GetVisualizationData()
+    {
+        Dictionary<string, int> featuresStats = new Dictionary<string, int>();
+
+        foreach (var module in _coverage.Specs.Modules)
         {
-            Dictionary<string, int> featuresStats = new Dictionary<string, int>();
+            IEnumerable<List<TestInfo>> tests = 
+                from SuiteInfo s
+                in module.Suites
+                select s.TestsInfos;
 
-            foreach (var module in _coverage.Specs.Modules)
-            {
-                IEnumerable<List<TestInfo>> tests = 
-                    from SuiteInfo s
-                    in module.Suites
-                    select s.TestsInfos;
-
-                featuresStats.Add(module.Name, tests.Sum(t => t.Count));
-            }
-
-            IOrderedEnumerable<KeyValuePair<string, int>> items = 
-                from pair in featuresStats
-                orderby pair.Value descending
-                select pair;
-
-            return items;
+            featuresStats.Add(module.Name, tests.Sum(t => t.Count));
         }
 
-        private void OnCollectionChange(object sender, NotifyCollectionChangedEventArgs e) =>
-            OnPropertyChanged(nameof(ModulesList));
+        IOrderedEnumerable<KeyValuePair<string, int>> items = 
+            from pair in featuresStats
+            orderby pair.Value descending
+            select pair;
+
+        return items;
     }
+
+    private void OnCollectionChange(object sender, NotifyCollectionChangedEventArgs e) =>
+        OnPropertyChanged(nameof(ModulesList));
 }
