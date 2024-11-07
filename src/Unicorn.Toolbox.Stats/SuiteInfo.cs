@@ -7,7 +7,7 @@ namespace Unicorn.Toolbox.Stats;
 [Serializable]
 public struct SuiteInfo
 {
-    public const string NoTag = "WITHOUT-TAG";
+    public const string NoTag = "[without-tag]";
 
     public SuiteInfo(string suiteName, IEnumerable<string> features, Dictionary<string, string> metadata)
     {

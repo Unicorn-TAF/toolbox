@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows.Input;
 using Unicorn.Toolbox.Commands;
 using Unicorn.Toolbox.Roi;
 using Unicorn.Toolbox.Stats;
 using Unicorn.Toolbox.Visualization;
-using Unicorn.Toolbox.Visualization.Palettes;
 
 namespace Unicorn.Toolbox.ViewModels;
 
@@ -14,9 +14,6 @@ public class MainViewModel : ViewModelBase
 {
     private readonly RoiInputs _roiInputs;
     private int selectedTab;
-        private IPalette currentPalette;
-        private bool fullscreen;
-        private bool circles;
 
     public MainViewModel(StatsCollector statsCollector)
     {
@@ -26,8 +23,8 @@ public class MainViewModel : ViewModelBase
         LaunchViewModel = new LaunchViewModel();
         RoiConfigurationViewModel = new RoiConfigurationViewModel(_roiInputs);
 
-        CurrentVisualizationPalette = new LightGreen();
-        VisualizationPalettes = new List<IPalette>() { CurrentVisualizationPalette, new Orange(), new DeepPurple() };
+        VisualizationPalettes = Palettes.AvailablePalettes;
+        CurrentVisualizationPalette = VisualizationPalettes.First();
         VisualizeCommand = new VisualizeCommand(this);
         CurrentViewModel = StatsViewModel;
 
@@ -58,60 +55,27 @@ public class MainViewModel : ViewModelBase
         }
     }
 
-        public bool FullscreenVisualization
-        {
-            get => fullscreen;
-            set
-            {
-                fullscreen = value;
-                OnPropertyChanged(nameof(FullscreenVisualization));
-            }
-        }
+    [Notify]
+    public bool FullscreenVisualization { get; set; }
 
-        public bool CirclesVisualization
-        {
-            get => circles;
-            set
-            {
-                circles = value;
-                OnPropertyChanged(nameof(CirclesVisualization));
-            }
-        }
-
+    [Notify]
     public IEnumerable<IPalette> VisualizationPalettes { get; }
 
-        public IPalette CurrentVisualizationPalette
-        {
-            get => currentPalette;
-            set
-            {
-                currentPalette = value;
-                OnPropertyChanged(nameof(CurrentVisualizationPalette));
-            }
-        }
+    [Notify]
+    public IPalette CurrentVisualizationPalette { get; set; }
 
     public ICommand VisualizeCommand { get; }
 
     private void TabChanged(int selectedTab)
     {
-        switch (selectedTab)
+        CurrentViewModel = selectedTab switch
         {
-            case 0:
-                CurrentViewModel = StatsViewModel;
-                break;
-            case 1:
-                CurrentViewModel = CoverageViewModel;
-                break;
-            case 2:
-                CurrentViewModel = LaunchViewModel;
-                break;
-            case 3:
-                CurrentViewModel = RoiConfigurationViewModel;
-                break;
-            default:
-                throw new NotImplementedException($"Unknown tab index {selectedTab}");
-        }
-
+            0 => StatsViewModel,
+            1 => CoverageViewModel,
+            2 => LaunchViewModel,
+            3 => RoiConfigurationViewModel,
+            _ => throw new NotImplementedException($"Unknown tab index {selectedTab}"),
+        };
         UpdateProperties();
     }
 

@@ -1,5 +1,11 @@
-﻿using System.Windows.Input;
+﻿using OxyPlot;
+using OxyPlot.Axes;
+using OxyPlot.Series;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Input;
 using Unicorn.Toolbox.Commands;
+using Unicorn.Toolbox.Visualization;
 
 namespace Unicorn.Toolbox.ViewModels;
 
@@ -10,8 +16,39 @@ public class VisualizationViewModel : IDialogViewModel
         ExportVisualizationCommand = new ExportVisualizationCommand();
     }
 
+    public VisualizationViewModel(IOrderedEnumerable<KeyValuePair<string, int>> data, IPalette palette, string title) : this()
+    {
+        BuildPlotModel(data, palette, title);
+        IsStatsVisualization = true;
+    }
+
     [Notify]
-    public bool Exportable { get; set; }
+    public bool IsStatsVisualization { get; set; }
+
+    public PlotModel VisualizationPlotModel { get; set; }
 
     public ICommand ExportVisualizationCommand { get; }
+
+    private void BuildPlotModel(IOrderedEnumerable<KeyValuePair<string, int>> data, IPalette palette, string title)
+    {
+        VisualizationPlotModel = new PlotModel
+        {
+            Title = title,
+        };
+
+        BarSeries barSeries = new()
+        {
+            ItemsSource = data.Reverse().Select(x => new BarItem { Value = x.Value, Color = palette.MainColor }).ToList(),
+        };
+
+        VisualizationPlotModel.Series.Add(barSeries);
+
+        VisualizationPlotModel.Axes.Add(new CategoryAxis
+        {
+            Position = AxisPosition.Left,
+            ItemsSource = data.Select(p => p.Key).ToArray()
+        });
+
+        VisualizationPlotModel.SelectionColor = OxyColors.Black;
+    }
 }

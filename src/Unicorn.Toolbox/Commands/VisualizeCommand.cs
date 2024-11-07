@@ -22,11 +22,11 @@ public class VisualizeCommand : CommandBase
     {
         if (_viewModel.CurrentViewModel is StatsViewModel stats)
         {
-            VisualizeStatistics(stats);
+            VisualizeStatistics(stats, _viewModel.CurrentVisualizationPalette);
         } 
         else if (_viewModel.CurrentViewModel is CoverageViewModel coverage)
         {
-            VisualizeCoverage(coverage);
+            VisualizeCoverage(coverage, _viewModel.CurrentVisualizationPalette);
         }
         else
         {
@@ -34,40 +34,35 @@ public class VisualizeCommand : CommandBase
         }
     }
 
-    private void VisualizeStatistics(StatsViewModel stats)
+    private void VisualizeStatistics(StatsViewModel stats, IPalette palette)
     {
-        var data = stats.GetVisualizationData();
-
-        DialogHost visualization = GetVisualizationDialog(
-            $"Overall tests statistics :: {stats.CurrentFilter.FilterName}", !_viewModel.CirclesVisualization);
-
-        if (_viewModel.CirclesVisualization)
-        {
-            new VisualizerCircles(GetCanvasFrom(visualization), _viewModel.CurrentVisualizationPalette)
-                .VisualizeData(data);
-        }
-        else
-        {
-            new VisualizerBars(GetCanvasFrom(visualization), _viewModel.CurrentVisualizationPalette)
-                .VisualizeData(data);
-        }
+        string title = $"Overall tests statistics :: {stats.CurrentFilter.FilterName}";
+        VisualizationViewModel visualizationVm = new(stats.GetVisualizationData(), palette, title);
+        ShowChartVisualizationDialog(title, visualizationVm);
     }
 
-    private void VisualizeCoverage(CoverageViewModel coverage)
+    private void VisualizeCoverage(CoverageViewModel coverage, IPalette palette)
     {
-        var vizData = coverage.GetVisualizationData();
-        DialogHost visualization = GetVisualizationDialog("Modules coverage by tests", !_viewModel.CirclesVisualization);
+        string title = "Modules coverage by tests";
+        VisualizationViewModel visualizationVm = new(coverage.GetVisualizationData(), palette, title);
+        ShowChartVisualizationDialog(title, visualizationVm);
+    }
 
-        if (_viewModel.CirclesVisualization)
+    private void ShowChartVisualizationDialog(string title, VisualizationViewModel visualizationVm)
+    {
+        DialogHost window = new(title)
         {
-            new VisualizerCircles(GetCanvasFrom(visualization), _viewModel.CurrentVisualizationPalette)
-                .VisualizeData(vizData);
-        }
-        else
+            DataContext = new DialogHostViewModel(visualizationVm),
+            ShowActivated = true,
+            ResizeMode = ResizeMode.CanResize
+        };
+
+        if (_viewModel.FullscreenVisualization)
         {
-            new VisualizerBars(GetCanvasFrom(visualization), _viewModel.CurrentVisualizationPalette)
-                .VisualizeData(vizData);
+            window.WindowState = WindowState.Maximized;
         }
+
+        window.Show();
     }
 
     private void VisualizeResults(LaunchViewModel launchResults)
@@ -79,11 +74,11 @@ public class VisualizeCommand : CommandBase
             .Visualize();
     }
 
-    private DialogHost GetVisualizationDialog(string title, bool exportable)
+    private DialogHost GetVisualizationDialog(string title, bool statsVisualization)
     {
         VisualizationViewModel visualizationVm = new VisualizationViewModel
         {
-            Exportable = exportable
+            IsStatsVisualization = statsVisualization
         };
 
         var visualization = new DialogHost(title)
@@ -105,7 +100,7 @@ public class VisualizeCommand : CommandBase
         return visualization;
     }
 
-    public Canvas GetCanvasFrom(DependencyObject depObj)
+    private static Canvas GetCanvasFrom(DependencyObject depObj)
     {
         if (depObj == null)
         {

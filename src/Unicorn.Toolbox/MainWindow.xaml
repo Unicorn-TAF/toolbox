@@ -23,18 +23,17 @@
             </TabItem>
         </TabControl>
         <GroupBox x:Name="groupBoxVisualization" Header="Visualization" IsEnabled="{Binding CurrentViewModel.DataLoaded}" VerticalAlignment="Top" HorizontalAlignment="Right">
-            <UniformGrid Columns="4" Rows="1" Margin="5,5,5,5">
+            <UniformGrid Columns="3" Rows="1" Margin="5,5,5,5">
+                <CheckBox x:Name="checkBoxFullscreen" Content="Fullscreen" IsChecked="{Binding FullscreenVisualization}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 <ComboBox x:Name="comboBoxPalette" HorizontalAlignment="Left" Width="100" Height="22" FontSize="12" 
                           VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="0,0,0,0"
                           ItemsSource="{Binding VisualizationPalettes}" SelectedItem="{Binding CurrentVisualizationPalette}" IsEnabled="{Binding CurrentViewModel.CanCustomizeVisualization}">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
-                            <ListViewItem Content="{Binding Name}" Foreground="{Binding MainColor}"/>
+                            <ListViewItem Content="{Binding Name}"/>
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
-                <CheckBox x:Name="checkBoxModern" Content="Circles" IsChecked="{Binding CirclesVisualization}" IsEnabled="{Binding CurrentViewModel.CanCustomizeVisualization}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <CheckBox x:Name="checkBoxFullscreen" Content="Fullscreen" IsChecked="{Binding FullscreenVisualization}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 <Button x:Name="buttonVisualize" Content="Visualize" Width="80" Height="22" Command="{Binding VisualizeCommand}" HorizontalAlignment="Right"/>
             </UniformGrid>
         </GroupBox>
