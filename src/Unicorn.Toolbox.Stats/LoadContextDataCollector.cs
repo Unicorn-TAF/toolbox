@@ -6,7 +6,7 @@ using Unicorn.Taf.Core.Testing;
 
 namespace Unicorn.Toolbox.Stats;
 
-public class LoadContextDataCollector : IDataCollector
+public sealed class LoadContextDataCollector : IDataCollector
 {
     private readonly bool _considerParameterization;
 

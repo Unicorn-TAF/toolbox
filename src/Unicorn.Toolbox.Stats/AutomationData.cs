@@ -8,7 +8,7 @@ using Unicorn.Toolbox.Stats.Filtering;
 namespace Unicorn.Toolbox.Stats;
 
 [Serializable]
-public class AutomationData : IOutcome
+public sealed class AutomationData : IOutcome
 {
     public AutomationData()
     {

@@ -24,7 +24,7 @@
             <oxy:PlotView x:Name="visualizationPlot" Model="{Binding VisualizationPlotModel}" Background="White" Foreground="White" PanCursor="Cross"/>
             <Button Content="Export" Width="60" Height="22" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,10,10,0"
                 Command="{Binding ExportVisualizationCommand}" 
-                CommandParameter="{Binding ElementName=canvasVisualization}"/>
+                CommandParameter="{Binding ElementName=visualizationPlot}"/>
         </Grid>
         
     </Grid>

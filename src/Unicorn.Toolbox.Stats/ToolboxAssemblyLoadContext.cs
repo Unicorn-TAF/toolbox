@@ -11,7 +11,7 @@ namespace Unicorn.Toolbox.Stats;
 /// <summary>
 /// Provides with ability to manipulate with Unicorn test assembly in dedicated <see cref="AssemblyLoadContext"/>
 /// </summary>
-public class StatsAssemblyLoadContext : AssemblyLoadContext
+public sealed class StatsAssemblyLoadContext : AssemblyLoadContext
 {
     private readonly string _assemblyDirectory;
     private readonly List<Assembly> _loadedAssemblies;

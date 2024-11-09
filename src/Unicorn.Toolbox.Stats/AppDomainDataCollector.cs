@@ -6,7 +6,7 @@ using Unicorn.Taf.Core.Testing;
 namespace Unicorn.Toolbox.Stats;
 
 #pragma warning disable S3885 // "Assembly.Load" should be used
-public class AppDomainDataCollector : MarshalByRefObject
+public sealed class AppDomainDataCollector : MarshalByRefObject
 {
     public AutomationData GetTestsStatistics(string assemblyPath, bool considerParameterization)
     {

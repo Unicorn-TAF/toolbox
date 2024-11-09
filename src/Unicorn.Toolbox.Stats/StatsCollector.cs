@@ -12,7 +12,7 @@ using Unicorn.Taf.Api;
 
 namespace Unicorn.Toolbox.Stats;
 
-public class StatsCollector
+public sealed class StatsCollector
 {
     private string _assemblyFile;
     private bool _considerParameterization;
