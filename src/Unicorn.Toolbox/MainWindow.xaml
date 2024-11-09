@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Unicorn.Toolbox" 
         xmlns:views="clr-namespace:Unicorn.Toolbox.Views"
         mc:Ignorable="d"
-        Title="Unicorn toolbox" Height="750" Width="1200" MinHeight="750" MinWidth="1200" WindowStartupLocation="CenterScreen" Icon="app.ico">
+        Title="Unicorn toolbox" Height="750" Width="1200" MinHeight="750" MinWidth="1200" WindowStartupLocation="CenterScreen">
     <Grid>
         <TabControl x:Name="tabControl" Margin="0,35,0,25" SelectedIndex="{Binding SelectedTab}">
             <TabItem x:Name="tabStatistics" Header="Tests statistics" Width="100">

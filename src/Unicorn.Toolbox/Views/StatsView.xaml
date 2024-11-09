@@ -37,7 +37,7 @@
                 <DataGridTemplateColumn Header="Test Suite" Width="2*" ClipboardContentBinding="{Binding Name}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <DataGridCell Content="{Binding Name}">
+                            <DataGridCell Content="{Binding Name}" VerticalAlignment="Center">
                                 <DataGridCell.InputBindings>
                                     <MouseBinding
                                         MouseAction="LeftDoubleClick"
@@ -58,7 +58,7 @@
                 <DataGridTemplateColumn Header="Metadata" Width="2*" ClipboardContentBinding="{Binding Metadata, Converter={StaticResource DictionaryToStringConverter}}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <DataGridCell Content="{Binding Metadata, Converter={StaticResource DictionaryToStringConverter}}" />
+                            <DataGridCell Content="{Binding Metadata, Converter={StaticResource DictionaryToStringConverter}}" VerticalAlignment="Center"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
