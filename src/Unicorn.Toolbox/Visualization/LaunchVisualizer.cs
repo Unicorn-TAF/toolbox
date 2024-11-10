@@ -45,15 +45,17 @@ public class LaunchVisualizer
     private Rectangle _currentSuite;
     private bool _newSuite = false;
 
+    private readonly double _pixelsPerDip;
+
     public LaunchVisualizer(Canvas canvas, List<Execution> resultsList)
     {
         _canvas = canvas;
         _canvas.Height = Math.Max(canvas.RenderSize.Height, resultsList.Count * (MinBarHeight + Margin) + Margin);
         _resultsList = resultsList;
 
-#pragma warning disable S2245 // Using pseudorandom number generators (PRNGs) is security-sensitive
+        _pixelsPerDip = VisualTreeHelper.GetDpi(new Button()).PixelsPerDip;
+
         _random = new Random();
-#pragma warning restore S2245 // Using pseudorandom number generators (PRNGs) is security-sensitive
         _backColor = Brushes.White;
         _fontColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#111"));
 
@@ -102,7 +104,7 @@ public class LaunchVisualizer
             _currentStamp.FontSize,
             _currentStamp.Foreground,
             new NumberSubstitution(),
-            TextFormattingMode.Display)
+            _pixelsPerDip)
             .Width;
     }
 
@@ -164,9 +166,11 @@ public class LaunchVisualizer
         {
             _newSuite = false;
 
-            var brush = new SolidColorBrush();
-            brush.Opacity = 0.3;
-            brush.Color = _currentBrush.Color;
+            SolidColorBrush brush = new()
+            {
+                Opacity = 0.3,
+                Color = _currentBrush.Color
+            };
 
             _currentSuite = new Rectangle
             {
@@ -207,11 +211,13 @@ public class LaunchVisualizer
 
     private void DrawText(string text, double x, double y, bool rightAligned)
     {
-        var label = new TextBlock();
-        label.Text = text;
-        label.TextAlignment = TextAlignment.Center;
-        label.FontFamily = new FontFamily("Calibri");
-        label.FontSize = 15;
+        TextBlock label = new()
+        {
+            Text = text,
+            TextAlignment = TextAlignment.Center,
+            FontFamily = new FontFamily("Calibri"),
+            FontSize = 15
+        };
 
         var formattedText = new FormattedText(
             label.Text,
@@ -221,7 +227,7 @@ public class LaunchVisualizer
             label.FontSize,
             label.Foreground,
             new NumberSubstitution(),
-            TextFormattingMode.Display);
+            _pixelsPerDip);
 
         label.Foreground = _fontColor;
 

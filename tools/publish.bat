@@ -6,6 +6,6 @@ set PROJ_PATH=%cd%\..\src\Unicorn.Toolbox\Unicorn.Toolbox.csproj
 
 for %%v in (net462, net6.0-windows) do (
 	dotnet publish %PROJ_PATH% --configuration Release --framework %%v --output %OUT_DIR%\%%v -p:VersionPrefix=%VERSION%
-	del %OUT_DIR%\net462\AspectInjector.Broker.dll
+	del %OUT_DIR%\%%v\AspectInjector.Broker.dll
 )
 

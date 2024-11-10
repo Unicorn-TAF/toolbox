@@ -21,11 +21,11 @@ public sealed class StatsCollector
     {
     }
 
-    public AutomationData Data { get; protected set; }
+    public AutomationData Data { get; private set; }
 
-    public string AssemblyFile { get; protected set; }
+    public string AssemblyFile { get; private set; }
 
-    public string AssemblyProps { get; protected set; }
+    public string AssemblyProps { get; private set; }
 
     [MethodImpl(MethodImplOptions.NoInlining)]
     public void GetTestsStatistics(string fileName, bool considerParameterization)
