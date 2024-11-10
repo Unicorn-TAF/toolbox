@@ -67,25 +67,13 @@ public class VisualizeCommand : CommandBase
 
     private void VisualizeResults(LaunchViewModel launchResults)
     {
-        DialogHost visualization = GetVisualizationDialog("Launch visualization", false);
-        List<Execution> executions = launchResults.ExecutionsList.Cast<Execution>().ToList();
+        VisualizationViewModel visualizationVm = new();
 
-        new LaunchVisualizer(GetCanvasFrom(visualization), executions)
-            .Visualize();
-    }
-
-    private DialogHost GetVisualizationDialog(string title, bool statsVisualization)
-    {
-        VisualizationViewModel visualizationVm = new VisualizationViewModel
-        {
-            IsStatsVisualization = statsVisualization
-        };
-
-        var visualization = new DialogHost(title)
+        DialogHost visualization = new("Launch visualization")
         {
             DataContext = new DialogHostViewModel(visualizationVm),
         };
-        
+
         if (_viewModel.FullscreenVisualization)
         {
             visualization.WindowState = WindowState.Maximized;
@@ -97,7 +85,10 @@ public class VisualizeCommand : CommandBase
 
         visualization.Show();
 
-        return visualization;
+        List<Execution> executions = launchResults.ExecutionsList.Cast<Execution>().ToList();
+
+        new LaunchVisualizer(GetCanvasFrom(visualization), executions)
+            .Visualize();
     }
 
     private static Canvas GetCanvasFrom(DependencyObject depObj)

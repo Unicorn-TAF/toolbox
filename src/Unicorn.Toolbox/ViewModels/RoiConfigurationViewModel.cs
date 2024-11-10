@@ -8,9 +8,9 @@ public class RoiConfigurationViewModel : FunctionalityViewModelBase
 {
     private readonly RoiInputs _config;
 
-    public RoiConfigurationViewModel(RoiInputs config)
+    public RoiConfigurationViewModel()
     {
-        _config = config;
+        _config = new RoiInputs();
         ManualTestExecutionMins = _config.ManualTestExecutionHrs * 60;
         CalculateRoiCommand = new CalculateRoiCommand(_config);
     }

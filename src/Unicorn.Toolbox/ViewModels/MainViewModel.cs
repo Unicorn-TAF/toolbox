@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Input;
 using Unicorn.Toolbox.Commands;
-using Unicorn.Toolbox.Roi;
 using Unicorn.Toolbox.Stats;
 using Unicorn.Toolbox.Visualization;
 
@@ -12,16 +11,15 @@ namespace Unicorn.Toolbox.ViewModels;
 
 public class MainViewModel : ViewModelBase
 {
-    private readonly RoiInputs _roiInputs;
-    private int selectedTab;
+    private readonly StatsCollector _statsCollector;
 
-    public MainViewModel(StatsCollector statsCollector)
+    public MainViewModel()
     {
-        _roiInputs = new RoiInputs();
-        StatsViewModel = new StatsViewModel(statsCollector);
-        CoverageViewModel = new CoverageViewModel(statsCollector);
+        _statsCollector = new StatsCollector();
+        StatsViewModel = new StatsViewModel(_statsCollector);
+        CoverageViewModel = new CoverageViewModel(_statsCollector);
         LaunchViewModel = new LaunchViewModel();
-        RoiConfigurationViewModel = new RoiConfigurationViewModel(_roiInputs);
+        RoiConfigurationViewModel = new RoiConfigurationViewModel();
 
         VisualizationPalettes = Palettes.AvailablePalettes;
         CurrentVisualizationPalette = VisualizationPalettes.First();
@@ -41,19 +39,12 @@ public class MainViewModel : ViewModelBase
 
     public FunctionalityViewModelBase RoiConfigurationViewModel { get; set; }
 
+    [Notify]
     public FunctionalityViewModelBase CurrentViewModel { get; set; }
 
-    public int SelectedTab
-    {
-        get => selectedTab;
-
-        set
-        {
-            selectedTab = value;
-            OnPropertyChanged(nameof(SelectedTab));
-            TabChanged(selectedTab);
-        }
-    }
+    [Notify]
+    [CallAlso(nameof(TabChanged))]
+    public int SelectedTab { get; set; }
 
     [Notify]
     public bool FullscreenVisualization { get; set; }
@@ -66,27 +57,23 @@ public class MainViewModel : ViewModelBase
 
     public ICommand VisualizeCommand { get; }
 
-    private void TabChanged(int selectedTab)
+    private void TabChanged()
     {
-        CurrentViewModel = selectedTab switch
+        CurrentViewModel = SelectedTab switch
         {
             0 => StatsViewModel,
             1 => CoverageViewModel,
             2 => LaunchViewModel,
             3 => RoiConfigurationViewModel,
-            _ => throw new NotImplementedException($"Unknown tab index {selectedTab}"),
+            _ => throw new NotImplementedException($"Unknown tab index {SelectedTab}"),
         };
-        UpdateProperties();
     }
-
-    public void UpdateProperties() =>
-        OnPropertyChanged(nameof(CurrentViewModel));
 
     private void OnDataLoadedPropertyChanged(object sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(FunctionalityViewModelBase.DataLoaded))
         {
-            UpdateProperties();
+            TabChanged();
         }
     }
 }

@@ -2,6 +2,7 @@
 using System;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 
 namespace Unicorn.Toolbox;
 
@@ -19,6 +20,13 @@ public class NotifyAlsoAttribute : Attribute
     public string[] NotifyAlso { get; }
 }
 
+[AttributeUsage(AttributeTargets.Property)]
+[Injection(typeof(NotifyAspect))]
+public class CallAlsoAttribute : Attribute
+{
+    public CallAlsoAttribute(params string[] callAlso) => CallAlsoMethod = callAlso;
+    public string[] CallAlsoMethod { get; }
+}
 
 [Mixin(typeof(INotifyPropertyChanged))]
 [Aspect(Scope.Global)]
@@ -37,7 +45,13 @@ public class NotifyAspect : INotifyPropertyChanged
             PropertyChanged(source, new PropertyChangedEventArgs(propName));
 
         foreach (var attr in triggers.OfType<NotifyAlsoAttribute>())
-            foreach (var additional in attr.NotifyAlso ?? new string[] { })
+            foreach (var additional in attr.NotifyAlso ?? Array.Empty<string>())
                 PropertyChanged(source, new PropertyChangedEventArgs(additional));
+
+        foreach (var attr in triggers.OfType<CallAlsoAttribute>())
+            foreach (var additional in attr.CallAlsoMethod ?? Array.Empty<string>())
+                source.GetType()
+                    .GetMethod(additional, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                    .Invoke(source, Array.Empty<object>());
     }
 }
