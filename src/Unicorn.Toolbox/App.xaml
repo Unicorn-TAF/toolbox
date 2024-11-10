@@ -4,6 +4,22 @@
              xmlns:local="clr-namespace:Unicorn.Toolbox">
     <Application.Resources>
         <ResourceDictionary>
+            <Style x:Key="StackPanelStyle" TargetType="{x:Type StackPanel}">
+                <Setter Property="Orientation" Value="Horizontal" />
+                <Setter Property="HorizontalAlignment" Value="Right" />
+            </Style>
+            <Style x:Key="LabelStyle" TargetType="{x:Type Label}">
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="HorizontalAlignment" Value="Right" />
+            </Style>
+            <Style x:Key="TextBoxStyle" TargetType="{x:Type TextBox}">
+                <Setter Property="Height" Value="22" />
+                <Setter Property="Width" Value="50" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="HorizontalContentAlignment" Value="Center" />
+                <Setter Property="HorizontalAlignment" Value="Left" />
+            </Style>
+            
             <Style TargetType="{x:Type DataGridCell}">
                 <Style.Triggers>
                     <Trigger Property="DataGridCell.IsSelected" Value="True">
@@ -13,10 +29,13 @@
                 </Style.Triggers>
             </Style>
             <Style x:Key="WrappedColumnHeaderStyle" TargetType="{x:Type DataGridColumnHeader}">
+                <Setter Property="HorizontalAlignment" Value="Center" />
+                <Setter Property="BorderBrush" Value="Transparent" />
+                <Setter Property="Margin" Value="0,0,0,0" />
                 <Setter Property="ContentTemplate">
                     <Setter.Value>
                         <DataTemplate>
-                            <TextBlock TextWrapping="Wrap" Text="{Binding}"></TextBlock>
+                            <TextBlock TextWrapping="Wrap" TextAlignment="Center" Text="{Binding}"/>
                         </DataTemplate>
                     </Setter.Value>
                 </Setter>

@@ -2,35 +2,34 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Unicorn.Toolbox.Stats
+namespace Unicorn.Toolbox.Stats;
+
+[Serializable]
+public struct SuiteInfo
 {
-    [Serializable]
-    public struct SuiteInfo
+    public const string NoTag = "[without-tag]";
+
+    public SuiteInfo(string suiteName, IEnumerable<string> features, Dictionary<string, string> metadata)
     {
-        public const string NoTag = "<NO TAG>";
+        Name = suiteName;
+        TestsInfos = new List<TestInfo>();
+        Tags = new List<string>(features);
+        Metadata = metadata;
 
-        public SuiteInfo(string suiteName, IEnumerable<string> features, Dictionary<string, string> metadata)
+        if (!Tags.Any())
         {
-            Name = suiteName;
-            TestsInfos = new List<TestInfo>();
-            Tags = new List<string>(features);
-            Metadata = metadata;
-
-            if (!Tags.Any())
-            {
-                Tags.Add(NoTag);
-            }
+            Tags.Add(NoTag);
         }
-
-        public string Name { get; }
-
-        public List<TestInfo> TestsInfos { get; set; }
-
-        public List<string> Tags { get; }
-
-        public Dictionary<string, string> Metadata { get; }
-
-        public void SetTestInfo(List<TestInfo> newInfos) =>
-            TestsInfos = newInfos;
     }
+
+    public string Name { get; }
+
+    public List<TestInfo> TestsInfos { get; set; }
+
+    public List<string> Tags { get; }
+
+    public Dictionary<string, string> Metadata { get; }
+
+    public void SetTestInfo(List<TestInfo> newInfos) =>
+        TestsInfos = newInfos;
 }

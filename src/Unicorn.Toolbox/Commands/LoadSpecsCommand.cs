@@ -7,60 +7,59 @@ using System.Text;
 using Unicorn.Toolbox.Models.Coverage;
 using Unicorn.Toolbox.ViewModels;
 
-namespace Unicorn.Toolbox.Commands
+namespace Unicorn.Toolbox.Commands;
+
+public class LoadSpecsCommand : CommandBase
 {
-    public class LoadSpecsCommand : CommandBase
+    private readonly CoverageViewModel _viewModel;
+    private readonly SpecsCoverage _coverage;
+
+    public LoadSpecsCommand(CoverageViewModel viewModel, SpecsCoverage coverage)
     {
-        private readonly CoverageViewModel _viewModel;
-        private readonly SpecsCoverage _coverage;
+        _viewModel = viewModel;
+        _coverage = coverage;
+    }
 
-        public LoadSpecsCommand(CoverageViewModel viewModel, SpecsCoverage coverage)
+    public override void Execute(object parameter)
+    {
+        OpenFileDialog openFileDialog = new OpenFileDialog
         {
-            _viewModel = viewModel;
-            _coverage = coverage;
-        }
+            Filter = "Application specs|*.json"
+        };
 
-        public override void Execute(object parameter)
+        if (openFileDialog.ShowDialog().Value)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog
+            string specsFile = openFileDialog.FileName;
+
+            _coverage.ReadSpecs(specsFile);
+            _viewModel.GetCoverageCommand.Execute(null);
+
+            foreach (CoverageModuleViewModel module in _viewModel.ModulesList)
             {
-                Filter = "Application specs|*.json"
-            };
-
-            if (openFileDialog.ShowDialog().Value)
-            {
-                string specsFile = openFileDialog.FileName;
-
-                _coverage.ReadSpecs(specsFile);
-                _viewModel.GetCoverageCommand.Execute(null);
-
-                foreach (CoverageModuleViewModel module in _viewModel.ModulesList)
-                {
-                    module.PropertyChanged += new PropertyChangedEventHandler(OnCheckboxCheck);
-                }
-
-                StringBuilder status = new StringBuilder();
-
-                status.AppendFormat("specs {0} were loaded >> ", Path.GetFileName(specsFile))
-                    .AppendFormat("name: {0}  |  ", _coverage.Specs.Name)
-                    .AppendFormat("modules: {0}", _coverage.Specs.Modules.Count);
-
-                _viewModel.Status = status.ToString();
-                _viewModel.DataLoaded = true;
+                module.PropertyChanged += new PropertyChangedEventHandler(OnCheckboxCheck);
             }
 
+            StringBuilder status = new StringBuilder();
+
+            status.AppendFormat("specs {0} were loaded >> ", Path.GetFileName(specsFile))
+                .AppendFormat("name: {0}  |  ", _coverage.Specs.Name)
+                .AppendFormat("modules: {0}", _coverage.Specs.Modules.Count);
+
+            _viewModel.Status = status.ToString();
+            _viewModel.DataLoaded = true;
         }
 
-        private void OnCheckboxCheck(object sender, PropertyChangedEventArgs e)
-        {
-            IEnumerable<string> runTags =
-                _viewModel.ModulesList
-                .Where(m => m.Selected)
-                .SelectMany(m => m.Features)
-                .Select(f => f.ToLowerInvariant())
-                .Distinct();
+    }
 
-            _viewModel.RunTags = "#" + string.Join(" #", runTags);
-        }
+    private void OnCheckboxCheck(object sender, PropertyChangedEventArgs e)
+    {
+        IEnumerable<string> runTags =
+            _viewModel.ModulesList
+            .Where(m => m.Selected)
+            .SelectMany(m => m.Features)
+            .Select(f => f.ToLowerInvariant())
+            .Distinct();
+
+        _viewModel.RunTags = "#" + string.Join(" #", runTags);
     }
 }

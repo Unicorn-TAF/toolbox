@@ -1,9 +1,8 @@
-﻿namespace Unicorn.Toolbox.Stats.Filtering
+﻿namespace Unicorn.Toolbox.Stats.Filtering;
+
+public enum FilterType
 {
-    public enum FilterType
-    {
-        Tag,
-        Category,
-        Author
-    }
+    Tag,
+    Category,
+    Author
 }

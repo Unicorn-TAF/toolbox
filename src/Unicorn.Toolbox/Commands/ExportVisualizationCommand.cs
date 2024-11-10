@@ -1,36 +1,38 @@
 ﻿using Microsoft.Win32;
+using OxyPlot.Axes;
+using OxyPlot.Series;
+using OxyPlot.Wpf;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Windows.Controls;
 
-namespace Unicorn.Toolbox.Commands
+namespace Unicorn.Toolbox.Commands;
+
+public class ExportVisualizationCommand : CommandBase
 {
-    public class ExportVisualizationCommand : CommandBase
+    public override void Execute(object parameter)
     {
-        public override void Execute(object parameter)
+        const string delimiter = ",";
+        var saveDialog = new SaveFileDialog
         {
-            const string delimiter = ",";
-            var saveDialog = new SaveFileDialog
+            Filter = "Csv files|*.csv"
+        };
+
+        if (saveDialog.ShowDialog().Value)
+        {
+            var csv = new StringBuilder();
+
+            PlotView plotView = parameter as PlotView;
+
+            double[] values = (plotView.ActualModel.Series[0] as BarSeries).ActualItems.Select(i => i.Value).ToArray();
+            string[] keys = (plotView.ActualModel.Axes[0] as CategoryAxis).ItemsSource.Cast<string>().ToArray();
+
+            for (int i = 0; i < keys.Length; i++)
             {
-                Filter = "Csv files|*.csv"
-            };
-
-            if (saveDialog.ShowDialog().Value)
-            {
-                var csv = new StringBuilder();
-
-                foreach (var children in (parameter as Canvas).Children)
-                {
-                    if (children is TextBlock block)
-                    {
-                        var pair = block.Text.Split(':').Select(p => p.Trim());
-                        csv.AppendLine(string.Join(delimiter, pair));
-                    }
-                }
-
-                File.WriteAllText(saveDialog.FileName, csv.ToString());
+                csv.Append(keys[i]).Append(delimiter).Append(values[i]).AppendLine();
             }
+
+            File.WriteAllText(saveDialog.FileName, csv.ToString());
         }
     }
 }

@@ -1,22 +1,21 @@
-﻿namespace Unicorn.Toolbox.ViewModels
+﻿namespace Unicorn.Toolbox.ViewModels;
+
+public class FunctionalityViewModelBase : ViewModelBase
 {
-    public class FunctionalityViewModelBase : ViewModelBase
+    private bool dataLoaded;
+
+    public bool DataLoaded
     {
-        private bool dataLoaded;
+        get => dataLoaded;
 
-        public bool DataLoaded
+        set
         {
-            get => dataLoaded;
-
-            set
-            {
-                dataLoaded = value;
-                OnPropertyChanged(nameof(DataLoaded));
-            }
+            dataLoaded = value;
+            OnPropertyChanged(nameof(DataLoaded));
         }
-
-        public string Status { get; set; } = string.Empty;
-
-        public virtual bool CanCustomizeVisualization { get; }
     }
+
+    public string Status { get; set; } = string.Empty;
+
+    public virtual bool CanCustomizeVisualization { get; }
 }

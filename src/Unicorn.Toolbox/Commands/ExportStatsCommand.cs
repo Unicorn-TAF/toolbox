@@ -3,58 +3,57 @@ using System.IO;
 using System.Text;
 using Unicorn.Toolbox.Stats;
 
-namespace Unicorn.Toolbox.Commands
+namespace Unicorn.Toolbox.Commands;
+
+public class ExportStatsCommand : CommandBase
 {
-    public class ExportStatsCommand : CommandBase
+    private readonly StatsCollector _analyzer;
+
+    public ExportStatsCommand(StatsCollector analyzer)
     {
-        private readonly StatsCollector _analyzer;
+        _analyzer = analyzer;
+    }
 
-        public ExportStatsCommand(StatsCollector analyzer)
+    public override void Execute(object parameter)
+    {
+        const string delimiter = ",";
+
+        char[] chars = { '\t', '\r', '\n', '\"', ',' };
+
+        var saveDialog = new SaveFileDialog
         {
-            _analyzer = analyzer;
-        }
+            Filter = "Csv files|*.csv"
+        };
 
-        public override void Execute(object parameter)
+        if (saveDialog.ShowDialog().Value)
         {
-            const string delimiter = ",";
+            var csv = new StringBuilder();
 
-            char[] chars = { '\t', '\r', '\n', '\"', ',' };
+            csv.AppendLine(string.Join(delimiter, "Suite", "Test", "Author", "Tags", "Categories", "Disabled"));
 
-            var saveDialog = new SaveFileDialog
+            foreach (var suite in _analyzer.Data.FilteredInfo)
             {
-                Filter = "Csv files|*.csv"
-            };
+                var tags = string.Join("#", suite.Tags).ToLowerInvariant();
+                
+                var suiteName = suite.Name.IndexOfAny(chars) >= 0 ? 
+                    '\"' + suite.Name.Replace("\"", "\"\"") + '\"' : 
+                    suite.Name;
 
-            if (saveDialog.ShowDialog().Value)
-            {
-                var csv = new StringBuilder();
-
-                csv.AppendLine(string.Join(delimiter, "Suite", "Test", "Author", "Tags", "Categories", "Disabled"));
-
-                foreach (var suite in _analyzer.Data.FilteredInfo)
+                foreach (var test in suite.TestsInfos)
                 {
-                    var tags = string.Join("#", suite.Tags).ToLowerInvariant();
-                    
-                    var suiteName = suite.Name.IndexOfAny(chars) >= 0 ? 
-                        '\"' + suite.Name.Replace("\"", "\"\"") + '\"' : 
-                        suite.Name;
+                    var disabled = test.Disabled ? "Y" : "N";
+                    var categories = string.Join("#", test.Categories).ToLowerInvariant();
 
-                    foreach (var test in suite.TestsInfos)
-                    {
-                        var disabled = test.Disabled ? "Y" : "N";
-                        var categories = string.Join("#", test.Categories).ToLowerInvariant();
+                    var testName = test.Name.IndexOfAny(chars) >= 0 ? 
+                        '\"' + test.Name.Replace("\"", "\"\"") + '\"' : 
+                        test.Name;
 
-                        var testName = test.Name.IndexOfAny(chars) >= 0 ? 
-                            '\"' + test.Name.Replace("\"", "\"\"") + '\"' : 
-                            test.Name;
-
-                        csv.AppendLine(string.Join(
-                            delimiter, suiteName, testName, test.Author, tags, categories, disabled));
-                    }
+                    csv.AppendLine(string.Join(
+                        delimiter, suiteName, testName, test.Author, tags, categories, disabled));
                 }
-
-                File.WriteAllText(saveDialog.FileName, csv.ToString());
             }
+
+            File.WriteAllText(saveDialog.FileName, csv.ToString());
         }
     }
 }

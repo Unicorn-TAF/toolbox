@@ -3,34 +3,33 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Windows.Data;
 
-namespace Unicorn.Toolbox.Converters
+namespace Unicorn.Toolbox.Converters;
+
+public class ArrayToStringConverter : IValueConverter
 {
-    public class ArrayToStringConverter : IValueConverter
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        string delimiter = (string)parameter;
+
+        if (value is IEnumerable<string> ienumerable)
         {
-            string delimiter = (string)parameter;
+            string result = string.Join(delimiter, ienumerable);
 
-            if (value is IEnumerable<string> ienumerable)
+            if (delimiter.Trim() == "#")
             {
-                string result = string.Join(delimiter, ienumerable);
-
-                if (delimiter.Trim() == "#")
-                {
-                    result = "#" + result;
-                }
-
-                return result.ToLowerInvariant();
+                result = "#" + result;
             }
-            else
-            {
-                return string.Empty;
-            }
+
+            return result.ToLowerInvariant();
         }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        else
         {
-            throw new NotImplementedException();
+            return string.Empty;
         }
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        throw new NotImplementedException();
     }
 }

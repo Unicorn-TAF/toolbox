@@ -5,55 +5,54 @@ using System.Windows;
 using Unicorn.Toolbox.Models.Launch;
 using Unicorn.Toolbox.ViewModels;
 
-namespace Unicorn.Toolbox.Commands
+namespace Unicorn.Toolbox.Commands;
+
+public class LoadTrxCommand : CommandBase
 {
-    public class LoadTrxCommand : CommandBase
+    private readonly LaunchResult _launchResult;
+    private readonly LaunchViewModel _viewModel;
+
+    public LoadTrxCommand(LaunchViewModel viewModel, LaunchResult launchResult)
     {
-        private readonly LaunchResult _launchResult;
-        private readonly LaunchViewModel _viewModel;
+        _launchResult = launchResult;
+        _viewModel = viewModel;
+    }
 
-        public LoadTrxCommand(LaunchViewModel viewModel, LaunchResult launchResult)
+    public override void Execute(object parameter)
+    {
+        var openFileDialog = new OpenFileDialog
         {
-            _launchResult = launchResult;
-            _viewModel = viewModel;
+            Filter = "Trx files|*.trx",
+            Multiselect = true
+        };
+
+        if (!(bool)openFileDialog.ShowDialog() || !openFileDialog.FileNames.Any())
+        {
+            return;
         }
 
-        public override void Execute(object parameter)
+        _launchResult.Clear();
+        var trxFiles = openFileDialog.FileNames;
+
+        foreach (var trxFile in trxFiles)
         {
-            var openFileDialog = new OpenFileDialog
+            try
             {
-                Filter = "Trx files|*.trx",
-                Multiselect = true
-            };
-
-            if (!(bool)openFileDialog.ShowDialog() || !openFileDialog.FileNames.Any())
-            {
-                return;
+                _launchResult.AppendResultsFromTrx(trxFile);
             }
-
-            _launchResult.Clear();
-            var trxFiles = openFileDialog.FileNames;
-
-            foreach (var trxFile in trxFiles)
+            catch (Exception ex)
             {
-                try
-                {
-                    _launchResult.AppendResultsFromTrx(trxFile);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(
-                        $"Error parsing {trxFile} file:" + ex.ToString(), 
-                        "Error", 
-                        MessageBoxButton.OK, 
-                        MessageBoxImage.Error);
-                }
+                MessageBox.Show(
+                    $"Error parsing {trxFile} file:" + ex.ToString(), 
+                    "Error", 
+                    MessageBoxButton.OK, 
+                    MessageBoxImage.Error);
             }
-
-            _viewModel.Status = $"{_launchResult.Executions.Count()} .trx files were loaded >> {_launchResult}";
-            _viewModel.DataLoaded = true;
-
-            _viewModel.UpdateViewModel();
         }
+
+        _viewModel.Status = $"{_launchResult.Executions.Count()} .trx files were loaded >> {_launchResult}";
+        _viewModel.DataLoaded = true;
+
+        _viewModel.UpdateViewModel();
     }
 }

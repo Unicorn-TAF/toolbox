@@ -1,0 +1,71 @@
+﻿<UserControl x:Class="Unicorn.Toolbox.Views.RoiConfigurationView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Unicorn.Toolbox.Views"
+             xmlns:s="clr-namespace:System;assembly=mscorlib"
+             mc:Ignorable="d">
+    <Grid x:Name="configurationGrid">
+        <StackPanel HorizontalAlignment="Center">
+            <StackPanel Style="{StaticResource StackPanelStyle}">
+                <Label Content="Manual test execution time [min]:" Style="{StaticResource LabelStyle}"/>
+                <TextBox x:Name="mtExecutionMins" Style="{StaticResource TextBoxStyle}" 
+                         Text="{Binding ManualTestExecutionMins, StringFormat={}{0:F1}}" />
+            </StackPanel>
+            <StackPanel Style="{StaticResource StackPanelStyle}">
+                <Label Content="Fail reason investigation time [min]:" Style="{StaticResource LabelStyle}" />
+                <TextBox x:Name="failAnalyzeMins" Style="{StaticResource TextBoxStyle}" 
+                         Text="{Binding FailAnalyzeMins, StringFormat={}{0:F1}}" />
+            </StackPanel>
+            <StackPanel Style="{StaticResource StackPanelStyle}">
+                <Label Content="Framework creation time [hrs]:" Style="{StaticResource LabelStyle}" />
+                <TextBox x:Name="tafCreationHrs" Style="{StaticResource TextBoxStyle}" 
+                         Text="{Binding TafCreationHrs, StringFormat={}{0:F1}}" />
+            </StackPanel>
+            <StackPanel Style="{StaticResource StackPanelStyle}">
+                <Label Content="Automated test creation time [hrs]:" Style="{StaticResource LabelStyle}" />
+                <TextBox x:Name="autoTestCreationHrs" Style="{StaticResource TextBoxStyle}" 
+                         Text="{Binding AutoTestCreationHrs, StringFormat={}{0:F1}}" />
+            </StackPanel>
+            <StackPanel Style="{StaticResource StackPanelStyle}">
+                <Label Content="Automated test fix time [hrs]:" Style="{StaticResource LabelStyle}" />
+                <TextBox x:Name="autoTestFixHrs" Style="{StaticResource TextBoxStyle}" 
+                         Text="{Binding AutoTestFixHrs, StringFormat={}{0:F1}}" />
+            </StackPanel>
+            <StackPanel Style="{StaticResource StackPanelStyle}">
+                <Label Content="% of analyzed fails because of tests:" Style="{StaticResource LabelStyle}" />
+                <TextBox x:Name="atFailsPercent" Style="{StaticResource TextBoxStyle}" 
+                         Text="{Binding AtFailsPercent, StringFormat={}{0:F1}}" />
+            </StackPanel>
+            <StackPanel Style="{StaticResource StackPanelStyle}">
+                <Label Content="% of analyzed fails because of defects:" Style="{StaticResource LabelStyle}" />
+                <TextBox x:Name="devFailsPercent" Style="{StaticResource TextBoxStyle}" 
+                         Text="{Binding DevFailsPercent, StringFormat={}{0:F1}}" />
+            </StackPanel>
+            <StackPanel Style="{StaticResource StackPanelStyle}">
+                <Label Content="Extra activities per day (meetings etc.) [hrs]:" Style="{StaticResource LabelStyle}" />
+                <TextBox x:Name="nonDevHrs" Style="{StaticResource TextBoxStyle}" 
+                         Text="{Binding NonDevHrs, StringFormat={}{0:F1}}" />
+            </StackPanel>
+            <StackPanel Style="{StaticResource StackPanelStyle}">
+                <Label Content="QA builds per week:" Style="{StaticResource LabelStyle}" />
+                <TextBox x:Name="buildsPerPeriod" Style="{StaticResource TextBoxStyle}" 
+                         Text="{Binding BuildsPerPeriod}" />
+            </StackPanel>
+            <StackPanel Style="{StaticResource StackPanelStyle}">
+                <Label Content="Automation team size:" Style="{StaticResource LabelStyle}" />
+                <TextBox x:Name="teamCount" Style="{StaticResource TextBoxStyle}" 
+                         Text="{Binding TeamCount}" />
+            </StackPanel>
+            <StackPanel Style="{StaticResource StackPanelStyle}">
+                <Label Content="Prediction length [weeks]:" Style="{StaticResource LabelStyle}" />
+                <TextBox x:Name="periodsCount" Style="{StaticResource TextBoxStyle}" 
+                         Text="{Binding PeriodsCount}" />
+            </StackPanel>
+            <StackPanel>
+                <Button Content="Make forecast" Width="Auto" Height="22" VerticalAlignment="Bottom" Command="{Binding CalculateRoiCommand}" Margin="0,10,0,10"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</UserControl>

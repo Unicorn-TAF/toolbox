@@ -1,41 +1,46 @@
 ﻿using Microsoft.Win32;
+using System;
 using System.Linq;
+using System.Reflection;
+using System.Windows;
 using Unicorn.Toolbox.Stats;
 using Unicorn.Toolbox.Stats.Filtering;
 using Unicorn.Toolbox.ViewModels;
 
-namespace Unicorn.Toolbox.Commands
+namespace Unicorn.Toolbox.Commands;
+
+public class LoadAssemblyCommand : CommandBase
 {
-    public class LoadAssemblyCommand : CommandBase
+    private readonly StatsViewModel _viewModel;
+    private readonly StatsCollector _statsCollector;
+
+    public LoadAssemblyCommand(StatsViewModel viewModel, StatsCollector statsCollector)
     {
-        private readonly StatsViewModel _viewModel;
-        private readonly StatsCollector _statsCollector;
+        _viewModel = viewModel;
+        _statsCollector = statsCollector;
+    }
 
-        public LoadAssemblyCommand(StatsViewModel viewModel, StatsCollector statsCollector)
+    public override void Execute(object parameter)
+    {
+        bool considerData = (bool)parameter;
+
+        var openFileDialog = new OpenFileDialog
         {
-            _viewModel = viewModel;
-            _statsCollector = statsCollector;
-        }
+            Filter = "Unicorn tests assemblies|*.dll"
+        };
 
-        public override void Execute(object parameter)
+        if (openFileDialog.ShowDialog().Value)
         {
-            bool considerData = (bool)parameter;
+            string assemblyFile = openFileDialog.FileName;
 
-            var openFileDialog = new OpenFileDialog
+            try
             {
-                Filter = "Unicorn tests assemblies|*.dll"
-            };
-
-            if (openFileDialog.ShowDialog().Value)
-            {
-                string assemblyFile = openFileDialog.FileName;
-
                 _statsCollector.GetTestsStatistics(assemblyFile, considerData);
                 _statsCollector.Data.ClearFilters();
 
                 _viewModel.Filters.First(f => f.Filter == FilterType.Tag)
                     .Populate(_statsCollector.Data.UniqueTags);
-                
+            
                 _viewModel.Filters.First(f => f.Filter == FilterType.Category)
                     .Populate(_statsCollector.Data.UniqueCategories);
 
@@ -50,6 +55,14 @@ namespace Unicorn.Toolbox.Commands
                 _viewModel.DataLoaded = true;
 
                 _viewModel.ApplyFilteredData();
+            }
+            catch (TargetInvocationException ex)
+            {
+                MessageBox.Show(
+                    ex.InnerException.ToString(), 
+                    "Error loading assembly", 
+                    MessageBoxButton.OK, 
+                    MessageBoxImage.Error);
             }
         }
     }
