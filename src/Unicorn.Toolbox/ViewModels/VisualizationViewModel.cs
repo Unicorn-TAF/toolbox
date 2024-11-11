@@ -36,9 +36,11 @@ public class VisualizationViewModel : IDialogViewModel
             Title = title,
         };
 
+        IEnumerable<KeyValuePair<string, int>> reversedData = data.Reverse();
+
         BarSeries barSeries = new()
         {
-            ItemsSource = data.Reverse().Select(x => new BarItem { Value = x.Value, Color = palette.MainColor }).ToList(),
+            ItemsSource = reversedData.Select(x => new BarItem { Value = x.Value, Color = palette.MainColor }).ToList(),
         };
 
         VisualizationPlotModel.Series.Add(barSeries);
@@ -46,7 +48,7 @@ public class VisualizationViewModel : IDialogViewModel
         VisualizationPlotModel.Axes.Add(new CategoryAxis
         {
             Position = AxisPosition.Left,
-            ItemsSource = data.Select(p => p.Key).ToArray()
+            ItemsSource = reversedData.Select(p => p.Key).ToArray()
         });
 
         VisualizationPlotModel.SelectionColor = OxyColors.Black;
