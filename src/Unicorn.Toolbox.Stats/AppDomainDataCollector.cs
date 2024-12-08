@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using Unicorn.Taf.Api;
 using Unicorn.Taf.Core.Engine;
 using Unicorn.Taf.Core.Testing;
 
@@ -21,7 +22,7 @@ public sealed class AppDomainDataCollector : MarshalByRefObject
             {
                 foreach (var parametersSet in AdapterUtilities.GetSuiteData(suiteType))
                 {
-                    var parameterizedSuite = testsAssembly
+                    var parameterizedSuiteInstance = testsAssembly
                         .CreateInstance(
                         suiteType.FullName, 
                         true, 
@@ -31,8 +32,13 @@ public sealed class AppDomainDataCollector : MarshalByRefObject
                         null, 
                         null);
 
-                    ((TestSuite)parameterizedSuite).Outcome.DataSetName = parametersSet.Name;
-                    data.AddSuiteData(CollectorUtilities.GetSuiteInfo(parameterizedSuite, considerParameterization));
+                    
+                    TestSuite parameterizedTestSuite = new TestSuite(parameterizedSuiteInstance);
+                    parameterizedTestSuite.Outcome.DataSetName = parametersSet.Name;
+                    data.AddSuiteData(CollectorUtilities.GetSuiteInfo(
+                        parameterizedTestSuite, 
+                        parameterizedSuiteInstance, 
+                        considerParameterization));
 
                     if (!considerParameterization)
                     {
@@ -42,8 +48,12 @@ public sealed class AppDomainDataCollector : MarshalByRefObject
             }
             else
             {
-                var nonParameterizedSuite = testsAssembly.CreateInstance(suiteType.FullName);
-                data.AddSuiteData(CollectorUtilities.GetSuiteInfo(nonParameterizedSuite, considerParameterization));
+                var nonParameterizedSuiteInstance = testsAssembly.CreateInstance(suiteType.FullName);
+                var nonParameterizedSuite = new TestSuite(nonParameterizedSuiteInstance);
+                data.AddSuiteData(CollectorUtilities.GetSuiteInfo(
+                    nonParameterizedSuite, 
+                    nonParameterizedSuiteInstance, 
+                    considerParameterization));
             }
         }
 

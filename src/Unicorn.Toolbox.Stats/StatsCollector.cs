@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using Unicorn.Taf.Api;
 
 #if NET || NETCOREAPP
 using System.Runtime.Serialization.Formatters.Binary;
@@ -40,31 +41,21 @@ public sealed class StatsCollector
 
 #if NETFRAMEWORK
 
-        AppDomain unicornDomain = AppDomain.CreateDomain("Unicorn.ConsoleRunner AppDomain");
+        string contextDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        UnicornAppDomainIsolation<AppDomainDataCollector> collectorIsolation =
+                new UnicornAppDomainIsolation<AppDomainDataCollector>(contextDirectory, "Unicorn.Toolbox AppDomain");
+        Data = collectorIsolation.Instance.GetTestsStatistics(_assemblyFile, _considerParameterization);
 
-        try
-        {
-            string pathToDll = Assembly.GetExecutingAssembly().Location;
-
-            AppDomainDataCollector collector = (AppDomainDataCollector)unicornDomain
-                .CreateInstanceFromAndUnwrap(pathToDll, typeof(AppDomainDataCollector).FullName);
-
-            Data = collector.GetTestsStatistics(_assemblyFile, _considerParameterization);
-        }
-        finally
-        {
-            AppDomain.Unload(unicornDomain);
-        }
 #endif
 
 #if NET || NETCOREAPP
 
         string contextDirectory = Path.GetDirectoryName(_assemblyFile);
 
-        StatsAssemblyLoadContext collectorContext = new StatsAssemblyLoadContext(contextDirectory);
+        UnicornAssemblyLoadContext collectorContext = new UnicornAssemblyLoadContext(contextDirectory);
         collectorContext.Initialize(typeof(ITestRunner));
         collectorContext.LoadAssemblyFrom(typeof(LoadContextDataCollector).Assembly.Location);
-        AssemblyName assemblyName = System.Reflection.AssemblyName.GetAssemblyName(_assemblyFile);
+        AssemblyName assemblyName = AssemblyName.GetAssemblyName(_assemblyFile);
         Assembly testAssembly = collectorContext.GetAssembly(assemblyName);
 
         Type collectorType = collectorContext.GetAssemblyContainingType(typeof(LoadContextDataCollector))

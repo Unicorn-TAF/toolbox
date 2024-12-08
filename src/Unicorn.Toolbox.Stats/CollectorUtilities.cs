@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Unicorn.Taf.Core.Testing;
@@ -9,20 +8,8 @@ namespace Unicorn.Toolbox.Stats;
 
 public static class CollectorUtilities
 {
-    public static SuiteInfo GetSuiteInfo(object suiteInstance, bool considerParameterization)
+    public static SuiteInfo GetSuiteInfo(TestSuite testSuite, object suiteInstance, bool considerParameterization)
     {
-        int inheritanceCounter = 0;
-        var currentType = suiteInstance.GetType();
-
-        Type _baseSuiteType = typeof(TestSuite);
-
-        while (!currentType.Equals(_baseSuiteType) && inheritanceCounter++ < 50)
-        {
-            currentType = currentType.BaseType;
-        }
-
-        var testSuite = suiteInstance as TestSuite;
-
         var suiteName = testSuite.Outcome.Name;
 
         if (!string.IsNullOrEmpty(testSuite.Outcome.DataSetName) && considerParameterization)
