@@ -26,7 +26,7 @@ public sealed class LoadContextDataCollector : IDataCollector
             {
                 foreach (var parametersSet in AdapterUtilities.GetSuiteData(suiteType))
                 {
-                    var parameterizedSuite = assembly
+                    var parameterizedSuiteInstance = assembly
                         .CreateInstance(
                         suiteType.FullName,
                         true,
@@ -36,8 +36,12 @@ public sealed class LoadContextDataCollector : IDataCollector
                         null,
                         null);
 
-                    ((TestSuite)parameterizedSuite).Outcome.DataSetName = parametersSet.Name;
-                    data.AddSuiteData(CollectorUtilities.GetSuiteInfo(parameterizedSuite, _considerParameterization));
+                    TestSuite parameterizedTestSuite = new TestSuite(parameterizedSuiteInstance);
+                    parameterizedTestSuite.Outcome.DataSetName = parametersSet.Name;
+                    data.AddSuiteData(CollectorUtilities.GetSuiteInfo(
+                        parameterizedTestSuite, 
+                        parameterizedSuiteInstance, 
+                        _considerParameterization));
 
                     if (!_considerParameterization)
                     {
@@ -47,8 +51,12 @@ public sealed class LoadContextDataCollector : IDataCollector
             }
             else
             {
-                var nonParameterizedSuite = assembly.CreateInstance(suiteType.FullName);
-                data.AddSuiteData(CollectorUtilities.GetSuiteInfo(nonParameterizedSuite, _considerParameterization));
+                var nonParameterizedSuiteInstance = assembly.CreateInstance(suiteType.FullName);
+                var nonParameterizedSuite = new TestSuite(nonParameterizedSuiteInstance);
+                data.AddSuiteData(CollectorUtilities.GetSuiteInfo(
+                    nonParameterizedSuite, 
+                    nonParameterizedSuiteInstance, 
+                    _considerParameterization));
             }
         }
 
