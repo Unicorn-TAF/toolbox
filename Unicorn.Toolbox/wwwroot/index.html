@@ -1,0 +1,107 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unicorn Toolbox</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="icon" type="image/png" href="/images/favicon.png">
+</head>
+<body>
+    <nav class="tabs">
+        <a href="/" data-target="stats">Test Statistics</a>
+        <a href="/coverage" data-target="coverage">Coverage</a>
+        <a href="/analysis" data-target="analysis">Result Analysis</a>
+        <a href="/efficiency" data-target="efficiency">AT Efficiency</a>
+        <!--<a href="/results/" target="_blank">Raw Results</a>-->
+    </nav>
+
+    <!-- Hidden input for file selection -->
+    <input type="file" id="trxFileLoader" multiple accept=".trx" style="display: none;">
+
+    <main id="content">
+        <section id="stats" class="tab-content">
+            <h1>Test Statistics</h1>
+            <p>Content for Test Statistics.</p>
+        </section>
+
+        <section id="coverage" class="tab-content" style="display: none;">
+            <h1>Coverage</h1>
+            <p>Content for Coverage.</p>
+        </section>
+
+        <section id="analysis" class="tab-content" style="display: none;">
+            <!-- Analysis Tab Content (Keep as is) -->
+            <div class="analysis-container">
+                <div class="left-panel">
+                    <fieldset class="control-group">
+                        <legend>Load Data</legend>
+                        <div> <button id="loadTrxButton">Load TRX files</button> <span id="loadStatus" style="margin-left: 15px; color: #333; font-size: 0.9em;"></span> </div>
+                        <div> <button id="visualizeButton">Visualize Timeline</button> </div>
+                    </fieldset>
+                    <fieldset class="control-group top-fails-group">
+                        <legend>Top 5 Fail Reasons</legend> <div id="topFailsList" class="fail-items-grid"></div>
+                    </fieldset>
+                </div>
+                <div class="right-panel">
+                    <fieldset class="control-group find-fails-group">
+                        <legend>Find Tests</legend> <div class="find-controls"> <select id="failFilterType"> <option value="None" selected>-- No Fail Filter --</option> <option value="ErrorMessage">ErrorMessage (Contains)</option> <option value="ErrorMessageRegex">ErrorMessage (Regex)</option> <option value="TestName">TestName (Contains)</option> </select> <input type="text" id="failSearchCriteria" placeholder="Enter search text..."> <button id="searchFailsButton">Search</button> </div>
+                    </fieldset>
+                    <div class="results-grid-container">
+                        <table id="resultsTable">
+                            <thead> <tr> <th data-sort-key="fileName" data-sort-type="text" title="File name">File name</th> <th data-sort-key="totalDurationMin" data-sort-type="number" title="Full TRX duration (finish - start)">Total duration (min)</th> <th data-sort-key="rawDurationMin" data-sort-type="number" title="Only tests duration (before/after suites and time in between tests excluded) (min)">Raw test duration (min)</th> <th data-sort-key="suitesCount" data-sort-type="number">Suites</th> <th data-sort-key="testsCount" data-sort-type="number">Tests</th> <th data-sort-key="failedTests" data-sort-type="number">Fails</th> <th data-sort-key="skippedTests" data-sort-type="number">Skips</th> </tr> </thead>
+                            <tbody id="resultsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="efficiency" class="tab-content" style="display: none;">
+            <!-- Efficiency Tab Content -->
+            <h1>AT Efficiency & ROI Forecast</h1>
+            <div class="efficiency-container">
+                <div class="efficiency-inputs">
+                    <fieldset class="control-group">
+                        <legend>Input Parameters</legend>
+                        <div class="input-row"><label for="manualTestTime">Manual test execution time [min]:</label><input type="number" id="manualTestTime" value="10.0" step="0.1"></div>
+                        <div class="input-row"><label for="failInvestigationTime">Fail reason investigation time [min]:</label><input type="number" id="failInvestigationTime" value="5.0" step="0.1"></div>
+                        <div class="input-row"><label for="frameworkCreationTime">Framework creation time [hrs]:</label><input type="number" id="frameworkCreationTime" value="80.0" step="1.0"></div>
+                        <div class="input-row"><label for="testCreationTime">Automated test creation time [hrs]:</label><input type="number" id="testCreationTime" value="8.0" step="0.1"></div>
+                        <div class="input-row"><label for="testFixTime">Automated test fix time [hrs]:</label><input type="number" id="testFixTime" value="2.0" step="0.1"></div>
+                        <div class="input-row"><label for="atFailPercent">% of analyzed fails because of tests:</label><input type="number" id="atFailPercent" value="2.5" step="0.1"></div>
+                        <div class="input-row"><label for="devFailPercent">% of analyzed fails because of defects:</label><input type="number" id="devFailPercent" value="2.5" step="0.1"></div>
+                        <div class="input-row"><label for="extraHrsPerDay">Extra activities per day (meetings etc.) [hrs]:</label><input type="number" id="extraHrsPerDay" value="0.5" step="0.1"></div>
+                        <div class="input-row"><label for="buildsPerWeek">QA builds per week:</label><input type="number" id="buildsPerWeek" value="5" step="1"></div>
+                        <div class="input-row"><label for="teamSize">Automation team size:</label><input type="number" id="teamSize" value="4" step="1"></div>
+                        <div class="input-row"><label for="predictionLength">Prediction length [weeks]:</label><input type="number" id="predictionLength" value="54" step="1"></div>
+                        <button id="makeForecastButton">Make forecast</button>
+                    </fieldset>
+                </div>
+                <div class="efficiency-results">
+                    <div id="roiResult" class="roi-result-display">Test automation will self-sustain by <strong id="roiWeek">--</strong> week</div>
+                    <!-- *** Chart containers will be managed by updated CSS *** -->
+                    <div class="chart-container"><h3>ROI</h3><canvas id="roiChartCanvas"></canvas></div>
+                    <div class="chart-container"><h3>Efficiency (man-days)</h3><canvas id="efficiencyChartCanvas"></canvas></div>
+                    <div id="roiTableContainer" class="results-grid-container" style="margin-top: 15px;">
+                        <table id="roiTable">
+                            <thead><tr><th>Week</th><th>Total tests</th><th>Total runs</th><th>Time to write tests (hrs)</th><th>MT time saved per run (days)</th><th>MT total saved time (days)</th><th>AT total spent time (days)</th><th>ROI (%)</th></tr></thead>
+                            <tbody id="roiTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- *** MODAL STRUCTURE (Keep as is) *** -->
+    <div id="visualizationModal" class="modal"> <div class="modal-content visualization-modal-content"> <span class="modal-close-button" title="Close">×</span> <h2>Timeline Visualization</h2> <div id="timelineAxisHeader"></div> <div id="timelineContainerWrapper"> <div id="timelineContainer"></div> <div id="timelineCursorLine" class="timeline-cursor-line"></div> <div id="timelineClickMarkerLine" class="timeline-click-marker-line"></div> </div> <div id="timelineTooltip" class="timeline-tooltip"></div> <div id="timelineClickInfo" class="timeline-click-info">Click on timeline to see tests</div> </div> </div>
+
+    <!-- Chart.js and Annotation Plugin -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
+    <!-- Your scripts -->
+    <!-- No need to include roi-calculator.js here if using modules -->
+    <script src="/js/script.js" type="module"></script>
+</body>
+</html>

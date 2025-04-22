@@ -1,0 +1,721 @@
+﻿body {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.tabs {
+    background-color: #f1f1f1;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+}
+
+    .tabs a {
+        display: inline-block;
+        padding: 10px 15px;
+        margin-right: 5px;
+        text-decoration: none;
+        color: #333;
+        border: 1px solid transparent;
+        border-radius: 10px;
+    }
+
+        .tabs a:hover {
+            background-color: #ddd;
+        }
+
+        .tabs a.active {
+            background-color: #fff;
+            border-color: #ccc;
+            position: relative;
+            top: 1px;
+        }
+
+        .tabs a[target="_blank"] {
+            float: right;
+            background-color: #e0e0e0;
+        }
+
+            .tabs a[target="_blank"]:hover {
+                background-color: #c0c0c0;
+            }
+
+#content {
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-top: none;
+    margin-top: -1px;
+}
+
+.tab-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column; 
+    min-height: 0; 
+}
+    .tab-content[style*="display: none"] {
+        flex-grow: 0;
+    }
+
+
+iframe {
+    border: 1px solid #eee;
+}
+
+.analysis-container {
+    display: flex;
+    gap: 15px;
+    flex-grow: 1;
+    min-height: 0; 
+}
+
+.left-panel {
+    flex: 0 0 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    min-height: 0; 
+}
+
+.right-panel {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    gap: 15px;
+    min-height: 0; 
+}
+
+.control-group {
+    border: 1px solid #a1aaaf;
+    padding: 10px;
+    background-color: #f8f8f8;
+    border-radius: 3px;
+}
+
+    .control-group legend {
+        font-weight: bold;
+        padding: 0 5px;
+        color: #333;
+    }
+
+#loadTrxButton, #visualizeButton {
+    padding: 5px 15px;
+    margin: 5px 0;
+}
+
+@keyframes rollingGradient {
+    0% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+#visualizeButton.gradient-active {
+    background: linear-gradient(90deg, #1CCEED, #1C4AED, #1C8CED, #1CEDC7, #311CED, #419EF0, #44676E, #8A1CED, #1CE5ED, #1CADEF, #87CEEB, #3CB371, #FFD700, #FFA07A, #9370DB, #1CCEED);
+    background-size: 300% 300%;
+    animation: rollingGradient 5s linear infinite;
+    color: white;
+    border: 1px solid #a1aaaf;
+    border-radius: 4px;
+    padding: 5px 15px;
+    margin: 5px 0;
+    box-shadow: none;
+}
+
+.top-fails-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.fail-items-grid {
+    display: grid;
+    grid-template-rows: repeat(5, auto);
+    gap: 10px;
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+.fail-item {
+    border: 1px solid #808080;
+    display: flex;
+    flex-direction: column;
+    min-height: 80px;
+}
+
+.fail-message-box {
+    background-color: #303030;
+    padding: 5px;
+    flex-grow: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+    .fail-message-box pre {
+        color: #eaeaea;
+        font-family: Consolas, monospace;
+        font-size: 11px;
+        white-space: pre-wrap;
+        word-break: break-all;
+        margin: 0;
+        max-height: 70px;
+        overflow-y: auto;
+        flex-grow: 1;
+    }
+
+.fail-count {
+    align-self: flex-end;
+    margin: 3px 5px;
+    font-weight: bold;
+    color: #3399ff;
+    cursor: pointer;
+    background-color: #f8f8f8;
+    padding: 0 3px;
+}
+
+    .fail-count:hover {
+        text-decoration: underline;
+    }
+
+.results-grid-container {
+    overflow-x: auto;
+    overflow-y: auto;
+    flex-grow: 1;    
+    border: 1px solid #c5c5c5;
+    min-height: 100px;
+    border-radius: 3px;
+}
+
+#resultsTable,
+#roiTable {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+    #resultsTable th, #resultsTable td,
+    #roiTable th, #roiTable td {
+        border: 1px solid #ddd;
+        padding: 6px 8px;
+        text-align: left;
+        vertical-align: middle;
+    }
+
+    #resultsTable thead th,
+    #roiTable thead th {
+        background-color: #f2f2f2;
+        font-weight: bold;
+        text-align: center;
+        white-space: nowrap;
+        position: sticky; 
+        top: 0;
+        z-index: 2;
+        padding-right: 20px;
+    }
+
+        #resultsTable thead th[data-sort-key],
+        #roiTable thead th[data-sort-key] {
+            cursor: pointer;
+        }
+
+        #resultsTable thead th::after,
+        #roiTable thead th::after {
+            content: '';
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.8em;
+            opacity: 0.3;
+            transition: opacity 0.2s ease-in-out;
+        }
+
+        #resultsTable thead th.sorted-asc::after,
+        #roiTable thead th.sorted-asc::after {
+            content: '▲';
+            opacity: 1;
+        }
+
+        #resultsTable thead th.sorted-desc::after,
+        #roiTable thead th.sorted-desc::after {
+            content: '▼';
+            opacity: 1;
+        }
+
+    #resultsTable thead:hover th:not(:hover)::after,
+    #roiTable thead:hover th:not(:hover)::after {
+        opacity: 0.2;
+    }
+
+    #resultsTable thead th[data-sort-key]:hover::after,
+    #roiTable thead th[data-sort-key]:hover::after {
+        opacity: 0.6;
+    }
+
+    #resultsTable thead th.sorted-asc:hover::after, #resultsTable thead th.sorted-desc:hover::after,
+    #roiTable thead th.sorted-asc:hover::after, #roiTable thead th.sorted-desc:hover::after {
+        opacity: 1;
+    }
+
+    #resultsTable td:nth-child(n+2), #resultsTable th:nth-child(n+2),
+    #roiTable td:nth-child(n+2), #roiTable th:nth-child(n+2) {
+        text-align: center;
+    }
+
+    #resultsTable tbody tr:nth-child(even),
+    #roiTable tbody tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    #resultsTable tbody tr:hover,
+    #roiTable tbody tr:hover {
+        background-color: #eaf2fa;
+    }
+
+    #resultsTable tbody tr.error-row, #resultsTable tbody tr.error-row:hover,
+    #roiTable tbody tr.error-row, #roiTable tbody tr.error-row:hover  {
+        background-color: #ffeeee;
+        color: #a94442;
+    }
+
+        #resultsTable tbody tr.error-row td[colspan],
+        #roiTable tbody tr.error-row td[colspan] {
+            text-align: left !important;
+            font-style: italic;
+        }
+
+.header-content {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.execution-header span {
+    white-space: nowrap;
+}
+
+.execution-header input {
+    width: 150px;
+    padding: 2px 4px;
+    font-size: 11px;
+}
+
+.find-fails-group {
+    flex-shrink: 0;
+}
+
+.find-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#failFilterType {
+    padding: 4px;
+    flex: 0 0 150px;
+}
+
+#failSearchCriteria {
+    padding: 4px 6px;
+    flex-grow: 1;
+}
+
+#searchFailsButton {
+    padding: 4px 15px;
+    flex-shrink: 0;
+}
+
+/* --- *** START: Visualization Modal Styles *** --- */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden; 
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #888;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+    animation-name: animatetop;
+    animation-duration: 0.4s;
+    position: relative;
+}
+
+.visualization-modal-content {
+    width: 98%;
+    height: 96vh; 
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    overflow: hidden; 
+}
+
+@keyframes animatetop {
+    from {
+        top: -300px;
+        opacity: 0
+    }
+
+    to {
+        top: 0;
+        opacity: 1
+    }
+}
+
+.modal-close-button {
+    color: #aaa;
+    position: absolute;
+    top: 5px;
+    right: 15px;
+    font-size: 28px;
+    font-weight: bold;
+    z-index: 10; 
+}
+
+    .modal-close-button:hover, .modal-close-button:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+#timelineAxisHeader {
+    height: 20px; 
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 5px;
+    position: relative;
+    font-size: 10px;
+    color: #555;
+    flex-shrink: 0; 
+}
+
+    #timelineAxisHeader .time-label {
+        position: absolute;
+        bottom: 2px;
+        transform: translateX(-50%);
+        white-space: nowrap;
+    }
+
+#timelineContainerWrapper {
+    flex-grow: 1; 
+    overflow-y: auto;
+    overflow-x: hidden;
+    border: 1px solid #eee;
+    position: relative;
+    min-height: 0; 
+}
+
+#timelineContainer {
+    position: relative;
+    background-color: #fdfdfd;
+    cursor: crosshair;
+    padding-top: 5px;
+}
+
+.timeline-row {
+    height: 25px;
+    border-bottom: 1px dotted #eee;
+    position: relative;
+    box-sizing: border-box;
+    margin-bottom: 2px;
+    width: 100%;
+}
+    .timeline-row:last-child {
+        border-bottom: none;
+    }
+
+.test-square {
+    position: absolute;
+    height: 15px;
+    top: 5px;
+    min-width: 2px;
+    box-sizing: border-box;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    opacity: 0.85;
+    border-radius: 1px;
+    overflow: hidden;
+    transition: border-color 0.1s ease-out, opacity 0.1s ease-out;
+}
+
+    .test-square:hover {
+        border-color: #000;
+        opacity: 1;
+        z-index: 10;
+    }
+
+/* Color Palette */
+.color-0 {
+    background-color: #1CCEED;
+}
+
+.color-1 {
+    background-color: #1C4AED;
+}
+
+.color-2 {
+    background-color: #1C8CED;
+}
+
+.color-3 {
+    background-color: #1CEDC7;
+}
+
+.color-4 {
+    background-color: #311CED;
+}
+
+.color-5 {
+    background-color: #419EF0;
+}
+
+.color-6 {
+    background-color: #44676E;
+}
+
+.color-7 {
+    background-color: #8A1CED;
+}
+
+.color-8 {
+    background-color: #1CE5ED;
+}
+
+.color-9 {
+    background-color: #1CADEF;
+}
+
+.color-10 {
+    background-color: #87CEEB;
+}
+
+.color-11 {
+    background-color: #3CB371;
+}
+
+.color-12 {
+    background-color: #FFD700;
+}
+
+.color-13 {
+    background-color: #FFA07A;
+}
+
+.color-14 {
+    background-color: #9370DB;
+}
+
+.color-fail {
+    background-color: #F04141;
+    border-color: #a00;
+}
+
+.timeline-tooltip {
+    position: fixed;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 3px;
+    font-size: 11px;
+    white-space: pre;
+    display: none;
+    pointer-events: none;
+    z-index: 1010;
+    box-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+}
+
+.timeline-cursor-line {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    border-left: 1px dashed rgba(0, 0, 0, 0.7);
+    pointer-events: none;
+    display: none;
+    z-index: 5;
+}
+
+.timeline-click-marker-line {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background-color: rgba(255, 0, 0, 0.7);
+    pointer-events: none;
+    display: none;
+    z-index: 6; 
+}
+
+.suite-underline {
+    position: absolute;
+    height: 2px;
+    bottom: -1px;
+    z-index: 1;
+    opacity: 0.6;
+}
+
+
+#timelineClickInfo {
+    margin-top: 10px;
+    padding: 8px;
+    border: 1px solid #dcdcdc;
+    background-color: #f9f9f9;
+    font-size: 11px;
+    min-height: 40px; 
+    max-height: 100px; 
+    overflow-y: auto;
+    color: #333;
+    flex-shrink: 0; 
+    font-family: Consolas, monospace;
+}
+
+    #timelineClickInfo p {
+        margin: 2px 0;
+    }
+
+    #timelineClickInfo strong {
+        display: block;
+        margin-bottom: 4px;
+        font-weight: bold;
+        color: #111;
+    }
+
+    #timelineClickInfo span {
+        color: #555;
+        font-weight: normal;
+        margin-right: 5px;
+    }
+
+    #timelineClickInfo em {
+        color: #888;
+    }
+/* --- *** END: Visualization Modal Styles *** --- */
+
+/* --- START: AT Efficiency Tab Styles --- */
+.efficiency-container {
+    display: flex;
+    gap: 20px;
+    flex-grow: 1;
+    min-height: 0;   
+    overflow: hidden;
+}
+
+.efficiency-inputs {
+    flex: 0 0 350px;   
+    overflow-y: auto;  
+    padding-right: 5px;
+}
+
+    .efficiency-inputs .input-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+    }
+
+    .efficiency-inputs label {
+        flex-basis: 65%;
+        text-align: right;
+        margin-right: 10px;
+        font-size: 12px;
+        color: #333;
+    }
+
+    .efficiency-inputs input[type="number"] {
+        flex-basis: 30%;
+        padding: 4px;
+        font-size: 12px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        text-align: right;
+    }
+
+#makeForecastButton {
+    margin-top: 15px;
+    width: 100%;
+    padding: 8px;
+}
+
+.efficiency-results {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    min-width: 0; 
+    min-height: 0; 
+    overflow: hidden; 
+}
+
+.roi-result-display {
+    font-size: 1.1em;
+    text-align: center;
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+
+    .roi-result-display strong {
+        font-weight: bold;
+        color: #d9534f;
+        font-size: 1.2em;
+    }
+
+.chart-container {
+    border: 1px solid #ddd;
+    padding: 10px;
+    padding-bottom: 35px;
+    background-color: #fff;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    position: relative;
+    min-height: 0;
+    flex-grow: 1; 
+    flex-shrink: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 600px;
+}
+
+    .chart-container h3 {
+        text-align: center;
+        margin-top: 0;
+        margin-bottom: 5px;
+        font-size: 1.1em;
+        color: #555;
+        flex-shrink: 0;
+    }
+
+    .chart-container canvas {
+        display: block;
+        box-sizing: border-box;
+        max-width: 100%;
+        width: 100%;
+    }
+
+
+#roiTableContainer {
+    max-height: 500px; 
+    overflow-y: auto;
+    overflow-x: hidden;
+    flex-shrink: 0; 
+    flex-grow: 0;
+}
+
+/* --- END: AT Efficiency Tab Styles --- */
