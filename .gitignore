@@ -262,3 +262,5 @@ Application/SourceCode/Test.iLevel.ViewPoint.Common/ErrorReport_PSalavei*
 # Database project artifacts
 *.jfm
 
+# Ignore compiled TS files
+/Unicorn.Toolbox/wwwroot/js

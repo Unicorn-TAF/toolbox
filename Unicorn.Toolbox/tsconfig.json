@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "target": "es2016",
+    "module": "esnext",
+    "lib": [ "dom", "esnext", "es2015", "dom.iterable", "es2017" ],
+    "allowJs": true,
+    "checkJs": false,
+    "sourceMap": true, // Generate '.map' files for debugging TS code in the browser.
+    "outDir": "./wwwroot/js/dist", // output directory for compiled JS files. 
+    "rootDir": "./ClientScripts", // root directory of your source TS files
+
+    "strict": true,
+    "skipLibCheck": true,
+
+    "moduleResolution": "node",
+    "baseUrl": ".",
+    "paths": {},
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": [
+    "./ClientScripts/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "wwwroot"
+  ]
+}
