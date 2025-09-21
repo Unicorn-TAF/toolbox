@@ -23,8 +23,8 @@ function setupTabs() {
     function updateActiveTab(path) {
         var targetId = 'stats'; // Default tab
         switch (path) {
-            case '/coverage':
-                targetId = 'coverage';
+            case '/template':
+                targetId = 'template';
                 break;
             case '/analysis':
                 targetId = 'analysis';

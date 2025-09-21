@@ -16,7 +16,7 @@ function getElement<T extends HTMLElement>(selector: string): T | null {
 // --- Tab Navigation Logic ---
 function setupTabs(): void {
     const tabsContainer = getElement<HTMLDivElement>('.tabs');
-    const contentContainer = getElement<HTMLElement>('#content'); // Can be <main>
+    const contentContainer = getElement<HTMLElement>('#content');
 
     if (!tabsContainer || !contentContainer) {
         console.error("Could not find tabs container or content container.");
@@ -27,9 +27,9 @@ function setupTabs(): void {
     const contentSections = contentContainer.querySelectorAll<HTMLElement>('.tab-content');
 
     function updateActiveTab(path: string): void {
-        let targetId = 'stats'; // Default tab
+        let targetId = 'stats';
         switch (path) {
-            case '/coverage': targetId = 'coverage'; break;
+            case '/template': targetId = 'template'; break;
             case '/analysis': targetId = 'analysis'; break;
             case '/efficiency': targetId = 'efficiency'; break;
             case '/': default: targetId = 'stats'; break;

@@ -10,7 +10,7 @@
 <body>
     <nav class="tabs">
         <a href="/" data-target="stats">Test Statistics</a>
-        <a href="/coverage" data-target="coverage">Coverage</a>
+        <a href="/template" data-target="template">Template</a>
         <a href="/analysis" data-target="analysis">Result Analysis</a>
         <a href="/efficiency" data-target="efficiency">AT Efficiency</a>
         <!--<a href="/results/" target="_blank">Raw Results</a>-->
@@ -25,9 +25,10 @@
             <p>Content for Test Statistics.</p>
         </section>
 
-        <section id="coverage" class="tab-content" style="display: none;">
-            <h1>Coverage</h1>
-            <p>Content for Coverage.</p>
+        <section id="template" class="tab-content" style="display: none;">
+            <h1>Template</h1>
+            <p>Content for Template.</p>
+            <p>There will be a tool to generate bat/sh files to generate project from unicorn template and link them.</p>
         </section>
 
         <section id="analysis" class="tab-content" style="display: none;">
@@ -94,14 +95,10 @@
         </section>
     </main>
 
-    <!-- *** MODAL STRUCTURE (Keep as is) *** -->
     <div id="visualizationModal" class="modal"> <div class="modal-content visualization-modal-content"> <span class="modal-close-button" title="Close">×</span> <h2>Timeline Visualization</h2> <div id="timelineAxisHeader"></div> <div id="timelineContainerWrapper"> <div id="timelineContainer"></div> <div id="timelineCursorLine" class="timeline-cursor-line"></div> <div id="timelineClickMarkerLine" class="timeline-click-marker-line"></div> </div> <div id="timelineTooltip" class="timeline-tooltip"></div> <div id="timelineClickInfo" class="timeline-click-info">Click on timeline to see tests</div> </div> </div>
 
-    <!-- Chart.js and Annotation Plugin -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
-    <!-- Your scripts -->
-    <!-- No need to include roi-calculator.js here if using modules -->
     <script src="/js/dist/main.js" type="module"></script>
 </body>
 </html>

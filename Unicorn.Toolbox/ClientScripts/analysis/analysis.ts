@@ -1,6 +1,6 @@
 ﻿import { TrxFileData, TestData, TrxSummary, AggregatedFailure } from '../models/trx.js';
 import { parseDateTimeSafe, parseTimespan } from '../utils/formatters.js';
-import { openVisualizationModal, closeVisualizationModal, initializeVisualizationModalControls } from './visualization.js'; // Import modal functions
+import { openVisualizationModal, closeVisualizationModal, initializeVisualizationModalControls, invalidateVisualizationCache } from './visualization.js'; // Import modal functions
 
 // --- Module State ---
 let analysisTabInitialized: boolean = false;
@@ -375,6 +375,7 @@ async function handleTrxFileLoad(event: Event, elements: ReturnType<typeof getAn
     allTrxData = [];
     aggregatedFailures.clear();
     processedFileNames.clear(); // Clear the set for the new load operation
+    invalidateVisualizationCache(); 
     elements.resultsTableBody.innerHTML = ''; // Clear summary table
     elements.topFailsListContainer.innerHTML = '<p class="no-data-message">Load TRX files to see top failures.</p>'; // Clear top fails
     elements.visualizeButton.disabled = true; // Disable visualize button
